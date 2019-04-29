@@ -3,7 +3,7 @@
 namespace Vostok.Clusterclient.Core.Transforms
 {
     /// <summary>
-    /// Marker interface for request transformations applied in the <see cref="Vostok.Clusterclient.Core.Modules.RequestTransformationModule"/>
+    /// Marker interface for request transformations applied in the <see cref="Modules.RequestTransformationModule"/>.
     /// </summary>
     [PublicAPI]
     public interface IRequestTransformMetadata

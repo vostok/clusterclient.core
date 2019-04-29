@@ -5,7 +5,7 @@ using Vostok.Clusterclient.Core.Model;
 namespace Vostok.Clusterclient.Core.Transforms
 {
     /// <summary>
-    /// <para>Represents a transform used to modify request before it gets sent.</para>
+    /// <para>Represents an asynchronous transform used to modify request before it gets sent.</para>
     /// <para>Requests transforms form a chain where each transform works with a result of previous one.</para>
     /// </summary>
     [PublicAPI]
@@ -16,6 +16,7 @@ namespace Vostok.Clusterclient.Core.Transforms
         /// </summary>
         [Pure]
         [NotNull]
+        [ItemNotNull]
         Task<Request> TransformAsync([NotNull] Request request);
     }
 }
