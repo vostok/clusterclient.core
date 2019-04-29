@@ -37,6 +37,7 @@ namespace Vostok.Clusterclient.Core.Modules
             }
 
             SubstituteStreamContent(context);
+
             return await next(context).ConfigureAwait(false);
         }
 
