@@ -6,7 +6,7 @@ using Vostok.Clusterclient.Core.Ordering.Storage;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed
 {
-    internal interface IReplicaWeightCalculator
+    public interface IReplicaWeightCalculator
     {
         double GetWeight(
             [NotNull] Uri replica,
