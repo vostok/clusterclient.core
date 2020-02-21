@@ -37,7 +37,7 @@ namespace Vostok.Clusterclient.Core.Transport
                     : connectionTimeout.Value;
 
                 var response = await transport.SendAsync(request, connectionAttemptTimeout, timeBudget.Remaining, cancellationToken).ConfigureAwait(false);
-
+                
                 if (response.Code == ResponseCode.ConnectFailure)
                     continue;
 
