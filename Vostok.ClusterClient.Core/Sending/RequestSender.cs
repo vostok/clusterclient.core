@@ -39,8 +39,7 @@ namespace Vostok.Clusterclient.Core.Sending
 
             var absoluteRequest = requestConverter.TryConvertToAbsolute(request, replica);
 
-            var connectionAttemptsTransport = new ConnectionAttemptsTransport(transport, configuration.ConnectionAttempts);
-            var response = await SendRequestAsync(connectionAttemptsTransport, absoluteRequest, timeBudget, connectionTimeout, cancellationToken).ConfigureAwait(false);
+            var response = await SendRequestAsync(transport, absoluteRequest, timeBudget, connectionTimeout, cancellationToken).ConfigureAwait(false);
 
             var responseVerdict = responseClassifier.Decide(response, configuration.ResponseCriteria);
 
@@ -63,6 +62,8 @@ namespace Vostok.Clusterclient.Core.Sending
         {
             if (request == null)
                 return Responses.Unknown;
+
+            transport = new ConnectionAttemptsTransport(transport, configuration.ConnectionAttempts);
 
             try
             {

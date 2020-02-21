@@ -26,6 +26,22 @@ namespace Vostok.Clusterclient.Core.Tests.Transport
             innerTransport = Substitute.For<ITransport>();
         }
 
+        [TestCase(ResponseCode.Ok)]
+        [TestCase(ResponseCode.InternalServerError)]
+        [TestCase(ResponseCode.Canceled)]
+        [TestCase(ResponseCode.UnknownFailure)]
+        public void Should_not_retry_ordinary_response_codes(ResponseCode code)
+        {
+            innerTransport
+                .SendAsync(null, null, TimeSpan.Zero, CancellationToken.None)
+                .ReturnsForAnyArgs(new Response(code), new Response(ResponseCode.BadGateway));
+
+            var transport = GetTransport(2);
+
+            Send(transport).Code.Should().Be(code);
+            innerTransport.ReceivedWithAnyArgs(1).SendAsync(null, null, TimeSpan.Zero, CancellationToken.None);
+        }
+
         [Test]
         public void Should_retry_connection_timeout()
         {
@@ -57,13 +73,9 @@ namespace Vostok.Clusterclient.Core.Tests.Transport
         }
 
         private ConnectionAttemptsTransport GetTransport(int connectionAttempts = 1)
-        {
-            return new ConnectionAttemptsTransport(innerTransport, connectionAttempts);
-        }
+            => new ConnectionAttemptsTransport(innerTransport, connectionAttempts);
 
         private Response Send(ITransport transport, CancellationToken token = default)
-        {
-            return transport.SendAsync(request, connectionTimeout, timeout, token).GetAwaiter().GetResult();
-        }
+            => transport.SendAsync(request, connectionTimeout, timeout, token).GetAwaiter().GetResult();
     }
 }
