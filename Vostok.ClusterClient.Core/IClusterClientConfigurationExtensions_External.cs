@@ -36,6 +36,8 @@ namespace Vostok.Clusterclient.Core
             configuration.DefaultRequestStrategy = Strategy.Sequential1;
 
             configuration.DeduplicateRequestUrl = true;
+
+            configuration.TargetServiceName = url.AbsoluteUri;
         }
     }
 }
