@@ -12,6 +12,7 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies;
 using Vostok.Clusterclient.Core.Strategies.DelayProviders;
+using Vostok.Clusterclient.Core.Strategies.WaitAnotherReplicaResultProvider;
 using Vostok.Clusterclient.Core.Tests.Helpers;
 
 #pragma warning disable CS4014
@@ -387,6 +388,81 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             sentRequests[2].Headers?[HeaderNames.ConcurrencyLevel].Should().Be("3");
             sentRequests[3].Headers?[HeaderNames.ConcurrencyLevel].Should().Be("3");
             sentRequests[4].Headers?[HeaderNames.ConcurrencyLevel].Should().Be("3");
+        }
+
+        [Test]
+        public void Should_not_launch_requests_when_need_wait_another_replica_result()
+        {
+            var waitProvider = Substitute.For<IWaitAnotherResultProvider>();
+            var strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, 3, waitProvider);
+            waitProvider.NeedWaitAnotherResult(Arg.Is<ReplicaResult>(r => r.Verdict == ResponseVerdict.Accept)).Returns(true);
+            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+            
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            sender.ClearReceivedCalls();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept);
+            sender.ReceivedCalls().Should().HaveCount(0);
+            sentRequests.Should().HaveCount(3);
+
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+            sender.ReceivedCalls().Should().HaveCount(1);
+            sentRequests.Should().HaveCount(4);
+
+            CompleteRequest(replicas[2], ResponseVerdict.Reject);
+            sender.ReceivedCalls().Should().HaveCount(2);
+            sentRequests.Should().HaveCount(5);
+
+            CompleteRequest(replicas[3], ResponseVerdict.Accept);
+            sender.ReceivedCalls().Should().HaveCount(2);
+            sentRequests.Should().HaveCount(5);
+
+            CompleteRequest(replicas[4], ResponseVerdict.Accept);
+            sender.ReceivedCalls().Should().HaveCount(2);
+            sentRequests.Should().HaveCount(5);
+
+            sendTask.GetAwaiter().GetResult();
+
+            sender.ReceivedCalls().Should().HaveCount(2);
+            sentRequests.Should().HaveCount(5);
+        }
+
+        [Test]
+        public void Should_cancel_remaining_requests_and_delays_when_receiving_accepted_result_after_waiting_another_replica_result()
+        {
+            var tokens = new List<CancellationToken>();
+
+            sender
+                .When(s => s.SendToReplicaAsync(Arg.Any<Uri>(), Arg.Any<Request>(), Arg.Any<TimeSpan?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()))
+                .Do(info => tokens.Add(info.Arg<CancellationToken>()));
+
+            delaysPlanner
+                .When(p => p.Plan(Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()))
+                .Do(info => tokens.Add(info.Arg<CancellationToken>()));
+
+            var waitProvider = Substitute.For<IWaitAnotherResultProvider>();
+            strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, 3, waitProvider);
+
+            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(5.Seconds()), replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            waitProvider.NeedWaitAnotherResult(null).ReturnsForAnyArgs(true);
+            CompleteRequest(replicas[0], ResponseVerdict.Accept);
+            waitProvider.NeedWaitAnotherResult(null).ReturnsForAnyArgs(false);
+            CompleteRequest(replicas[1], ResponseVerdict.Accept);
+
+            sendTask.GetAwaiter().GetResult();
+
+            tokens.Should().HaveCount(5); // 3 request + 2 delay tokens
+
+            foreach (var t in tokens)
+            {
+                t.IsCancellationRequested.Should().BeTrue();
+            }
         }
 
         private void SetupDelaysPlanner()

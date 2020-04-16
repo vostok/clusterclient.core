@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies.DelayProviders;
+using Vostok.Clusterclient.Core.Strategies.WaitAnotherReplicaResultProvider;
 
 namespace Vostok.Clusterclient.Core.Strategies
 {
@@ -36,13 +37,24 @@ namespace Vostok.Clusterclient.Core.Strategies
         private readonly IForkingDelaysProvider delaysProvider;
         private readonly IForkingDelaysPlanner delaysPlanner;
         private readonly int maximumParallelism;
+        private readonly IWaitAnotherResultProvider waitAnotherResultProvider;
 
         public ForkingRequestStrategy([NotNull] IForkingDelaysProvider delaysProvider, int maximumParallelism)
             : this(delaysProvider, ForkingDelaysPlanner.Instance, maximumParallelism)
         {
         }
 
+        public ForkingRequestStrategy([NotNull] IForkingDelaysProvider delaysProvider, int maximumParallelism, [NotNull] IWaitAnotherResultProvider waitAnotherResultProvider)
+            : this(delaysProvider, ForkingDelaysPlanner.Instance, maximumParallelism, waitAnotherResultProvider)
+        {
+        }
+
         internal ForkingRequestStrategy([NotNull] IForkingDelaysProvider delaysProvider, [NotNull] IForkingDelaysPlanner delaysPlanner, int maximumParallelism)
+            : this(delaysProvider, delaysPlanner, maximumParallelism, new FixedWaitAnotherResultProvider(wait: false))
+        {
+        }
+
+        internal ForkingRequestStrategy([NotNull] IForkingDelaysProvider delaysProvider, [NotNull] IForkingDelaysPlanner delaysPlanner, int maximumParallelism, [NotNull] IWaitAnotherResultProvider waitAnotherResultProvider)
         {
             if (delaysProvider == null)
                 throw new ArgumentNullException(nameof(delaysProvider));
@@ -56,6 +68,7 @@ namespace Vostok.Clusterclient.Core.Strategies
             this.delaysProvider = delaysProvider;
             this.delaysPlanner = delaysPlanner;
             this.maximumParallelism = maximumParallelism;
+            this.waitAnotherResultProvider = waitAnotherResultProvider;
         }
 
         /// <inheritdoc />
@@ -105,21 +118,33 @@ namespace Vostok.Clusterclient.Core.Strategies
         /// <inheritdoc />
         public override string ToString() => $"Forking({delaysProvider})";
 
-        private static async Task<bool> WaitForAcceptedResultAsync(List<Task> currentTasks)
+        private async Task<bool> WaitForAcceptedResultAsync(List<Task> currentTasks)
+        {
+            var result = await WaitAnyReplicaResultOrNull(currentTasks);
+            if (result == null)
+                return false;
+            while (currentTasks.Count > 0 && waitAnotherResultProvider.NeedWaitAnotherResult(result))
+            {
+                result = await WaitAnyReplicaResultOrNull(currentTasks);
+                if (result == null)
+                    return false;
+            }
+
+            return result.Verdict == ResponseVerdict.Accept;
+        }
+
+        private static async Task<ReplicaResult> WaitAnyReplicaResultOrNull(List<Task> currentTasks)
         {
             var completedTask = await Task.WhenAny(currentTasks).ConfigureAwait(false);
 
             currentTasks.Remove(completedTask);
 
-            var resultTask = completedTask as Task<ReplicaResult>;
-            if (resultTask == null)
-                return false;
+            if (!(completedTask is Task<ReplicaResult> resultTask))
+                return null;
 
             currentTasks.RemoveAll(task => !(task is Task<ReplicaResult>));
 
-            var result = await resultTask.ConfigureAwait(false);
-
-            return result.Verdict == ResponseVerdict.Accept;
+            return await resultTask.ConfigureAwait(false);
         }
 
         private void LaunchRequest(List<Task> currentTasks, Request request, IRequestTimeBudget budget, IRequestSender sender, IEnumerator<Uri> replicasEnumerator, TimeSpan? connectionTimeout, CancellationToken cancellationToken)
