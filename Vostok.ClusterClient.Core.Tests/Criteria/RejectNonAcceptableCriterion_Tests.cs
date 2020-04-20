@@ -17,7 +17,7 @@ namespace Vostok.Clusterclient.Core.Tests.Criteria
         }
 
         [Test]
-        public void Should_accept_an_error_response_with_default_dont_retry_header()
+        public void Should_accept_an_error_response_with_default_dont_accept_header()
         {
             var response = new Response(ResponseCode.Ok, headers: Headers.Empty.Set(HeaderNames.DontAccept, ""));
 
@@ -25,7 +25,7 @@ namespace Vostok.Clusterclient.Core.Tests.Criteria
         }
 
         [Test]
-        public void Should_know_nothing_about_an_error_response_without_dont_retry_header()
+        public void Should_know_nothing_about_an_error_response_without_dont_accept_header()
         {
             var response = new Response(ResponseCode.Ok, headers: Headers.Empty);
 
