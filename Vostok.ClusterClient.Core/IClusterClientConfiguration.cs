@@ -189,7 +189,7 @@ namespace Vostok.Clusterclient.Core
         /// <para>Gets or sets the target service environment.</para>
         /// <para>This parameter is optional and has no default value.</para>
         /// </summary>
-        [Obsolete("This property is not used. Use EnvironmentProvider instead.")]
+        [Obsolete("This property is not used. Use TargetEnvironmentProvider instead.")]
         string TargetEnvironment { get; set; }
 
         /// <summary>
