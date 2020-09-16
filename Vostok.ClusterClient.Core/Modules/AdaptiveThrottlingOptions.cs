@@ -19,7 +19,6 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
         /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
-        [Obsolete("Use another constructor with `Func<string> getStorageKey` argument")]
         public AdaptiveThrottlingOptions(
             [NotNull] string storageKey,
             int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
@@ -34,7 +33,7 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="minimumRequests">A minimum requests count in <see cref="MinutesToTrack"/> minutes to reject any request.</param>
         /// <param name="criticalRatio">A minimum ratio of requests to accepts eligible for rejection. Must be > 1.</param>
         /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="getStorageKey"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
         public AdaptiveThrottlingOptions(
             [NotNull] Func<string> getStorageKey,

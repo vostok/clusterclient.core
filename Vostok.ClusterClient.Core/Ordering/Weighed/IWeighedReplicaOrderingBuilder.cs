@@ -1,7 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Vostok.Clusterclient.Core.Topology;
-using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed

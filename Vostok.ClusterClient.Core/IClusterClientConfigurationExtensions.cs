@@ -7,7 +7,6 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
 using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.Clusterclient.Core.Topology;
-using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -22,7 +21,7 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         public static void SetupWeighedReplicaOrdering(this IClusterClientConfiguration configuration, Action<IWeighedReplicaOrderingBuilder> build)
         {
-            var builder = new WeighedReplicaOrderingBuilder(configuration.TargetEnvironmentProvider, configuration.TargetServiceName, configuration.Log);
+            var builder = new WeighedReplicaOrderingBuilder(configuration.TargetServiceName, configuration.Log);
             build(builder);
             configuration.ReplicaOrdering = builder.Build();
         }
@@ -62,9 +61,9 @@ namespace Vostok.Clusterclient.Core
             configuration.ResponseCriteria = new List<IResponseCriterion>(criteria);
         }
 
-        private static string GenerateStorageKey(ITargetEnvironmentProvider environmentProvider, string serviceName)
+        private static string GenerateStorageKey(Func<string> environmentProvider, string serviceName)
         {
-            var environment = environmentProvider.Find() ?? string.Empty;
+            var environment = environmentProvider() ?? string.Empty;
             return (environment, serviceName ?? string.Empty).ToString();
         }
     }

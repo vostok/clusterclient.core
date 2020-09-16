@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vostok.Clusterclient.Core.Topology;
-using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed
@@ -11,11 +9,11 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         private readonly List<IReplicaWeightModifier> modifiers;
 
         public WeighedReplicaOrderingBuilder(ILog log)
-            : this(null, null, log)
+            : this(null, log)
         {
         }
 
-        public WeighedReplicaOrderingBuilder(ITargetEnvironmentProvider environmentProvider, string serviceName, ILog log)
+        public WeighedReplicaOrderingBuilder(string serviceName, ILog log)
         {
             Log = log;
             MinimumWeight = ClusterClientDefaults.MinimumReplicaWeight;

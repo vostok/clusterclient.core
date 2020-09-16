@@ -18,7 +18,6 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="criticalRatio">A maximum allowed ratio of used replicas count to issued requests count. Should be in (1; +inf) range.</param>
         /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/> less than 1 or <paramref name="criticalRatio"/> not in (1; +inf) range.</exception>
-        [Obsolete("Use another constructor with `Func<string> getStorageKey` argument")]
         public ReplicaBudgetingOptions(
             [NotNull] string storageKey,
             int minutesToTrack = ClusterClientDefaults.ReplicaBudgetingMinutesToTrack,
