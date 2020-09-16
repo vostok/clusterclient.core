@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Vostok.Clusterclient.Core.Topology.TargetEnvironment
 {
     /// <summary>
-    /// Represents a cluster provider which uses an external delegate to provide target environment.
+    /// Represents a target environment provider which uses an external delegate to provide target environment.
     /// </summary>
     public class AdHocTargetEnvironmentProvider : ITargetEnvironmentProvider
     {

@@ -17,11 +17,11 @@ namespace Vostok.Clusterclient.Core.Tests.Topology.TargetEnvironment
         [Test]
         public void Should_use_delegate_on_each_find_call()
         {
-            var values = new[] {"quick", "brown", "fox"};
+            var values = new[] {"quick", "brown", "fox", null};
             var index = 0;
             var provider = new AdHocTargetEnvironmentProvider(() => values[index++]);
 
-            var actual = new[] {provider.Find(), provider.Find(), provider.Find()};
+            var actual = new[] {provider.Find(), provider.Find(), provider.Find(), provider.Find()};
 
             actual.Should().Equal(values);
         }
