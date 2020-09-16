@@ -46,12 +46,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         string Environment { get; set; }
 
         /// <summary>
-        /// <para>Gets or sets the environment provider for service this <see cref="ClusterClient"/> will talk to.</para>
-        /// <para>This parameter is taken from <see cref="IClusterClientConfiguration"/>.</para>
-        /// </summary>
-        ITargetEnvironmentProvider EnvironmentProvider { get; set; }
-
-        /// <summary>
         /// Adds given <paramref name="modifier"/> to the modifiers chain.
         /// </summary>
         void AddModifier([NotNull] IReplicaWeightModifier modifier);

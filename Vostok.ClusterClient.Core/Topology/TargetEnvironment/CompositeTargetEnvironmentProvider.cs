@@ -13,7 +13,7 @@ namespace Vostok.Clusterclient.Core.Topology.TargetEnvironment
         private readonly ITargetEnvironmentProvider[] innerProviders;
 
         /// <param name="innerProviders">An array of target environment providers. First non-null value will be used.</param>
-        public CompositeTargetEnvironmentProvider([NotNull] params ITargetEnvironmentProvider[] innerProviders)
+        public CompositeTargetEnvironmentProvider([ItemNotNull] [NotNull] params ITargetEnvironmentProvider[] innerProviders)
         {
             if (innerProviders == null)
                 throw new ArgumentNullException(nameof(innerProviders));

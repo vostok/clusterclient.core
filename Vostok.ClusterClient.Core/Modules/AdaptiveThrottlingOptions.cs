@@ -9,6 +9,9 @@ namespace Vostok.Clusterclient.Core.Modules
     [PublicAPI]
     public class AdaptiveThrottlingOptions
     {
+        [NotNull]
+        private readonly Func<string> getStorageKey;
+
         /// <param name="storageKey">A key used to decouple statistics for different services. This parameter is REQUIRED</param>
         /// <param name="minutesToTrack">How much minutes of statistics will be tracked. Must be >= 1.</param>
         /// <param name="minimumRequests">A minimum requests count in <see cref="MinutesToTrack"/> minutes to reject any request.</param>
@@ -16,15 +19,31 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
         /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
+        [Obsolete("Use another constructor with `Func<string> getStorageKey` argument")]
         public AdaptiveThrottlingOptions(
             [NotNull] string storageKey,
             int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
             int minimumRequests = ClusterClientDefaults.AdaptiveThrottlingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
+            double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap): this(() => storageKey, minutesToTrack, minimumRequests, criticalRatio, maximumRejectProbability)
+        {
+        }
+
+        /// <param name="getStorageKey">A function that returns a key that is used to decouple statistics for different services. This parameter is REQUIRED</param>
+        /// <param name="minutesToTrack">How much minutes of statistics will be tracked. Must be >= 1.</param>
+        /// <param name="minimumRequests">A minimum requests count in <see cref="MinutesToTrack"/> minutes to reject any request.</param>
+        /// <param name="criticalRatio">A minimum ratio of requests to accepts eligible for rejection. Must be > 1.</param>
+        /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
+        public AdaptiveThrottlingOptions(
+            [NotNull] Func<string> getStorageKey,
+            int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
+            int minimumRequests = ClusterClientDefaults.AdaptiveThrottlingMinimumRequests,
+            double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            if (storageKey == null)
-                throw new ArgumentNullException(nameof(storageKey));
+            this.getStorageKey = getStorageKey ?? throw new ArgumentNullException(nameof(getStorageKey));
 
             if (minutesToTrack < 1)
                 throw new ArgumentOutOfRangeException(nameof(minutesToTrack), "Minutes to track parameter must be >= 1.");
@@ -35,7 +54,6 @@ namespace Vostok.Clusterclient.Core.Modules
             if (maximumRejectProbability < 0.0 || maximumRejectProbability > 1.0)
                 throw new ArgumentOutOfRangeException(nameof(maximumRejectProbability), "Maximum rejection probability must be in [0; 1] range.");
 
-            StorageKey = storageKey;
             MinutesToTrack = minutesToTrack;
             MinimumRequests = minimumRequests;
             CriticalRatio = criticalRatio;
@@ -46,7 +64,7 @@ namespace Vostok.Clusterclient.Core.Modules
         /// A key used to decouple statistics for different services.
         /// </summary>
         [NotNull]
-        public string StorageKey { get; }
+        public string StorageKey => getStorageKey();
 
         /// <summary>
         /// How much minutes of statistics will be tracked. Must be >= 1.

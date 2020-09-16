@@ -1,4 +1,5 @@
-﻿using Vostok.Clusterclient.Core.Modules;
+﻿using System;
+using Vostok.Clusterclient.Core.Modules;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -13,6 +14,7 @@ namespace Vostok.Clusterclient.Core
         /// <param name="minimumRequests">See <see cref="AdaptiveThrottlingOptions.MinimumRequests"/>.</param>
         /// <param name="criticalRatio">See <see cref="AdaptiveThrottlingOptions.CriticalRatio"/>.</param>
         /// <param name="maximumRejectProbability">See <see cref="AdaptiveThrottlingOptions.MaximumRejectProbability"/>.</param>
+        [Obsolete("Use another constructor with `Func<string> getStorageKey` argument")]
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             string storageKey,
@@ -21,14 +23,14 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var options = new AdaptiveThrottlingOptions(
-                storageKey,
+            SetupAdaptiveThrottling(
+                configuration,
+                () => storageKey,
                 minutesToTrack,
                 minimumRequests,
                 criticalRatio,
-                maximumRejectProbability);
-
-            configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
+                maximumRejectProbability
+            );
         }
 
         /// <summary>
@@ -46,9 +48,32 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironmentProvider, configuration.TargetServiceName);
+            SetupAdaptiveThrottling(
+                configuration,
+                () => GenerateStorageKey(configuration.TargetEnvironmentProvider, configuration.TargetServiceName),
+                minutesToTrack,
+                minimumRequests,
+                criticalRatio,
+                maximumRejectProbability
+            );
+        }
 
-            SetupAdaptiveThrottling(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio, maximumRejectProbability);
+        public static void SetupAdaptiveThrottling(
+            this IClusterClientConfiguration configuration,
+            Func<string> getStorageKey,
+            int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
+            int minimumRequests = ClusterClientDefaults.AdaptiveThrottlingMinimumRequests,
+            double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
+            double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
+        {
+            var options = new AdaptiveThrottlingOptions(
+                getStorageKey,
+                minutesToTrack,
+                minimumRequests,
+                criticalRatio,
+                maximumRejectProbability);
+
+            configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
     }
 }

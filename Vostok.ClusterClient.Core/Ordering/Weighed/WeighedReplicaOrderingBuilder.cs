@@ -21,7 +21,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
             MinimumWeight = ClusterClientDefaults.MinimumReplicaWeight;
             MaximumWeight = ClusterClientDefaults.MaximumReplicaWeight;
             InitialWeight = ClusterClientDefaults.InitialReplicaWeight;
-            EnvironmentProvider = environmentProvider;
             ServiceName = serviceName;
 
             modifiers = new List<IReplicaWeightModifier>();
@@ -38,8 +37,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         public string ServiceName { get; set; }
 
         public string Environment { get; set; }
-
-        public ITargetEnvironmentProvider EnvironmentProvider { get; set; }
 
         public WeighedReplicaOrdering Build() =>
             new WeighedReplicaOrdering(modifiers, MinimumWeight, MaximumWeight, InitialWeight);

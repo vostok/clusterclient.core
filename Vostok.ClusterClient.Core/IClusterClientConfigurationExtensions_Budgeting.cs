@@ -1,4 +1,5 @@
-﻿using Vostok.Clusterclient.Core.Modules;
+﻿using System;
+using Vostok.Clusterclient.Core.Modules;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -12,6 +13,7 @@ namespace Vostok.Clusterclient.Core
         /// <param name="minutesToTrack">See <see cref="ReplicaBudgetingOptions.MinutesToTrack"/>.</param>
         /// <param name="minimumRequests">See <see cref="ReplicaBudgetingOptions.MinimumRequests"/>.</param>
         /// <param name="criticalRatio">See <see cref="ReplicaBudgetingOptions.CriticalRatio"/>.</param>
+        [Obsolete("Use another overload with `Func<string> getStorageKey` argument")]
         public static void SetupReplicaBudgeting(
             this IClusterClientConfiguration configuration,
             string storageKey,
@@ -19,9 +21,13 @@ namespace Vostok.Clusterclient.Core
             int minimumRequests = ClusterClientDefaults.ReplicaBudgetingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.ReplicaBudgetingCriticalRatio)
         {
-            var options = new ReplicaBudgetingOptions(storageKey, minutesToTrack, minimumRequests, criticalRatio);
-
-            configuration.AddRequestModule(new ReplicaBudgetingModule(options), RequestModule.RequestExecution);
+            SetupReplicaBudgeting(
+                configuration,
+                () => storageKey,
+                minutesToTrack,
+                minimumRequests,
+                criticalRatio
+            );
         }
 
         /// <summary>
@@ -37,9 +43,33 @@ namespace Vostok.Clusterclient.Core
             int minimumRequests = ClusterClientDefaults.ReplicaBudgetingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.ReplicaBudgetingCriticalRatio)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironmentProvider, configuration.TargetServiceName);
+            SetupReplicaBudgeting(
+                configuration,
+                () => GenerateStorageKey(configuration.TargetEnvironmentProvider, configuration.TargetServiceName),
+                minutesToTrack,
+                minimumRequests,
+                criticalRatio
+            );
+        }
 
-            SetupReplicaBudgeting(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio);
+        /// <summary>
+        /// Sets up a replica budgeting mechanism with given parameters.
+        /// </summary>
+        /// <param name="configuration">A configuration to be modified.</param>
+        /// <param name="getStorageKey">See <see cref="ReplicaBudgetingOptions.StorageKey"/>.</param>
+        /// <param name="minutesToTrack">See <see cref="ReplicaBudgetingOptions.MinutesToTrack"/>.</param>
+        /// <param name="minimumRequests">See <see cref="ReplicaBudgetingOptions.MinimumRequests"/>.</param>
+        /// <param name="criticalRatio">See <see cref="ReplicaBudgetingOptions.CriticalRatio"/>.</param>
+        public static void SetupReplicaBudgeting(
+            this IClusterClientConfiguration configuration,
+            Func<string> getStorageKey,
+            int minutesToTrack = ClusterClientDefaults.ReplicaBudgetingMinutesToTrack,
+            int minimumRequests = ClusterClientDefaults.ReplicaBudgetingMinimumRequests,
+            double criticalRatio = ClusterClientDefaults.ReplicaBudgetingCriticalRatio)
+        {
+            var options = new ReplicaBudgetingOptions(getStorageKey, minutesToTrack, minimumRequests, criticalRatio);
+
+            configuration.AddRequestModule(new ReplicaBudgetingModule(options), RequestModule.RequestExecution);
         }
     }
 }
