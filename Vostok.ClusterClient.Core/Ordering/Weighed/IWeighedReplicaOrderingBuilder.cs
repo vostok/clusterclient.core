@@ -1,4 +1,7 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Topology;
+using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed
@@ -39,7 +42,14 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         /// <para>Gets or sets the environment of service this <see cref="ClusterClient"/> will talk to.</para>
         /// <para>This parameter is taken from <see cref="IClusterClientConfiguration"/>.</para>
         /// </summary>
+        [Obsolete("This property is not used. Use EnvironmentProvider instead.")]
         string Environment { get; set; }
+
+        /// <summary>
+        /// <para>Gets or sets the environment provider for service this <see cref="ClusterClient"/> will talk to.</para>
+        /// <para>This parameter is taken from <see cref="IClusterClientConfiguration"/>.</para>
+        /// </summary>
+        ITargetEnvironmentProvider EnvironmentProvider { get; set; }
 
         /// <summary>
         /// Adds given <paramref name="modifier"/> to the modifiers chain.

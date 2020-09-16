@@ -13,6 +13,7 @@ using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.Clusterclient.Core.Retry;
 using Vostok.Clusterclient.Core.Strategies;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 using Vostok.Clusterclient.Core.Transforms;
 using Vostok.Clusterclient.Core.Transport;
 using Vostok.Logging.Abstractions;
@@ -188,7 +189,14 @@ namespace Vostok.Clusterclient.Core
         /// <para>Gets or sets the target service environment.</para>
         /// <para>This parameter is optional and has no default value.</para>
         /// </summary>
+        [Obsolete("This property is not used. Use EnvironmentProvider instead.")]
         string TargetEnvironment { get; set; }
+
+        /// <summary>
+        /// <para>Gets or sets a provider for the target service environment.</para>
+        /// <para>This parameter is optional and has no default value.</para>
+        /// </summary>
+        ITargetEnvironmentProvider TargetEnvironmentProvider { get; set; }
 
         /// <summary>
         /// <para>Gets or sets whether to remove duplicate path segments from beginning of request url.</para>

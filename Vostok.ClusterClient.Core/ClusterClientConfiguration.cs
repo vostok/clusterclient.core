@@ -10,6 +10,7 @@ using Vostok.Clusterclient.Core.Ordering.Storage;
 using Vostok.Clusterclient.Core.Retry;
 using Vostok.Clusterclient.Core.Strategies;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Clusterclient.Core.Topology.TargetEnvironment;
 using Vostok.Clusterclient.Core.Transforms;
 using Vostok.Clusterclient.Core.Transport;
 using Vostok.Logging.Abstractions;
@@ -45,6 +46,9 @@ namespace Vostok.Clusterclient.Core
             MaxReplicasUsedPerRequest = ClusterClientDefaults.MaxReplicasUsedPerRequest;
 
             DeduplicateRequestUrl = ClusterClientDefaults.DeduplicateRequestUrl;
+#pragma warning disable 618
+            TargetEnvironmentProvider = new AdHocTargetEnvironmentProvider(() => TargetEnvironment);
+#pragma warning restore 618
         }
 
         public ILog Log { get; }
@@ -91,7 +95,10 @@ namespace Vostok.Clusterclient.Core
 
         public string TargetServiceName { get; set; }
 
+        [Obsolete("Use TargetEnvironmentProvider")]
         public string TargetEnvironment { get; set; }
+
+        public ITargetEnvironmentProvider TargetEnvironmentProvider { get; set; }
 
         public bool DeduplicateRequestUrl { get; set; }
 

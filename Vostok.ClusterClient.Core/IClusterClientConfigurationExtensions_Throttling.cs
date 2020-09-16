@@ -32,7 +32,7 @@ namespace Vostok.Clusterclient.Core
         }
 
         /// <summary>
-        /// Sets up an adaptive client throttling mechanism with given parameters using <see cref="IClusterClientConfiguration.TargetServiceName"/> and <see cref="IClusterClientConfiguration.TargetEnvironment"/> as a storage key.
+        /// Sets up an adaptive client throttling mechanism with given parameters using <see cref="IClusterClientConfiguration.TargetServiceName"/> and environment from <see cref="IClusterClientConfiguration.TargetEnvironmentProvider"/> as a storage key.
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
         /// <param name="minutesToTrack">See <see cref="AdaptiveThrottlingOptions.MinutesToTrack"/>.</param>
@@ -46,7 +46,7 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironment, configuration.TargetServiceName);
+            var storageKey = GenerateStorageKey(configuration.TargetEnvironmentProvider, configuration.TargetServiceName);
 
             SetupAdaptiveThrottling(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio, maximumRejectProbability);
         }
