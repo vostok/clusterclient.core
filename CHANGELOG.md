@@ -1,3 +1,7 @@
+## 0.1.21 (21.10.2020):
+
+Added AppendToHeaderWithQuality extension to RequestHeadersExtensions.
+
 ## 0.1.20 (10.05.2020):
 
 Fixed https://github.com/vostok/clusterclient.core/issues/14
