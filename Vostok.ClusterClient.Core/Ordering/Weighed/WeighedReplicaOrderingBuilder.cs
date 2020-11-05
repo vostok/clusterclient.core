@@ -4,7 +4,7 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed
 {
-    internal class WeighedReplicaOrderingBuilder : IWeighedReplicaOrderingBuilder
+    public class WeighedReplicaOrderingBuilder : IWeighedReplicaOrderingBuilder
     {
         private readonly List<IReplicaWeightModifier> modifiers;
 
