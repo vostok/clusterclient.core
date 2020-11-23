@@ -4,7 +4,7 @@ using Vostok.Clusterclient.Core.Modules;
 
 namespace Vostok.Clusterclient.Core.Retry
 {
-    public class RetryStrategyAdapter : IRetryStrategyEx
+    internal class RetryStrategyAdapter : IRetryStrategyEx
     {
         private readonly IRetryStrategy retryStrategy;
 
