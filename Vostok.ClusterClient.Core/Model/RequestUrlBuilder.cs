@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
@@ -32,6 +33,7 @@ namespace Vostok.Clusterclient.Core.Model
     {
         private static readonly Func<string, string> Escape = Uri.EscapeDataString;
         private static readonly UnboundedObjectPool<StringBuilder> Builders;
+        private static readonly bool IsWindows = RuntimeInformation .IsOSPlatform(OSPlatform.Windows);
 
         private StringBuilder builder;
         private bool hasQueryParameters;
@@ -85,7 +87,9 @@ namespace Vostok.Clusterclient.Core.Model
             using (this)
             {
                 var uriString = builder.ToString();
-                var uriKind = uriString.StartsWith("/") ? UriKind.Relative : UriKind.RelativeOrAbsolute;
+                var uriKind = UriKind.RelativeOrAbsolute;
+                if (!IsWindows && uriString.StartsWith("/")) 
+                    uriKind = UriKind.Relative;
                 return result = new Uri(uriString, uriKind);
             }
         }
