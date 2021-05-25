@@ -38,7 +38,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             this.minWeight = minWeight;
             this.maxWeight = maxWeight;
             this.log = (log ?? new SilentLog()).ForContext<RelativeWeightModifier>();
-            this.globalStorageProvider = globalStorageProvider ?? new PerInstanceGlobalStorageProvider();
+            this.globalStorageProvider = globalStorageProvider ?? new PerProcessGlobalStorageProvider();
 
             storageKey = CreateStorageKey(service, environment);
         }
