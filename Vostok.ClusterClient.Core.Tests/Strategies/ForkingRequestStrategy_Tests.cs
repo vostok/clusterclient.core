@@ -308,7 +308,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         {
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(false);
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
 
             request = Request.Post("foo/bar").WithContent(content);
 
@@ -334,7 +334,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         {
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(true);
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
 
             request = Request.Post("foo/bar").WithContent(content);
 

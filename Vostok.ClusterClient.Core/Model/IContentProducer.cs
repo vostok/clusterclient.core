@@ -7,23 +7,19 @@ using JetBrains.Annotations;
 namespace Vostok.Clusterclient.Core.Model
 {
     /// <summary>
-    /// Represents a request body source which will be used in <see cref="Request"/>.
+    /// Represents a request body content producing source which will be used in <see cref="Request"/>.
     /// </summary>
     [PublicAPI]
     public interface IContentProducer
     {
         /// <summary>
         /// <para>Indicates if content can be produced multiple times.</para>
-        /// <para>When set to false:</para>
+        /// <para>When set to false, <see cref="ProduceAsync"/> method will be called exactly once.</para>
+        /// <para>User should take note that:</para>
         /// <list type="bullet">
-        /// <item><description><see cref="ProduceAsync"/> method will be called exactly once.</description></item>
-        /// <item><description>failed requests will never be retried or forked.</description></item>
-        /// </list> 
-        /// <para>User should take note that this property should:</para>
-        /// <list type="bullet">
-        /// <item><description>only be set to true when implementation allows multiple calls to <see cref="ProduceAsync"/></description></item>
-        /// <item><description>be consistent and not flip between true and false values during producing</description></item>
-        /// </list> 
+        /// <item><description>this property should only be set to true when implementation allows multiple calls to <see cref="ProduceAsync"/></description></item>
+        /// <item><description>only initial value of this property will have effect on sending strategy, which means that flipping property value between true and false during producing is pointless</description></item>
+        /// </list>
         /// </summary>
         bool IsReusable { get; }
 

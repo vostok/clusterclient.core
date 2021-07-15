@@ -53,7 +53,7 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             var contentProducer = context.Request.ContentProducer;
             if (contentProducer != null)
-                context.Request = context.Request.WithContent(new ReusableContentProducer(contentProducer));
+                context.Request = context.Request.WithContent(new UserContentProducerWrapper(contentProducer));
         }
     }
 }

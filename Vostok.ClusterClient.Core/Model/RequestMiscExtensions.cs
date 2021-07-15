@@ -9,7 +9,7 @@ namespace Vostok.Clusterclient.Core.Model
 
         public static bool ContainsAlreadyUsedContent(this Request request)
         {
-            return request.ContentProducer is ReusableContentProducer contentProducer && contentProducer.WasUsed;
+            return request.ContentProducer is UserContentProducerWrapper contentProducer && contentProducer.WasUsed;
         }
     }
 }

@@ -212,7 +212,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(false);
 
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
             request = request.WithContent(content);
 
             var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
@@ -235,7 +235,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(true);
 
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
             request = request.WithContent(content);
 
             content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();

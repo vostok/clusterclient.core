@@ -3,7 +3,7 @@
 namespace Vostok.Clusterclient.Core.Model
 {
     /// <summary>
-    /// Represents an error thrown when <see cref="ReusableContentProducer"/> used twice.
+    /// Represents an error thrown when <see cref="UserContentProducerWrapper"/> is attempted to be used more than once.
     /// </summary>
     [PublicAPI]
     public class ContentAlreadyUsedException : ClusterClientException

@@ -127,7 +127,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
 
             Execute();
 
-            context.Request.ContentProducer.Should().BeOfType<ReusableContentProducer>().Which.producer.Should().BeSameAs(producer);
+            context.Request.ContentProducer.Should().BeOfType<UserContentProducerWrapper>().Which.producer.Should().BeSameAs(producer);
         }
 
         private void Execute()

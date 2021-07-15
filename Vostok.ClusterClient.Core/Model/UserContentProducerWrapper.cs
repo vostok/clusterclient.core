@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Vostok.Clusterclient.Core.Model
 {
-    internal class ReusableContentProducer : IContentProducer
+    internal class UserContentProducerWrapper : IContentProducer
     {
         internal IContentProducer producer;
 
-        public ReusableContentProducer(IContentProducer producer)
+        public UserContentProducerWrapper(IContentProducer producer)
         {
             this.producer = producer;
             IsReusable = producer.IsReusable;

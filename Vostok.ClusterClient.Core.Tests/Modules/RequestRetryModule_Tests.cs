@@ -127,7 +127,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(false);
 
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
 
             content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
 
@@ -144,7 +144,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             var contentProducer = Substitute.For<IContentProducer>();
             contentProducer.IsReusable.Returns(true);
 
-            var content = new ReusableContentProducer(contentProducer);
+            var content = new UserContentProducerWrapper(contentProducer);
 
             content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
 
