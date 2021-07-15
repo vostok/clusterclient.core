@@ -64,6 +64,7 @@ namespace Vostok.Clusterclient.Core.Model
             Url = url ?? throw new ArgumentNullException(nameof(url));
             CompositeContent = compositeContent;
             StreamContent = streamContent;
+            ContentProducer = contentProducer;
             Content = content;
             Headers = headers;
         }
@@ -110,7 +111,7 @@ namespace Vostok.Clusterclient.Core.Model
         /// <summary>
         /// Returns <c>true</c> if current instance has a non-null <see cref="Content"/>, <see cref="CompositeContent"/> or <see cref="StreamContent"/>.
         /// </summary>
-        public bool HasBody => Content != null || CompositeContent != null || StreamContent != null;
+        public bool HasBody => Content != null || CompositeContent != null || StreamContent != null || ContentProducer != null;
 
         /// <summary>
         /// Produces a new <see cref="Request"/> instance with given url. Current instance is not modified.
@@ -136,7 +137,7 @@ namespace Vostok.Clusterclient.Core.Model
 
         /// <summary>
         /// <para>Produces a new <see cref="Request"/> instance with given body content. Current instance is not modified.</para>
-        /// <para>If current instance contains a non-null <see cref="StreamContent"/> or <see cref="CompositeContent"/> property, it will be discarded in new instance.</para>
+        /// <para>If current instance contains a non-null <see cref="StreamContent"/>, <see cref="CompositeContent"/> or <see cref="IContentProducer"/> property, it will be discarded in new instance.</para>
         /// </summary>
         /// <returns>A new <see cref="Request"/> object with updated content.</returns>
         [Pure]
@@ -148,12 +149,24 @@ namespace Vostok.Clusterclient.Core.Model
 
         /// <summary>
         /// <para>Produces a new <see cref="Request"/> instance with given body stream content. Current instance is not modified.</para>
-        /// <para>If current instance contains a non-null <see cref="Content"/> or <see cref="CompositeContent"/> property, it will be discarded in new instance.</para>
+        /// <para>If current instance contains a non-null <see cref="Content"/>, <see cref="CompositeContent"/> or <see cref="IContentProducer"/> property, it will be discarded in new instance.</para>
         /// </summary>
         /// <returns>A new <see cref="Request"/> object with updated content.</returns>
         [Pure]
         [NotNull]
         public Request WithContent([NotNull] IStreamContent content)
+        {
+            return new Request(Method, Url, content, content.Length.HasValue ? (Headers ?? Headers.Empty).Set(HeaderNames.ContentLength, content.Length.Value) : Headers);
+        }
+
+        /// <summary>
+        /// <para>Produces a new <see cref="Request"/> instance with body filled with given <see cref="IContentProducer"/> instance. Current instance is not modified.</para>
+        /// <para>If current instance contains a non-null <see cref="Content"/>, <see cref="CompositeContent"/> or <see cref="StreamContent"/> property, it will be discarded in new instance.</para>
+        /// </summary>
+        /// <returns>A new <see cref="Request"/> object with updated content.</returns>
+        [Pure]
+        [NotNull]
+        public Request WithContent([NotNull] IContentProducer content)
         {
             return new Request(Method, Url, content, content.Length.HasValue ? (Headers ?? Headers.Empty).Set(HeaderNames.ContentLength, content.Length.Value) : Headers);
         }
@@ -207,7 +220,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Request WithHeaders([NotNull] Headers headers)
         {
-            return new Request(Method, Url, CompositeContent, StreamContent, ContentProducer,Content, headers);
+            return new Request(Method, Url, CompositeContent, StreamContent, ContentProducer, Content, headers);
         }
 
         /// <inheritdoc />

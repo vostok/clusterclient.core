@@ -78,6 +78,40 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
+        public void Should_not_make_any_requests_when_not_reusable_content_producer_is_already_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(false);
+
+            var content = new ReusableContentProducer(contentProducer);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            request = Request.Post("foo/bar").WithContent(content);
+
+            Send(Budget.Infinite);
+
+            sender.ReceivedCalls().Should().BeEmpty();
+        }
+
+        [Test]
+        public void Should_send_requests_when_reusable_content_producer_is_already_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(true);
+
+            var content = new ReusableContentProducer(contentProducer);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            request = Request.Post("foo/bar").WithContent(content);
+
+            Send(Budget.Infinite);
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+        }
+
+        [Test]
         public void Should_consult_timeout_provider_for_each_replica_with_correct_parameters()
         {
             Send(Budget.Infinite);

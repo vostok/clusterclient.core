@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -183,6 +184,74 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             {
                 t.IsCancellationRequested.Should().BeTrue();
             }
+        }
+
+        [Test]
+        public void Should_not_make_retry_requests_when_request_body_stream_is_already_used()
+        {
+            var content = new SingleUseStreamContent(Stream.Null, 100);
+            request = request.WithContent(content);
+
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            content.Stream.GetHashCode();
+
+            foreach (var replica in replicas)
+            {
+                CompleteRequest(replica, ResponseVerdict.Reject);
+            }
+
+            task.IsCompleted.Should().BeTrue();
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Should_not_make_retry_requests_when_not_reusable_content_producer_is_already_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(false);
+
+            var content = new ReusableContentProducer(contentProducer);
+            request = request.WithContent(content);
+
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            foreach (var replica in replicas)
+            {
+                CompleteRequest(replica, ResponseVerdict.Reject);
+            }
+
+            task.IsCompleted.Should().BeTrue();
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Should_make_retry_request_when_reusable_content_producer_is_already_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(true);
+
+            var content = new ReusableContentProducer(contentProducer);
+            request = request.WithContent(content);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            foreach (var replica in replicas)
+            {
+                CompleteRequest(replica, ResponseVerdict.Reject);
+            }
+
+            task.IsCompleted.Should().BeTrue();
+
+            sender.ReceivedCalls().Should().HaveCount(replicas.Length);
         }
 
         private void CompleteRequest(Uri replica, ResponseVerdict verdict)

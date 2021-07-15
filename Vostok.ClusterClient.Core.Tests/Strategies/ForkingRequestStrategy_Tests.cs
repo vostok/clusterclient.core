@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Castle.Core.Logging;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NSubstitute;
@@ -300,6 +301,51 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             sender.ReceivedCalls().Should().HaveCount(1);
             delaysProvider.ReceivedCalls().Should().HaveCount(1);
             delaysPlanner.ReceivedCalls().Should().HaveCount(1);
+        }
+
+        [Test]
+        public void Should_stop_when_not_reusable_content_producer_gets_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(false);
+            var content = new ReusableContentProducer(contentProducer);
+
+            request = Request.Post("foo/bar").WithContent(content);
+
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            CompleteForkingDelay();
+
+            task.IsCompleted.Should().BeFalse();
+
+            CompleteRequest(replicas.First(), ResponseVerdict.Reject);
+
+            task.IsCompleted.Should().BeTrue();
+
+            sender.ReceivedCalls().Should().HaveCount(1);
+            delaysProvider.ReceivedCalls().Should().HaveCount(1);
+            delaysPlanner.ReceivedCalls().Should().HaveCount(1);
+        }
+
+        [Test]
+        public void Should_fork_when_reusable_content_producer_gets_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(true);
+            var content = new ReusableContentProducer(contentProducer);
+
+            request = Request.Post("foo/bar").WithContent(content);
+
+            strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            sender.ReceivedCalls().Should().HaveCount(3);
         }
 
         [Test]

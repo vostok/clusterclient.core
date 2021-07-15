@@ -122,6 +122,41 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [Test]
+        public void Should_not_retry_if_not_reusable_content_producer_has_already_been_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(false);
+
+            var content = new ReusableContentProducer(contentProducer);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            context.Request.Returns(request.WithContent(content));
+
+            Execute().Should().BeSameAs(result);
+
+            nextModuleCalls.Should().Be(1);
+        }
+
+        [Test]
+        public void Should_retry_if_reusable_content_producer_has_already_been_used()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.IsReusable.Returns(true);
+
+            var content = new ReusableContentProducer(contentProducer);
+
+            content.ProduceAsync(Stream.Null, CancellationToken.None).Wait();
+
+            var withContent = request.WithContent(content);
+            context.Request.Returns(withContent);
+
+            Execute().Should().BeSameAs(result);
+
+            nextModuleCalls.Should().Be(MaxAttempts);
+        }
+
+        [Test]
         public void Should_not_retry_if_retry_strategy_attempts_count_is_insufficient()
         {
             var retryStrategy = Substitute.For<IRetryStrategy>();
