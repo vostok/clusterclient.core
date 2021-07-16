@@ -34,7 +34,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 if (context.Budget.HasExpired)
                     return result;
 
-                if (context.Request.ContainsAlreadyUsedStream())
+                if (context.Request.ContainsAlreadyUsedStream() || context.Request.ContainsAlreadyUsedContent())
                     return result;
 
                 if (!retryPolicy.NeedToRetry(context.Request, context.Parameters, result.ReplicaResults))

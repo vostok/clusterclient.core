@@ -38,7 +38,9 @@ namespace Vostok.Clusterclient.Core.Model
         public static readonly Response ReceiveFailure = new Response(ResponseCode.ReceiveFailure);
         public static readonly Response Canceled = new Response(ResponseCode.Canceled);
         public static readonly Response StreamReuseFailure = new Response(ResponseCode.StreamReuseFailure);
+        public static readonly Response ContentReuseFailure = new Response(ResponseCode.ContentReuseFailure);
         public static readonly Response StreamInputFailure = new Response(ResponseCode.StreamInputFailure);
+        public static readonly Response ContentInputFailure = new Response(ResponseCode.ContentInputFailure);
 
         // (iloktionov): 5xx
         public static readonly Response InternalServerError = new Response(ResponseCode.InternalServerError);

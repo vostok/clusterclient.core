@@ -93,6 +93,11 @@ namespace Vostok.Clusterclient.Core.Sending
                 LogStreamReuseFailure();
                 return Responses.StreamReuseFailure;
             }
+            catch (ContentAlreadyUsedException)
+            {
+                LogContentReuseFailure();
+                return Responses.ContentReuseFailure;
+            }
             catch (Exception error)
             {
                 LogTransportException(error);
@@ -119,6 +124,9 @@ namespace Vostok.Clusterclient.Core.Sending
 
         private void LogStreamReuseFailure() =>
             configuration.Log.Warn("Detected an attempt to use request body stream more than once, which is not allowed.");
+
+        private void LogContentReuseFailure() =>
+            configuration.Log.Warn($"Detected an attempt to produce request content body stream more than once, which is not allowed because {nameof(IContentProducer.IsReusable)} set to false.");
 
         private void LogTransportException(Exception error) =>
             configuration.Log.Error(error, "Transport implementation threw an exception.");

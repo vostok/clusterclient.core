@@ -32,9 +32,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Adaptive
         [TestCase(ResponseVerdict.DontKnow)]
         public void Should_choose_to_not_touch_health_when_replica_response_code_indicates_stream_reuse_failure(ResponseVerdict verdict)
         {
-            var result = new ReplicaResult(new Uri("http://replica"), Responses.StreamReuseFailure, verdict, TimeSpan.Zero);
-
-            policy.SelectAction(result).Should().Be(AdaptiveHealthAction.DontTouch);
+            Should_choose_to_not_touch_health_when_replica_response_code_indicates_response(Responses.StreamReuseFailure, verdict);
         }
 
         [TestCase(ResponseVerdict.Accept)]
@@ -42,7 +40,28 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Adaptive
         [TestCase(ResponseVerdict.DontKnow)]
         public void Should_choose_to_not_touch_health_when_replica_response_code_indicates_stream_input_failure(ResponseVerdict verdict)
         {
-            var result = new ReplicaResult(new Uri("http://replica"), Responses.StreamInputFailure, verdict, TimeSpan.Zero);
+            Should_choose_to_not_touch_health_when_replica_response_code_indicates_response(Responses.StreamInputFailure, verdict);
+        }
+
+        [TestCase(ResponseVerdict.Accept)]
+        [TestCase(ResponseVerdict.Reject)]
+        [TestCase(ResponseVerdict.DontKnow)]
+        public void Should_choose_to_not_touch_health_when_replica_response_code_indicates_content_reuse_failure(ResponseVerdict verdict)
+        {
+            Should_choose_to_not_touch_health_when_replica_response_code_indicates_response(Responses.ContentReuseFailure, verdict);
+        }
+
+        [TestCase(ResponseVerdict.Accept)]
+        [TestCase(ResponseVerdict.Reject)]
+        [TestCase(ResponseVerdict.DontKnow)]
+        public void Should_choose_to_not_touch_health_when_replica_response_code_indicates_content_input_failure(ResponseVerdict verdict)
+        {
+            Should_choose_to_not_touch_health_when_replica_response_code_indicates_response(Responses.ContentInputFailure, verdict);
+        }
+
+        private void Should_choose_to_not_touch_health_when_replica_response_code_indicates_response(Response response, ResponseVerdict verdict)
+        {
+            var result = new ReplicaResult(new Uri("http://replica"), response, verdict, TimeSpan.Zero);
 
             policy.SelectAction(result).Should().Be(AdaptiveHealthAction.DontTouch);
         }

@@ -183,6 +183,7 @@ namespace Vostok.Clusterclient.Core
                 new RejectThrottlingErrorsCriterion(),
                 new RejectUnknownErrorsCriterion(),
                 new RejectStreamingErrorsCriterion(),
+                new RejectContentErrorsCriterion(),
                 new AlwaysAcceptCriterion()
             };
         }

@@ -119,6 +119,17 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             context.Request.StreamContent.Length.Should().Be(123L);
         }
 
+        [Test]
+        public void Should_substitute_request_content_producer()
+        {
+            var producer = Substitute.For<IContentProducer>();
+            request5 = request5.WithContent(producer);
+
+            Execute();
+
+            context.Request.ContentProducer.Should().BeOfType<UserContentProducerWrapper>().Which.producer.Should().BeSameAs(producer);
+        }
+
         private void Execute()
         {
             module.ExecuteAsync(context, _ => Task.FromResult<ClusterResult>(null))

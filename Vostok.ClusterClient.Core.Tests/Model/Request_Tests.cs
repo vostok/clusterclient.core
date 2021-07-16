@@ -74,7 +74,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithUrl_method_should_preserve_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             var newUrl = new Uri("http://vostok.tools");
 
@@ -115,7 +115,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithHeader_method_should_preserve_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             var requestAfter = request.WithHeader("name", "value");
 
@@ -191,7 +191,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithHeaders_method_should_preserve_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             var newHeaders = Headers.Empty.Set("a", "b");
 
@@ -267,11 +267,21 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_buffer_should_discard_any_previous_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             request = request.WithContent(new Content(new byte[16]));
 
             request.CompositeContent.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_buffer_should_discard_any_previous_content_producer()
+        {
+            request = request.WithContent(Substitute.For<IContentProducer>());
+
+            request = request.WithContent(new Content(new byte[16]));
+
+            request.ContentProducer.Should().BeNull();
         }
 
         [Test]
@@ -297,11 +307,11 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_stream_should_not_touch_original_request_content()
         {
-            var contentBefore = request.Content;
+            var contentBefore = request.StreamContent;
 
             request.WithContent(new StreamContent(Stream.Null, 123));
 
-            var contentAfter = request.Content;
+            var contentAfter = request.StreamContent;
 
             contentAfter.Should().BeSameAs(contentBefore);
         }
@@ -347,7 +357,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_stream_should_discard_any_previous_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             request = request.WithContent(new StreamContent(Stream.Null, 123));
 
@@ -355,9 +365,19 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         }
 
         [Test]
+        public void WithContent_method_for_stream_should_discard_any_previous_content_producer()
+        {
+            request = request.WithContent(Substitute.For<IContentProducer>());
+
+            request = request.WithContent(new StreamContent(Stream.Null, 123));
+
+            request.ContentProducer.Should().BeNull();
+        }
+
+        [Test]
         public void WithContent_method_for_composite_buffer_should_return_a_request_with_provided_content()
         {
-            var content = new CompositeContent(new Content[]{});
+            var content = new CompositeContent(new Content[] {});
 
             var requestAfter = request.WithContent(content);
 
@@ -368,7 +388,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_composite_buffer_should_preserve_method_and_url()
         {
-            var requestAfter = request.WithContent(new CompositeContent(new Content[] { }));
+            var requestAfter = request.WithContent(new CompositeContent(new Content[] {}));
 
             requestAfter.Method.Should().BeSameAs(request.Method);
             requestAfter.Url.Should().BeSameAs(request.Url);
@@ -377,11 +397,11 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_composite_buffer_should_not_touch_original_request_content()
         {
-            var contentBefore = request.Content;
+            var contentBefore = request.CompositeContent;
 
-            request.WithContent(new CompositeContent(new Content[] { }));
+            request.WithContent(new CompositeContent(new Content[] {}));
 
-            var contentAfter = request.Content;
+            var contentAfter = request.CompositeContent;
 
             contentAfter.Should().BeSameAs(contentBefore);
         }
@@ -389,11 +409,12 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void WithContent_method_for_composite_buffer_should_set_content_length_header()
         {
-            var content = new CompositeContent(new Content[]
-            {
-                new Content(new byte[15]), 
-                new Content(new byte[16]) 
-            });
+            var content = new CompositeContent(
+                new Content[]
+                {
+                    new Content(new byte[15]),
+                    new Content(new byte[16])
+                });
 
             request.WithContent(content).Headers.ContentLength.Should().Be("31");
         }
@@ -403,11 +424,12 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = new Request(request.Method, request.Url, request.Content);
 
-            var content = new CompositeContent(new Content[]
-            {
-                new Content(new byte[15]),
-                new Content(new byte[16])
-            });
+            var content = new CompositeContent(
+                new Content[]
+                {
+                    new Content(new byte[15]),
+                    new Content(new byte[16])
+                });
 
             request.WithContent(content).Headers.ContentLength.Should().Be("31");
         }
@@ -417,7 +439,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("k1", "v1").WithHeader("k2", "v2");
 
-            request.WithContent(new CompositeContent(new Content[]{})).Headers.Should().HaveCount(3);
+            request.WithContent(new CompositeContent(new Content[] {})).Headers.Should().HaveCount(3);
         }
 
         [Test]
@@ -425,7 +447,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithContent(new Content(new byte[16]));
 
-            request = request.WithContent(new CompositeContent(new Content[] { }));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
 
             request.Content.Should().BeNull();
         }
@@ -435,7 +457,117 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithContent(new StreamContent(Stream.Null, 123));
 
-            request = request.WithContent(new CompositeContent(new Content[] { }));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
+
+            request.StreamContent.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_composite_buffer_should_discard_any_previous_content_producer()
+        {
+            request = request.WithContent(Substitute.For<IContentProducer>());
+
+            request = request.WithContent(new CompositeContent(new Content[] {}));
+
+            request.ContentProducer.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_return_a_request_with_provided_content()
+        {
+            var content = Substitute.For<IContentProducer>();
+
+            var requestAfter = request.WithContent(content);
+
+            requestAfter.Should().NotBeSameAs(request);
+            requestAfter.ContentProducer.Should().BeSameAs(content);
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_preserve_method_and_url()
+        {
+            var requestAfter = request.WithContent(Substitute.For<IContentProducer>());
+
+            requestAfter.Method.Should().BeSameAs(request.Method);
+            requestAfter.Url.Should().BeSameAs(request.Url);
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_not_touch_original_request_content()
+        {
+            var contentBefore = request.ContentProducer;
+
+            request.WithContent(Substitute.For<IContentProducer>());
+
+            var contentAfter = request.ContentProducer;
+
+            contentAfter.Should().BeSameAs(contentBefore);
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_set_content_length_header_if_length_is_specified()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.Length.Returns(123);
+            request.WithContent(contentProducer).Headers.ContentLength.Should().Be("123");
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_not_set_content_length_header_if_length_is_not_specified()
+        {
+            var contentProducer = Substitute.For<IContentProducer>();
+            request.WithContent(contentProducer).Headers.ContentLength.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_set_content_length_header_even_if_original_request_had_no_headers()
+        {
+            request = new Request(request.Method, request.Url, request.Content);
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.Length.Returns(123);
+
+            request.WithContent(contentProducer).Headers.ContentLength.Should().Be("123");
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_preserve_original_request_headers()
+        {
+            request = request.WithHeader("k1", "v1").WithHeader("k2", "v2");
+            var contentProducer = Substitute.For<IContentProducer>();
+            contentProducer.Length.Returns(123);
+
+            request.WithContent(contentProducer).Headers.Should().HaveCount(3);
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_discard_any_previous_buffer_content()
+        {
+            request = request.WithContent(new Content(new byte[16]));
+
+            var contentProducer = Substitute.For<IContentProducer>();
+            request = request.WithContent(contentProducer);
+
+            request.Content.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_discard_any_previous_composite_content()
+        {
+            request = request.WithContent(new CompositeContent(new Content[] {}));
+
+            var contentProducer = Substitute.For<IContentProducer>();
+            request = request.WithContent(contentProducer);
+
+            request.CompositeContent.Should().BeNull();
+        }
+
+        [Test]
+        public void WithContent_method_for_content_producer_should_discard_any_previous_stream_content()
+        {
+            request = request.WithContent(new StreamContent(Stream.Null, 12));
+
+            var contentProducer = Substitute.For<IContentProducer>();
+            request = request.WithContent(contentProducer);
 
             request.StreamContent.Should().BeNull();
         }
@@ -467,7 +599,15 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         [Test]
         public void HasBody_property_should_return_true_when_request_contains_composite_content()
         {
-            request = request.WithContent(new CompositeContent(new Content[]{}));
+            request = request.WithContent(new CompositeContent(new Content[] {}));
+
+            request.HasBody.Should().BeTrue();
+        }
+
+        [Test]
+        public void HasBody_property_should_return_true_when_request_contains_content_producer()
+        {
+            request = request.WithContent(Substitute.For<IContentProducer>());
 
             request.HasBody.Should().BeTrue();
         }

@@ -78,9 +78,25 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Gray
         }
 
         [Test]
+        public void Learn_method_should_do_nothing_when_response_code_indicates_content_reuse_failure()
+        {
+            modifier.Learn(CreateResult(replica1, ResponseVerdict.Reject, Responses.ContentReuseFailure), storageProvider);
+
+            storage.Should().BeEmpty();
+        }
+
+        [Test]
         public void Learn_method_should_do_nothing_when_response_code_indicates_stream_input_failure()
         {
             modifier.Learn(CreateResult(replica1, ResponseVerdict.Reject, Responses.StreamInputFailure), storageProvider);
+
+            storage.Should().BeEmpty();
+        }
+
+        [Test]
+        public void Learn_method_should_do_nothing_when_response_code_indicates_content_input_failure()
+        {
+            modifier.Learn(CreateResult(replica1, ResponseVerdict.Reject, Responses.ContentInputFailure), storageProvider);
 
             storage.Should().BeEmpty();
         }

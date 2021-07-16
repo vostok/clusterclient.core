@@ -234,6 +234,16 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
         }
 
         [Test]
+        public void Should_return_content_reuse_failure_code_upon_catching_according_exception()
+        {
+            transport
+                .SendAsync(null, null, TimeSpan.Zero, CancellationToken.None)
+                .ThrowsForAnyArgs(_ => new ContentAlreadyUsedException("No luck here either!"));
+
+            Send().Response.Code.Should().Be(ResponseCode.ContentReuseFailure);
+        }
+
+        [Test]
         public void Should_respect_connection_attempts_setting()
         {
             configuration.ConnectionAttempts.Returns(1);

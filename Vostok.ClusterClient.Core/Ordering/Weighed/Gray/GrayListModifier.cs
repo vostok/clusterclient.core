@@ -68,7 +68,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Gray
                 return;
 
             if (result.Response.Code == ResponseCode.StreamReuseFailure ||
-                result.Response.Code == ResponseCode.StreamInputFailure)
+                result.Response.Code == ResponseCode.StreamInputFailure ||
+                result.Response.Code == ResponseCode.ContentInputFailure ||
+                result.Response.Code == ResponseCode.ContentReuseFailure)
                 return;
 
             var storage = storageProvider.Obtain<DateTime>(StorageKey);
