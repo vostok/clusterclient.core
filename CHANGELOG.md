@@ -1,3 +1,7 @@
+## 0.1.32 (20.07.2021):
+
+Added validation for a request time budget. Now if budget is greater than int.MaxValue, the IncorrectArguments result will be returned instead of throwing an exception from Task.Delay.
+
 ## 0.1.31 (30.06.2021):
 
 Added `VerdictBasedRetryPolicy` which earlier was duplicated in couple different solutions.
