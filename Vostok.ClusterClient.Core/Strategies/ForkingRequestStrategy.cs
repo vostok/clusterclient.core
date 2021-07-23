@@ -107,29 +107,19 @@ namespace Vostok.Clusterclient.Core.Strategies
 
         private static async Task<bool> WaitForAcceptedResultAsync(List<Task> currentTasks)
         {
-            while (true)
-            {
-                var completedTask = await Task.WhenAny(currentTasks).ConfigureAwait(false);
+            var completedTask = await Task.WhenAny(currentTasks).ConfigureAwait(false);
 
-                currentTasks.Remove(completedTask);
+            currentTasks.Remove(completedTask);
 
-                var resultTask = completedTask as Task<ReplicaResult>;
-                if (resultTask == null)
-                    return false;
+            var resultTask = completedTask as Task<ReplicaResult>;
+            if (resultTask == null)
+                return false;
 
-                var result = await resultTask.ConfigureAwait(false);
+            currentTasks.RemoveAll(task => !(task is Task<ReplicaResult>));
 
-                currentTasks.RemoveAll(task => !(task is Task<ReplicaResult>));
+            var result = await resultTask.ConfigureAwait(false);
 
-                if (result.Verdict == ResponseVerdict.Accept)
-                    return true;
-
-                if (result.Response.Headers[HeaderNames.DontFork] == null)
-                    return false;
-
-                if (currentTasks.Count == 0)
-                    return true;
-            }
+            return result.Verdict == ResponseVerdict.Accept;
         }
 
         private void LaunchRequest(List<Task> currentTasks, Request request, IRequestTimeBudget budget, IRequestSender sender, IEnumerator<Uri> replicasEnumerator, TimeSpan? connectionTimeout, CancellationToken cancellationToken)

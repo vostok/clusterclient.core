@@ -11,7 +11,7 @@ namespace Vostok.Clusterclient.Core.Retry
         public bool NeedToRetry(Request request, RequestParameters parameters, IList<ReplicaResult> results)
         {
             return results.Count == 0 ||
-                   results.All(result => result.Verdict != ResponseVerdict.Accept && result.Response.Headers[HeaderNames.DontFork] == null);
+                   results.All(result => result.Verdict != ResponseVerdict.Accept);
         }
     }
 }
