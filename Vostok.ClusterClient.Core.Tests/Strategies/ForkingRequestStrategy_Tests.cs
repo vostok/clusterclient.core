@@ -242,13 +242,15 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status()
+        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status([Values]bool unreliableHeaderPresent)
         {
             var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
             CompleteForkingDelay();
-            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+
+            var headers = unreliableHeaderPresent ? Headers.Empty.Set(HeaderNames.UnreliableResponse, "true") : Headers.Empty;
+            CompleteRequest(replicas[1], ResponseVerdict.Reject, headers);
 
             task.IsCompleted.Should().BeFalse();
 
@@ -389,6 +391,90 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             sentRequests[4].Headers?[HeaderNames.ConcurrencyLevel].Should().Be("3");
         }
 
+        [Test]
+        public void Should_wait_current_requests_and_not_launch_others_when_all_requests_ended_with_accepted_status_and_UnreliableResponse_header()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            task.IsCompleted.Should().BeFalse();
+            sender.ReceivedCalls().Should().HaveCount(2);
+
+            CompleteRequest(replicas[1], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            task.IsCompleted.Should().BeTrue();
+            sender.ReceivedCalls().Should().HaveCount(2);
+        }
+
+        [Test]
+        public void Should_stop_waiting_pending_requests_on_first_request_with_accepted_status_and_absent_UnreliableResponse_header_after_previous_request_with_such_header()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            task.IsCompleted.Should().BeFalse();
+
+            CompleteRequest(replicas[1], ResponseVerdict.Accept);
+
+            task.IsCompleted.Should().BeTrue();
+            sender.ReceivedCalls().Should().HaveCount(3);
+        }
+
+        [Test]
+        public void Should_issue_request_on_rejected_status_after_request_with_UnreliableResponse_header()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            sender.ReceivedCalls().Should().HaveCount(2);
+
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+            task.IsCompleted.Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_accept_when_accepted_responses_with_UnreliableResponse_header_from_all_replicas_mixed_with_rejected()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+            CompleteRequest(replicas[2], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[3], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            sender.ReceivedCalls().Should().HaveCount(4);
+            task.IsCompleted.Should().BeTrue();
+        }
+
+        [Test]
+        public void Should_accept_when_accepted_responses_with_UnreliableResponse_header_mixed_with_rejected_and_accepted_without_such_header()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+            CompleteRequest(replicas[2], ResponseVerdict.Accept);
+            sender.ReceivedCalls().Should().HaveCount(4);
+            task.IsCompleted.Should().BeTrue();
+        }
+
         private void SetupDelaysPlanner()
         {
             delaysPlanner
@@ -409,9 +495,9 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
                 .Returns(first, next);
         }
 
-        private void CompleteRequest(Uri replica, ResponseVerdict verdict)
+        private void CompleteRequest(Uri replica, ResponseVerdict verdict, Headers headers = null)
         {
-            resultSources[replica].TrySetResult(new ReplicaResult(replica, new Response(ResponseCode.Ok), verdict, TimeSpan.Zero));
+            resultSources[replica].TrySetResult(new ReplicaResult(replica, new Response(ResponseCode.Ok, headers: headers), verdict, TimeSpan.Zero));
         }
 
         private void CompleteForkingDelay()

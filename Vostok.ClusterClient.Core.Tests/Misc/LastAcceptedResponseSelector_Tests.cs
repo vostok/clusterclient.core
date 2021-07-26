@@ -40,6 +40,26 @@ namespace Vostok.Clusterclient.Core.Tests.Misc
         }
 
         [Test]
+        public void Should_prefer_accepted_responses_without_UnreliableResponse_header()
+        {
+            results.Add(CreateResult(ResponseVerdict.Accept, headers: Headers.Empty.Set(HeaderNames.UnreliableResponse, "true")));
+            results.Add(CreateResult(ResponseVerdict.Accept));
+            results.Add(CreateResult(ResponseVerdict.Accept, headers: Headers.Empty.Set(HeaderNames.UnreliableResponse, "true")));
+
+            selector.Select(null, null, results).Should().BeSameAs(results[1].Response);
+        }
+
+        [Test]
+        public void Should_return_last_of_the_accepted_responses_with_UnreliableResponse_if_all_have_such_header()
+        {
+            results.Add(CreateResult(ResponseVerdict.Accept, headers: Headers.Empty.Set(HeaderNames.UnreliableResponse, "true")));
+            results.Add(CreateResult(ResponseVerdict.Accept, headers: Headers.Empty.Set(HeaderNames.UnreliableResponse, "true")));
+            results.Add(CreateResult(ResponseVerdict.Accept, headers: Headers.Empty.Set(HeaderNames.UnreliableResponse, "true")));
+
+            selector.Select(null, null, results).Should().BeSameAs(results[2].Response);
+        }
+
+        [Test]
         public void Should_return_last_of_the_known_responses_if_there_are_no_accepted_ones()
         {
             results.Add(CreateResult(ResponseVerdict.Reject, ResponseCode.Unknown));
@@ -71,9 +91,9 @@ namespace Vostok.Clusterclient.Core.Tests.Misc
             selector.Select(null, null, results).Should().BeSameAs(results[1].Response);
         }
 
-        private static ReplicaResult CreateResult(ResponseVerdict verdict, ResponseCode code = ResponseCode.Ok)
+        private static ReplicaResult CreateResult(ResponseVerdict verdict, ResponseCode code = ResponseCode.Ok, Headers headers = null)
         {
-            return new ReplicaResult(new Uri("http://host:123/"), new Response(code), verdict, TimeSpan.Zero);
+            return new ReplicaResult(new Uri("http://host:123/"), new Response(code, headers: headers), verdict, TimeSpan.Zero);
         }
     }
 }
