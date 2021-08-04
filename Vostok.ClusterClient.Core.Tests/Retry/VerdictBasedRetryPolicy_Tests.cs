@@ -37,34 +37,6 @@ namespace Vostok.Clusterclient.Core.Tests.Retry
             policy.NeedToRetry(default, default, results).Should().BeFalse();
         }
 
-        [Test]
-        public void NeedToRetry_should_return_false_if_all_rejected_and_any_has_DontFork_header()
-        {
-            var results = new List<ReplicaResult>() {BuildResult(ResponseVerdict.Reject), BuildResult(ResponseVerdict.Reject, Headers.Empty.Set(HeaderNames.DontFork, "true"))};
-            policy.NeedToRetry(default, default, results).Should().BeFalse();
-        }
-
-        [Test]
-        public void NeedToRetry_should_return_false_if_all_not_dont_know_and_any_has_DontFork_header()
-        {
-            var results = new List<ReplicaResult>() {BuildResult(ResponseVerdict.DontKnow), BuildResult(ResponseVerdict.DontKnow, Headers.Empty.Set(HeaderNames.DontFork, "true"))};
-            policy.NeedToRetry(default, default, results).Should().BeFalse();
-        }
-
-        [Test]
-        public void NeedToRetry_should_ignore_DontFork_header_on_accept_verdict()
-        {
-            var results = new List<ReplicaResult>() {BuildResult(ResponseVerdict.Reject), BuildResult(ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.DontFork, "true"))};
-            policy.NeedToRetry(default, default, results).Should().BeFalse();
-        }
-
-        [Test]
-        public void NeedToRetry_should_ignore_DontFork_header_on_reject_verdict_when_accepted_present()
-        {
-            var results = new List<ReplicaResult>() {BuildResult(ResponseVerdict.Reject, Headers.Empty.Set(HeaderNames.DontFork, "true")), BuildResult(ResponseVerdict.Accept)};
-            policy.NeedToRetry(default, default, results).Should().BeFalse();
-        }
-
         private static ReplicaResult BuildResult(ResponseVerdict verdict, Headers responseHeaders = null)
         {
             return new ReplicaResult(default, new Response(default, headers: responseHeaders), verdict, default);
