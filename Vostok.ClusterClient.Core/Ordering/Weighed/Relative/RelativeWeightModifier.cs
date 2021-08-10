@@ -111,9 +111,10 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             }
             
             weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
-            weights.Update(newWeights);
-            
+
             LogWeights(weights, newWeights);
+
+            weights.Update(newWeights);
         }
 
         private double ModifyAndApplyLimits(double externalWeight, Weight? relativeWeight)
@@ -139,7 +140,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         private ClusterState CreateClusterState() =>
             new ClusterState(settings);
         
-        private void LogWeights(IWeights oldWeights, Dictionary<Uri, Weight> newWeights)
+        private void LogWeights(IWeights oldWeights, IReadOnlyDictionary<Uri, Weight> newWeights)
         {
             const double significantWeightChange = 0.1;
             const double degradedWeightBorder = 0.7;
