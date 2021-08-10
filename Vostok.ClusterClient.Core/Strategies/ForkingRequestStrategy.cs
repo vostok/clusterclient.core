@@ -14,7 +14,8 @@ namespace Vostok.Clusterclient.Core.Strategies
     /// <para>Represents a strategy which starts with one request, but can increase parallelism ("fork") when there's no response for long enough.</para>
     /// <para>Forking occurs when the strategy does not receive any responses during a time period called forking delay. Forking delays are provided by <see cref="IForkingDelaysProvider"/> implementations.</para>
     /// <para>Parallelism level can only increase during execution due to forking, but never decreases. However, it has a configurable upper bound.</para>
-    /// <para>Execution stops at any result with <see cref="ResponseVerdict.Accept"/> verdict.</para>
+    /// <para>Execution stops at any result with <see cref="ResponseVerdict.Accept"/> verdict if none of special cases have happened.
+    /// <br/>See <see cref="HeaderNames.UnreliableResponse"/> special case header for details.</para>
     /// </summary>
     /// <example>
     /// Example of execution with maximum parallelism = 3:
@@ -107,19 +108,28 @@ namespace Vostok.Clusterclient.Core.Strategies
 
         private static async Task<bool> WaitForAcceptedResultAsync(List<Task> currentTasks)
         {
-            var completedTask = await Task.WhenAny(currentTasks).ConfigureAwait(false);
+            while (currentTasks.Count > 0)
+            {
+                var completedTask = await Task.WhenAny(currentTasks).ConfigureAwait(false);
 
-            currentTasks.Remove(completedTask);
+                currentTasks.Remove(completedTask);
 
-            var resultTask = completedTask as Task<ReplicaResult>;
-            if (resultTask == null)
-                return false;
+                var resultTask = completedTask as Task<ReplicaResult>;
+                if (resultTask == null)
+                    return false;
 
-            currentTasks.RemoveAll(task => !(task is Task<ReplicaResult>));
+                currentTasks.RemoveAll(task => !(task is Task<ReplicaResult>));
 
-            var result = await resultTask.ConfigureAwait(false);
+                var result = await resultTask.ConfigureAwait(false);
 
-            return result.Verdict == ResponseVerdict.Accept;
+                if (result.Verdict != ResponseVerdict.Accept)
+                    return false;
+
+                if (result.Response.Headers[HeaderNames.UnreliableResponse] == null)
+                    return true;
+            }
+
+            return true;
         }
 
         private void LaunchRequest(List<Task> currentTasks, Request request, IRequestTimeBudget budget, IRequestSender sender, IEnumerator<Uri> replicasEnumerator, TimeSpan? connectionTimeout, CancellationToken cancellationToken)

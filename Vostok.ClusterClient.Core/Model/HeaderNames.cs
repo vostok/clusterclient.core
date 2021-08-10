@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Strategies;
 
 namespace Vostok.Clusterclient.Core.Model
@@ -69,7 +70,7 @@ namespace Vostok.Clusterclient.Core.Model
         public const string Via = "Via";
 
         /// <summary>
-        /// A custom response header which indicates that client must accept response from server and don't perform any retry attempts.
+        /// A custom response header which indicates that client must accept response from server and not perform any retry attempts.
         /// </summary>
         public const string DontRetry = "Dont-Retry";
 
@@ -109,5 +110,17 @@ namespace Vostok.Clusterclient.Core.Model
         /// A custom header utilized by <see cref="ForkingRequestStrategy"/> to denote its current parallelism level.
         /// </summary>
         public const string ConcurrencyLevel = "Concurrency-Level";
+
+        /// <summary>
+        /// A custom header which indicates that response might be accepted when following conditions are met:
+        /// <list type="number">
+        /// <item><description>Response verdict must be <see cref="ResponseVerdict.Accept"/>.</description></item>
+        /// <item><description>There are none currently launched forking or parallel requests. Otherwise, they must be awaited in order to determine reliability of response.</description></item>
+        /// <item><description>None other forking or parallel requests have returned response with <see cref="ResponseVerdict.Accept"/> verdict and without <see cref="UnreliableResponse"/> header.
+        /// Otherwise, it is considered more reliable and will be more preferable according to <see cref="LastAcceptedResponseSelector"/> logic.</description></item>
+        /// </list>
+        /// <remarks>General purpose of this header is protection against race conditions between forking and parallel requests.</remarks>
+        /// </summary>
+        public const string UnreliableResponse = "Unreliable-Response";
     }
 }
