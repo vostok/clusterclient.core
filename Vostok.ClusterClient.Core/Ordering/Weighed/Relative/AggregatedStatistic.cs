@@ -19,6 +19,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             Timestamp = timestamp;
         }
 
+        public override string ToString() =>
+            $"Total: {TotalCount:F3}, ErrorFraction: {ErrorFraction:F3}, StdDev: {StdDev:F3}, Mean: {Mean:F3}, Timestamp: {Timestamp:G}";
+
         public AggregatedStatistic Smooth(AggregatedStatistic? previous, TimeSpan smoothingConstant)
         {
             if (!previous.HasValue)
