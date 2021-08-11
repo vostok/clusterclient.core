@@ -19,5 +19,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         public TimeSpan StatisticSmoothingConstant = TimeSpan.FromSeconds(1);
         public TimeSpan WeightsDownSmoothingConstant = TimeSpan.FromSeconds(1);
         public TimeSpan WeightsRaiseSmoothingConstant = TimeSpan.FromMinutes(1);
+        public bool EnableLogs = false;
     }
 }

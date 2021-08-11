@@ -112,8 +112,8 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             
             weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
 
-            LogWeights(weights, newWeights);
-
+            LogWeights(newWeights, aggregatedClusterStatistic);
+            
             weights.Update(newWeights);
         }
 
@@ -140,19 +140,28 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         private ClusterState CreateClusterState() =>
             new ClusterState(settings);
         
-        private void LogWeights(IWeights oldWeights, IReadOnlyDictionary<Uri, Weight> newWeights)
+        private void LogWeights(IReadOnlyDictionary<Uri, Weight> newWeights, AggregatedClusterStatistic clusterStatistic)
         {
-            const double significantWeightChange = 0.1;
-            const double degradedWeightBorder = 0.7;
-            foreach (var (replica, newWeight) in newWeights)
-            {
-                var previousWeight = oldWeights.Get(replica)?.Value ?? settings.InitialWeight;
+            if (!settings.EnableLogs) return;
 
-                if (Math.Abs(previousWeight - newWeight.Value) > significantWeightChange ||
-                    previousWeight > degradedWeightBorder && newWeight.Value < degradedWeightBorder)
-                    log.Debug("Replica {ReplicaUrl} weight has changed from {PreviousWeight} to {NewWeight}",
-                        replica, previousWeight.ToString("F4"), newWeight.Value.ToString("F4"));
+            var stringBuilder = new StringBuilder("Weights:\n");
+            foreach (var newWeight in newWeights)
+            {
+                stringBuilder.AppendLine($"{newWeight.Key.OriginalString} : {newWeight.Value}");
             }
+
+            stringBuilder.AppendLine("Statistic:");
+
+            stringBuilder.AppendLine($"Cluster: {clusterStatistic.Cluster}");
+            stringBuilder.AppendLine("Replicas: ");
+            foreach (var replica in clusterStatistic.Replicas)
+            {
+                stringBuilder.AppendLine($"{replica.Key}: {replica.Value}");
+            }
+
+            var message = stringBuilder.ToString();
+            
+            log.Info(message);
         }
     }
 }
