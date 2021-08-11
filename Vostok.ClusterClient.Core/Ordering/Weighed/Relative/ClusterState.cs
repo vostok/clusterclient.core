@@ -2,6 +2,7 @@
 using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Ordering.Weighed.Relative.Interfaces;
 using Vostok.Commons.Threading;
+using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
@@ -25,13 +26,14 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             ITimeProvider timeProvider = null,
             IStatisticHistory statisticHistory = null, 
             IWeightsNormalizer weightsNormalizer = null,
-            IWeights weights = null)
+            IWeights weights = null,
+            ILog log = null)
         {
             this.settings = settings;
             
             IsUpdatingNow = new AtomicBoolean(false);
             TimeProvider = timeProvider ?? new TimeProvider();
-            RelativeWeightCalculator = relativeWeightCalculator ?? new RelativeWeightCalculator(settings);
+            RelativeWeightCalculator = relativeWeightCalculator ?? new RelativeWeightCalculator(settings, log);
             Weights = weights ?? new Weights(settings);
             WeightsNormalizer = weightsNormalizer ?? new WeightsNormalizer();
             CurrentStatistic = rawClusterStatistic ?? new RawClusterStatistic(settings.StatisticSmoothingConstant, settings.PenaltyMultiplier);

@@ -109,11 +109,11 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
                 if (relativeMaxWeight < newReplicaWeight.Value)
                     relativeMaxWeight = newReplicaWeight.Value;
             }
-            
-            weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
 
             LogWeights(newWeights, aggregatedClusterStatistic);
-            
+
+            weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
+
             weights.Update(newWeights);
         }
 
@@ -138,7 +138,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             $"{nameof(RelativeWeightModifier)}_{environment}_{service}";
 
         private ClusterState CreateClusterState() =>
-            new ClusterState(settings);
+            new ClusterState(settings, log: log);
         
         private void LogWeights(IReadOnlyDictionary<Uri, Weight> newWeights, AggregatedClusterStatistic clusterStatistic)
         {
