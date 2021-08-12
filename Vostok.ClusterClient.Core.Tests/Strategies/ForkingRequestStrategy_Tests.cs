@@ -49,12 +49,11 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             sender = Substitute.For<IRequestSender>();
             sender
                 .SendToReplicaAsync(Arg.Any<Uri>(), Arg.Any<Request>(), Arg.Any<TimeSpan?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
-                .Returns(
-                    info =>
-                    {
-                        sentRequests.Add(info.Arg<Request>());
-                        return resultSources[info.Arg<Uri>()].Task;
-                    });
+                .Returns(info =>
+                {
+                    sentRequests.Add(info.Arg<Request>());
+                    return resultSources[info.Arg<Uri>()].Task;
+                });
 
             delaySources = replicas.Select(_ => new TaskCompletionSource<bool>()).ToList();
             delaySourcesEnumerator = delaySources.GetEnumerator();
@@ -215,9 +214,9 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         public void Should_launch_requests_except_last_with_connection_timeout()
         {
             sender.ClearReceivedCalls();
-
+            
             strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, replicas.Length);
-
+            
             strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(5.Seconds()), replicas, replicas.Length, token);
 
             for (var i = 0; i < replicas.Length; ++i)
@@ -225,7 +224,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             for (var i = 0; i < replicas.Length - 1; ++i)
                 sender.Received(1).SendToReplicaAsync(replicas[i], Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
-
+            
             sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), null, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         }
 
@@ -244,13 +243,15 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status()
+        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status([Values]bool unreliableHeaderPresent)
         {
             var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
             CompleteForkingDelay();
-            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+
+            var headers = unreliableHeaderPresent ? Headers.Empty.Set(HeaderNames.UnreliableResponse, "true") : Headers.Empty;
+            CompleteRequest(replicas[1], ResponseVerdict.Reject, headers);
 
             task.IsCompleted.Should().BeFalse();
 
@@ -437,92 +438,87 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_not_fork_if_has_DontFork_header([Values] ResponseVerdict verdict, [Values(1, 3)] int requestsCount)
+        public void Should_wait_current_requests_and_not_launch_others_when_all_requests_ended_with_accepted_status_and_UnreliableResponse_header()
         {
-            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
-
-            for (var i = 0; i < requestsCount - 1; i++)
-                CompleteForkingDelay();
-
-            var conditionHeader = Headers.Empty.Set(HeaderNames.DontFork, "true");
-            for (var i = 0; i < requestsCount; i++)
-                CompleteRequest(replicas[i], verdict, conditionHeader);
-
-            sendTask.GetAwaiter().GetResult();
-
-            sentRequests.Should().HaveCount(requestsCount);
-        }
-
-        [Test]
-        public void Should_fork_only_if_no_DontFork_header()
-        {
-            // note (patrofimov, 26.03.2021): suppose 2 forks in progress: (0), (1). Then events occur in order:
-            // 1. Fork (0) request reaches backend and changes its state.
-            // 2. Fork (1) request reaches backend and finds out its state is changed. Due to changed backend state, DontFork header attached to response and i.e. code 409 (Conflict).
-            //    Fork (1) response reaches client. Verdict - Rejected, no fork launched due to header.
-            // 3. Fork (0) response reaches client but fails on the way back. Therefore, i.e. 200 OK transforms into 500 InternalServerError. Verdict - Rejected, fork (2) launched due to absent DontFork header.
-            // 4. Fork (2) request reaches backend and due to its changed state receives also response with DontFork and 409 like fork (1).
-            //    Fork (2) response reaches client and cluster request is over with verdict Rejected (409).
-            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
 
-            var conditionHeader = Headers.Empty.Set(HeaderNames.DontFork, "true");
-            CompleteRequest(replicas[1], ResponseVerdict.Reject, conditionHeader);
-            CompleteRequest(replicas[0], ResponseVerdict.Reject);
-            CompleteRequest(replicas[2], ResponseVerdict.Reject, conditionHeader);
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
 
-            sendTask.GetAwaiter().GetResult();
+            task.IsCompleted.Should().BeFalse();
+            sender.ReceivedCalls().Should().HaveCount(2);
 
-            sentRequests.Should().HaveCount(3);
+            CompleteRequest(replicas[1], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            task.IsCompleted.Should().BeTrue();
+            sender.ReceivedCalls().Should().HaveCount(2);
         }
 
         [Test]
-        public void Should_accept_after_rejected_responses_with_DontFork_header()
+        public void Should_stop_waiting_pending_requests_on_first_request_with_accepted_status_and_absent_UnreliableResponse_header_after_previous_request_with_such_header()
         {
-            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
+            CompleteForkingDelay();
 
-            var conditionHeader = Headers.Empty.Set(HeaderNames.DontFork, "true");
-            CompleteRequest(replicas[0], ResponseVerdict.Reject, conditionHeader);
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+
+            task.IsCompleted.Should().BeFalse();
+
             CompleteRequest(replicas[1], ResponseVerdict.Accept);
 
-            sendTask.GetAwaiter().GetResult();
-
-            sentRequests.Should().HaveCount(2);
+            task.IsCompleted.Should().BeTrue();
+            sender.ReceivedCalls().Should().HaveCount(3);
         }
 
         [Test]
-        public void Should_not_affect_accepted_responses_with_DontFork_header()
+        public void Should_issue_request_on_rejected_status_after_request_with_UnreliableResponse_header()
         {
-            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
 
-            var conditionHeader = Headers.Empty.Set(HeaderNames.DontFork, "true");
-            CompleteRequest(replicas[0], ResponseVerdict.Accept, conditionHeader);
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
 
-            sendTask.GetAwaiter().GetResult();
+            sender.ReceivedCalls().Should().HaveCount(2);
 
-            sentRequests.Should().HaveCount(2);
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+            task.IsCompleted.Should().BeFalse();
         }
 
         [Test]
-        public void Should_not_launch_more_requests_when_forking_delay_completed_after_rejected_with_DontFork_header()
+        public void Should_accept_when_accepted_responses_with_UnreliableResponse_header_from_all_replicas_mixed_with_rejected()
         {
-            var sendTask = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
             CompleteForkingDelay();
-
-            var conditionHeader = Headers.Empty.Set(HeaderNames.DontFork, "true");
-            CompleteRequest(replicas[0], ResponseVerdict.Reject, conditionHeader);
             CompleteForkingDelay();
-            CompleteRequest(replicas[1], ResponseVerdict.Reject, conditionHeader);
 
-            sendTask.GetAwaiter().GetResult();
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+            CompleteRequest(replicas[2], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[3], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            sender.ReceivedCalls().Should().HaveCount(4);
+            task.IsCompleted.Should().BeTrue();
+        }
 
-            sentRequests.Should().HaveCount(2);
+        [Test]
+        public void Should_accept_when_accepted_responses_with_UnreliableResponse_header_mixed_with_rejected_and_accepted_without_such_header()
+        {
+            var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
+
+            CompleteForkingDelay();
+            CompleteForkingDelay();
+
+            CompleteRequest(replicas[0], ResponseVerdict.Accept, Headers.Empty.Set(HeaderNames.UnreliableResponse, "true"));
+            CompleteRequest(replicas[1], ResponseVerdict.Reject);
+            CompleteRequest(replicas[2], ResponseVerdict.Accept);
+            sender.ReceivedCalls().Should().HaveCount(4);
+            task.IsCompleted.Should().BeTrue();
         }
 
         private void SetupDelaysPlanner()

@@ -1,3 +1,12 @@
+## 0.1.34 (04.08.2021)
+
+BREAKING CHANGE. Removed `Dont-Fork` header because another following mechanic was invented. It is expected that no one except drive used the header so it must be safe to remove it.
+Added `Unreliable-Response` header name for parallel requests races prevention in `ForkingRequestStrategy` and `ParallelRequestStrategy`.
+
+## 0.1.32 (20.07.2021):
+
+Added validation for a request time budget. Now if budget is greater than int.MaxValue, the IncorrectArguments result will be returned instead of throwing an exception from Task.Delay.
+
 ## 0.1.31 (30.06.2021):
 
 Added `VerdictBasedRetryPolicy` which earlier was duplicated in couple different solutions.

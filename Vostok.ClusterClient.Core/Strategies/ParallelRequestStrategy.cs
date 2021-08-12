@@ -9,7 +9,8 @@ using Vostok.Clusterclient.Core.Sending;
 namespace Vostok.Clusterclient.Core.Strategies
 {
     /// <summary>
-    /// Represents a strategy which maintains several parallel requests right from the start and stops at any result with <see cref="ResponseVerdict.Accept"/> verdict.
+    /// Represents a strategy which maintains several parallel requests right from the start and stops at any result with <see cref="ResponseVerdict.Accept"/> verdict if none of special cases have happened.
+    /// <br/>See <see cref="HeaderNames.UnreliableResponse"/> special case header for details.
     /// </summary>
     /// <example>
     /// Example of execution with parallelism = 3:
@@ -68,7 +69,8 @@ namespace Vostok.Clusterclient.Core.Strategies
                         currentTasks.Remove(completedTask);
 
                         var completedResult = await completedTask.ConfigureAwait(false);
-                        if (completedResult.Verdict == ResponseVerdict.Accept)
+
+                        if (completedResult.Verdict == ResponseVerdict.Accept && completedResult.Response.Headers[HeaderNames.UnreliableResponse] == null)
                         {
                             localCancellationSource.Cancel();
                             return;
@@ -76,7 +78,8 @@ namespace Vostok.Clusterclient.Core.Strategies
 
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        TryLaunchNextRequest(request, sender, budget, replicasEnumerator, currentTasks, parameters.ConnectionTimeout, linkedCancellationToken);
+                        if (completedResult.Verdict != ResponseVerdict.Accept)
+                            TryLaunchNextRequest(request, sender, budget, replicasEnumerator, currentTasks, parameters.ConnectionTimeout, linkedCancellationToken);
                     }
                 }
             }
