@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
+using System.Text;
 using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Ordering.Storage;
@@ -50,7 +50,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             
             ModifyClusterWeightsIfNeed(clusterState);
 
-            weight = ModifyAndApplyLimits(weight, clusterState.Weights.Get(replica));
+            weight = ModifyAndApplyLimits(weight, clusterState.Weights.Get(replica, settings.WeightsTTL));
         }
 
         /// <inheritdoc />
@@ -71,14 +71,16 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 
                 var aggregatedClusterStatistic = clusterState
                     .SwapToNewRawStatistic()
-                    .GetPenalizedAndSmoothedStatistic(currentTime, clusterState.StatisticHistory.Get());
+                    .GetPenalizedAndSmoothedStatistic(currentTime, clusterState.StatisticHistory.Get(),
+                        settings.PenaltyMultiplier, 
+                        settings.StatisticSmoothingConstant);
                 
                 ModifyWeights(aggregatedClusterStatistic, 
                     clusterState.RelativeWeightCalculator,
                     clusterState.WeightsNormalizer,
                     clusterState.Weights);
 
-                clusterState.StatisticHistory.Update(aggregatedClusterStatistic);
+                clusterState.StatisticHistory.Update(aggregatedClusterStatistic, settings.StatisticTTL);
             }
             finally
             {
@@ -98,11 +100,11 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             var relativeMaxWeight = 0d;
             foreach (var (replica, replicaStatistic) in aggregatedClusterStatistic.Replicas)
             {
-                var previousWeight = weights.Get(replica) ??
+                var previousWeight = weights.Get(replica, settings.WeightsTTL) ??
                                      new Weight(settings.InitialWeight, statisticCollectedTimestamp - settings.WeightUpdatePeriod);
                 
                 var newReplicaWeight = relativeWeightCalculator
-                    .Calculate(aggregatedClusterStatistic.Cluster, replicaStatistic, previousWeight);
+                    .Calculate(aggregatedClusterStatistic.Cluster, replicaStatistic, previousWeight, settings);
                 
                 newWeights.Add(replica, newReplicaWeight);
 
@@ -114,7 +116,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 
             weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
 
-            weights.Update(newWeights);
+            weights.Update(newWeights, settings);
         }
 
         private double ModifyAndApplyLimits(double externalWeight, Weight? relativeWeight)
@@ -138,7 +140,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             $"{nameof(RelativeWeightModifier)}_{environment}_{service}";
 
         private ClusterState CreateClusterState() =>
-            new ClusterState(settings, log: log);
+            new ClusterState();
         
         private void LogWeights(IReadOnlyDictionary<Uri, Weight> newWeights, AggregatedClusterStatistic clusterStatistic)
         {
