@@ -37,7 +37,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 MinWeight = 0.005,
                 Sensitivity = 3
             };
-            clusterState = new ClusterState(settings,
+            clusterState = new ClusterState(
                 timeProvider: Substitute.For<ITimeProvider>(),
                 rawClusterStatistic: Substitute.For<IRawClusterStatistic>(),
                 statisticHistory: Substitute.For<IStatisticHistory>(), 
