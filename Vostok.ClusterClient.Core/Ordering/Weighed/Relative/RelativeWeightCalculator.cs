@@ -5,12 +5,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
     internal class RelativeWeightCalculator : IRelativeWeightCalculator
     {
-        private readonly RelativeWeightSettings settings;
-
-        public RelativeWeightCalculator(RelativeWeightSettings settings) =>
-            this.settings = settings;
-
-        public Weight Calculate(in AggregatedStatistic clusterAggregatedStatistic, in AggregatedStatistic replicaAggregatedStatistic, in Weight previousWeight)
+        public Weight Calculate(in AggregatedStatistic clusterAggregatedStatistic, in AggregatedStatistic replicaAggregatedStatistic, in Weight previousWeight, RelativeWeightSettings settings)
         {
             var weightByStatuses = clusterAggregatedStatistic.TotalCount / settings.WeightUpdatePeriod.TotalSeconds <= settings.WeightByStatusesRpsThreshold;
             var rawWeight = weightByStatuses

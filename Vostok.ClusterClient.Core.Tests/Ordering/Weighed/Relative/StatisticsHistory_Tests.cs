@@ -13,11 +13,11 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
     public class StatisticsHistory_Tests
     {
         private StatisticsHistory statisticsHistory;
-
+        private readonly TimeSpan statisticTTL = 1.Hours();
         [SetUp]
         public void SetUp()
         {
-            statisticsHistory = new StatisticsHistory(1.Hours());
+            statisticsHistory = new StatisticsHistory();
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [new Uri("http://r3")] = new AggregatedStatistic(10, 0.2, 0.5, 0.35, DateTime.UtcNow),
             };
 
-            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic));
+            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic), statisticTTL);
 
             var clusterStats = statisticsHistory.Get();
             clusterStats.Cluster.Should().Be(clusterStatistic);
@@ -58,7 +58,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [r3] = new AggregatedStatistic(10, 0.2, 0.5, 0.35, DateTime.UtcNow),
             };
 
-            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic));
+            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic), statisticTTL);
 
             var clusterStats = statisticsHistory.Get();
             clusterStats.Cluster.Should().Be(clusterStatistic);
@@ -71,7 +71,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [new Uri("http://r3")] = new AggregatedStatistic(10, 0.2, 9.5, 1.35, DateTime.UtcNow),
             };
 
-            statisticsHistory.Update(new AggregatedClusterStatistic(newCluster, newReplicas));
+            statisticsHistory.Update(new AggregatedClusterStatistic(newCluster, newReplicas), statisticTTL);
             
             clusterStats = statisticsHistory.Get();
             clusterStats.Cluster.Should().Be(newCluster);
@@ -83,8 +83,6 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
         [Test]
         public void Update_should_delete_obsolete_statistics()
         {
-            statisticsHistory = new StatisticsHistory(1.Minutes());
-
             var r1 = new Uri("http://r1");
             var r2 = new Uri("http://r2");
             var r3 = new Uri("http://r3");
@@ -96,7 +94,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [r3] = new AggregatedStatistic(10, 0.2, 0.5, 0.35, DateTime.UtcNow - 2.Minutes()),
             };
 
-            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic));
+            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, replicasStatistic), 1.Hours());
             
             var clusterStats = statisticsHistory.Get();
             clusterStats.Cluster.Should().Be(clusterStatistic);
@@ -108,7 +106,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             {
                 [r2] = new AggregatedStatistic(10, 0.2, 5, 10, DateTime.UtcNow)
             };
-            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, newReplicasStats));
+            statisticsHistory.Update(new AggregatedClusterStatistic(clusterStatistic, newReplicasStats), 1.Minutes());
             
             clusterStats = statisticsHistory.Get();
             clusterStats.Cluster.Should().Be(clusterStatistic);
