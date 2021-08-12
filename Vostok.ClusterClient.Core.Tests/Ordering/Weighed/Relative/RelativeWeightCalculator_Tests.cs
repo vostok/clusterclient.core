@@ -27,7 +27,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 MinWeight = 0.005,
                 Sensitivity = 3
             };
-            relativeWeightCalculator = new RelativeWeightCalculator(settings);
+            relativeWeightCalculator = new RelativeWeightCalculator();
         }
 
         [TestCase(125, 500, 0.140)]
@@ -41,7 +41,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             var replicaStatistic = new AggregatedStatistic(1000, 0.2, replicaStdDev, replicaAvg, timeStamp);
 
             var calculatedWeight = relativeWeightCalculator
-                .Calculate(clusterStatistic, replicaStatistic, new Weight(settings.InitialWeight, timeStamp - settings.WeightUpdatePeriod));
+                .Calculate(clusterStatistic, replicaStatistic, new Weight(settings.InitialWeight, timeStamp - settings.WeightUpdatePeriod), settings);
 
             calculatedWeight.Value.Should().BeApproximately(expectedWeight, 0.001);
             calculatedWeight.Timestamp.Should().Be(timeStamp);
@@ -59,7 +59,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             var replicaStatistic = new AggregatedStatistic(replicaTotalCount, replicaErrorFraction, 10000, 1000, timeStamp);
 
             var calculatedWeight = relativeWeightCalculator
-                .Calculate(clusterStatistic, replicaStatistic, new Weight(settings.InitialWeight, timeStamp - settings.WeightUpdatePeriod));
+                .Calculate(clusterStatistic, replicaStatistic, new Weight(settings.InitialWeight, timeStamp - settings.WeightUpdatePeriod), settings);
 
             calculatedWeight.Value.Should().BeApproximately(expectedWeight, 0.001);
             calculatedWeight.Timestamp.Should().Be(timeStamp);

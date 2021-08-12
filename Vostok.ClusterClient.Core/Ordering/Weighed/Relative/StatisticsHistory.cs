@@ -7,20 +7,14 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
     internal class StatisticsHistory : IStatisticHistory
     {
-        private readonly TimeSpan statisticTtl;
         private AggregatedClusterStatistic currentHistory;
-
-        public StatisticsHistory(TimeSpan statisticTtl)
-        {
-            this.statisticTtl = statisticTtl;
-        }
 
         public AggregatedClusterStatistic Get() =>
             currentHistory != null
                 ? new AggregatedClusterStatistic(currentHistory.Cluster, currentHistory.Replicas) 
                 : null;
 
-        public void Update(AggregatedClusterStatistic snapshot)
+        public void Update(AggregatedClusterStatistic snapshot, TimeSpan statisticTTL)
         {
             if (currentHistory == null)
             {
@@ -40,7 +34,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
                     continue;
                 }
 
-                if (currentTime - currentStatistic.Timestamp < statisticTtl)
+                if (currentTime - currentStatistic.Timestamp < statisticTTL)
                     replicasUpdatedHistory[currentReplica] = currentStatistic;
             }
 

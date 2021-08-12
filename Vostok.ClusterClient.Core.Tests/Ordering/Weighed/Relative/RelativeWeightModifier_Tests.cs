@@ -37,7 +37,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 MinWeight = 0.005,
                 Sensitivity = 3
             };
-            clusterState = new ClusterState(settings,
+            clusterState = new ClusterState(
                 timeProvider: Substitute.For<ITimeProvider>(),
                 rawClusterStatistic: Substitute.For<IRawClusterStatistic>(),
                 statisticHistory: Substitute.For<IStatisticHistory>(), 
@@ -74,11 +74,11 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             relativeWeightModifier.Modify(replica, new List<Uri>(), replicaStorageProvider, Request.Get(""), RequestParameters.Empty, ref _);
 
             clusterState.RelativeWeightCalculator.DidNotReceiveWithAnyArgs()
-                .Calculate(Arg.Any<AggregatedStatistic>(), Arg.Any<AggregatedStatistic>(), Arg.Any<Weight>());
+                .Calculate(Arg.Any<AggregatedStatistic>(), Arg.Any<AggregatedStatistic>(), Arg.Any<Weight>(), settings);
             clusterState.CurrentStatistic.DidNotReceiveWithAnyArgs()
-                .GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>());
+                .GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant);
             clusterState.Weights.DidNotReceiveWithAnyArgs()
-                .Update(Arg.Any<Dictionary<Uri, Weight>>());
+                .Update(Arg.Any<Dictionary<Uri, Weight>>(), settings);
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
         {
             var replica = new Uri("http://r1");
             clusterState.TimeProvider.GetCurrentTime().Returns(info => DateTime.UtcNow);
-            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>())
+            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant)
                 .Returns(new AggregatedClusterStatistic(new AggregatedStatistic(), new Dictionary<Uri, AggregatedStatistic>()));
             settings.WeightUpdatePeriod = 100.Milliseconds();
             var lastUpdateTime = clusterState.LastUpdateTimestamp;
@@ -101,7 +101,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                     () =>
                     {
                         clusterState.WeightsNormalizer.Received(1).Normalize(Arg.Any<Dictionary<Uri, Weight>>(), Arg.Any<double>());
-                        clusterState.Weights.Received(1).Update(Arg.Any<IReadOnlyDictionary<Uri, Weight>>());
+                        clusterState.Weights.Received(1).Update(Arg.Any<IReadOnlyDictionary<Uri, Weight>>(), settings);
                     });
             };
             assertion.ShouldPassIn(settings.WeightUpdatePeriod, 10.Milliseconds());
@@ -115,7 +115,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             clusterState.LastUpdateTimestamp = timestamp;
             clusterState.TimeProvider.GetCurrentTime().Returns(timestamp + settings.WeightUpdatePeriod + 1.Seconds());
             var clusterStatistic = new AggregatedClusterStatistic(new AggregatedStatistic(10, 0.2, 13, 130, timestamp), new Dictionary<Uri, AggregatedStatistic>());
-            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>())
+            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant)
                 .Returns(clusterStatistic);
 
             relativeWeightModifier.Modify(new Uri("http://replica1"), new List<Uri>(), replicaStorageProvider, Request.Get(""), RequestParameters.Empty, ref _);
@@ -131,12 +131,12 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             clusterState.LastUpdateTimestamp = timestamp;
             clusterState.TimeProvider.GetCurrentTime().Returns(timestamp + settings.WeightUpdatePeriod + 1.Seconds());
             var clusterStatistic = new AggregatedClusterStatistic(new AggregatedStatistic(10, 0.2, 13, 130, timestamp), new Dictionary<Uri, AggregatedStatistic>());
-            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>())
+            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant)
                 .Returns(clusterStatistic);
 
             relativeWeightModifier.Modify(new Uri("http://replica1"), new List<Uri>(), replicaStorageProvider, Request.Get(""), RequestParameters.Empty, ref _);
 
-            clusterState.StatisticHistory.Received(1).Update(clusterStatistic);
+            clusterState.StatisticHistory.Received(1).Update(clusterStatistic, settings.StatisticTTL);
         }
 
         [Test]
@@ -155,17 +155,17 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [r2.Item1] = r2.Item2,
                 [r3.Item1] = r3.Item2,
             });
-            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>())
+            clusterState.CurrentStatistic.GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant)
                 .Returns(clusterStatistic);
-            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r1.Item2, Arg.Any<Weight>()).Returns(r1.Item3);
-            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r2.Item2, Arg.Any<Weight>()).Returns(r2.Item3);
-            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r3.Item2, Arg.Any<Weight>()).Returns(r3.Item3);
+            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r1.Item2, Arg.Any<Weight>(), settings).Returns(r1.Item3);
+            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r2.Item2, Arg.Any<Weight>(), settings).Returns(r2.Item3);
+            clusterState.RelativeWeightCalculator.Calculate(clusterStatistic.Cluster, r3.Item2, Arg.Any<Weight>(), settings).Returns(r3.Item3);
             
             relativeWeightModifier.Modify(r1.Item1, new List<Uri>(), replicaStorageProvider, Request.Get(""), RequestParameters.Empty, ref _);
 
-            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r1.Item1], Arg.Any<Weight>());
-            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r2.Item1], Arg.Any<Weight>());
-            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r3.Item1], Arg.Any<Weight>());
+            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r1.Item1], Arg.Any<Weight>(), settings);
+            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r2.Item1], Arg.Any<Weight>(), settings);
+            clusterState.RelativeWeightCalculator.Received(1).Calculate(clusterStatistic.Cluster, clusterStatistic.Replicas[r3.Item1], Arg.Any<Weight>(), settings);
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 .When(normalizer => normalizer.Normalize(Arg.Any<Dictionary<Uri, Weight>>(), Arg.Any<double>()))
                 .Do(info => weightsPassedToWeightsNormalizer = info.Arg<Dictionary<Uri, Weight>>());
             clusterState.CurrentStatistic
-                .GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>()).Returns(clusterStatistic);
+                .GetPenalizedAndSmoothedStatistic(Arg.Any<DateTime>(), Arg.Any<AggregatedClusterStatistic>(), settings.PenaltyMultiplier, settings.StatisticSmoothingConstant).Returns(clusterStatistic);
             
             relativeWeightModifier.Modify(
                 r1.Item1, 

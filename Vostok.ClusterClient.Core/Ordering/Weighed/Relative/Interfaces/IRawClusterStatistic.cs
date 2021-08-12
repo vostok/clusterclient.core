@@ -7,6 +7,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative.Interfaces
     {
         void Report(ReplicaResult replicaResult);
 
-        AggregatedClusterStatistic GetPenalizedAndSmoothedStatistic(DateTime currentTime, AggregatedClusterStatistic previous);
+        AggregatedClusterStatistic GetPenalizedAndSmoothedStatistic(DateTime currentTime, AggregatedClusterStatistic previous, int penaltyMultiplier, TimeSpan smoothingConstant);
     }
 }

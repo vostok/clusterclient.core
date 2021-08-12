@@ -11,12 +11,13 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
     public class RawClusterStatistic_Tests
     {
         private RawClusterStatistic rawClusterStatistic;
+        private readonly TimeSpan smoothingConstant = 1.Seconds();
         private const int PenaltyMultiplier = 50;
 
         [SetUp]
         public void SetUp()
         {
-            rawClusterStatistic = new RawClusterStatistic(1.Seconds(), PenaltyMultiplier);
+            rawClusterStatistic = new RawClusterStatistic();
         }
 
         [Test]
@@ -27,7 +28,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             rawClusterStatistic.Report(Accepted(replica, 1325));
             rawClusterStatistic.Report(Accepted(replica, 525));
             
-            var penalty = rawClusterStatistic.CalculatePenalty();
+            var penalty = rawClusterStatistic.CalculatePenalty(PenaltyMultiplier);
 
             penalty.Should().BeApproximately(25602.715, 0.001);
         }
@@ -40,7 +41,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
 
             rawClusterStatistic.Report(Accepted(replica, 125));
             rawClusterStatistic.Report(Accepted(replica, 1325));
-            var snapshot = rawClusterStatistic.GetPenalizedAndSmoothedStatistic(timestamp, null);
+            var snapshot = rawClusterStatistic.GetPenalizedAndSmoothedStatistic(timestamp, null, PenaltyMultiplier, smoothingConstant);
 
             snapshot.Replicas.Count.Should().Be(1);
             snapshot.Replicas[replica].Mean.Should().NotBeApproximately(0, 0.001);
@@ -56,7 +57,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
 
             rawClusterStatistic.Report(Accepted(replica, 125));
             rawClusterStatistic.Report(Accepted(replica, 1325));
-            var snapshot = rawClusterStatistic.GetPenalizedAndSmoothedStatistic(timestamp, null);
+            var snapshot = rawClusterStatistic.GetPenalizedAndSmoothedStatistic(timestamp, null, PenaltyMultiplier, smoothingConstant);
 
             snapshot.Cluster.Mean.Should().NotBeApproximately(0, 0.001);
             snapshot.Cluster.StdDev.Should().NotBeApproximately(0, 0.001);

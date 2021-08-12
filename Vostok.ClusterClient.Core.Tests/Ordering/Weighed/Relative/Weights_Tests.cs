@@ -21,7 +21,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
             {
                 WeightsTTL = 1.Hours()
             };
-            weights = new Weights(settings);
+            weights = new Weights();
         }
 
         [Test]
@@ -34,10 +34,10 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [new Uri("http://replica3")] = new Weight(0.1, DateTime.UtcNow + 10.Seconds())
             };
             
-            weights.Update(newWeights);
+            weights.Update(newWeights, settings);
 
             foreach (var p in newWeights)
-                weights.Get(p.Key).Should().Be(p.Value);
+                weights.Get(p.Key, settings.WeightsTTL).Should().Be(p.Value);
         }
 
         [Test]
@@ -53,21 +53,21 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [replica3] = new Weight(0.1, DateTime.UtcNow - 10.Seconds())
             };
 
-            weights.Update(newWeights);
+            weights.Update(newWeights, settings);
 
             foreach (var p in newWeights)
-                weights.Get(p.Key).Should().Be(p.Value);
+                weights.Get(p.Key, settings.WeightsTTL).Should().Be(p.Value);
             
             var newWeights2 = new Dictionary<Uri, Weight>()
             {
                 [replica2] = new Weight(11, DateTime.UtcNow)
             };
 
-            weights.Update(newWeights2);
+            weights.Update(newWeights2, settings);
 
-            weights.Get(replica1).Should().Be(newWeights[replica1]);
-            weights.Get(replica2).Should().Be(newWeights2[replica2]);
-            weights.Get(replica3).Should().Be(newWeights[replica3]);
+            weights.Get(replica1, settings.WeightsTTL).Should().Be(newWeights[replica1]);
+            weights.Get(replica2, settings.WeightsTTL).Should().Be(newWeights2[replica2]);
+            weights.Get(replica3, settings.WeightsTTL).Should().Be(newWeights[replica3]);
         }
 
         [Test]
@@ -80,16 +80,16 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [replica] = new Weight(0.7, DateTime.UtcNow - 100.Milliseconds()),
             };
             
-            weights.Update(newWeights);
+            weights.Update(newWeights, settings);
             Thread.Sleep(100);
 
-            weights.Get(replica).Should().BeNull();
+            weights.Get(replica, settings.WeightsTTL).Should().BeNull();
         }
 
         [Test]
         public void Should_return_null_if_not_present()
         {
-            weights.Get(new Uri("http://r1")).Should().BeNull();
+            weights.Get(new Uri("http://r1"), settings.WeightsTTL).Should().BeNull();
         }
 
         [Test]
@@ -111,32 +111,32 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
                 [replica4] = weight4,
                 [replica5] = weight5
             };
-            weights.Update(currentWeights);
+            weights.Update(currentWeights, settings);
 
             weights.Update(new Dictionary<Uri, Weight>()
             {
                 [replica1] = new Weight(0.8, DateTime.UtcNow)
-            });
+            }, settings);
 
-            var weightForReplica1 = weights.Get(replica1);
+            var weightForReplica1 = weights.Get(replica1, settings.WeightsTTL);
             weightForReplica1.Should().NotBeNull();
             weightForReplica1.Value.Value.Should().Be(0.8);
 
-            var weightForReplica2 = weights.Get(replica2);
+            var weightForReplica2 = weights.Get(replica2, settings.WeightsTTL);
             weightForReplica2.Should().NotBeNull();
             weightForReplica2.Value.Value.Should().BeApproximately(0.2, 0.001);
             weightForReplica2.Value.Timestamp.Should().Be(weight2.Timestamp);
 
-            var weightForReplica3 = weights.Get(replica3);
+            var weightForReplica3 = weights.Get(replica3, settings.WeightsTTL);
             weightForReplica3.Should().NotBeNull();
             weightForReplica3.Value.Value.Should().BeApproximately(0.3, 0.001);
             weightForReplica3.Value.Timestamp.Should().Be(weight3.Timestamp);
 
-            var weightForReplica4 = weights.Get(replica4);
+            var weightForReplica4 = weights.Get(replica4, settings.WeightsTTL);
             weightForReplica4.Should().NotBeNull();
             weightForReplica4.Value.Should().Be(weight4);
 
-            var weightForReplica5 = weights.Get(replica5);
+            var weightForReplica5 = weights.Get(replica5, settings.WeightsTTL);
             weightForReplica5.Should().NotBeNull();
             weightForReplica5.Value.Value.Should().BeApproximately(1.0, 0.001);
             weightForReplica5.Value.Timestamp.Should().Be(weight5.Timestamp);

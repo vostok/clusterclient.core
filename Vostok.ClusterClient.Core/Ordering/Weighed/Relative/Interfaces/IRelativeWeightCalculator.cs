@@ -2,6 +2,6 @@
 {
     internal interface IRelativeWeightCalculator
     {
-        Weight Calculate(in AggregatedStatistic clusterAggregatedStatistic, in AggregatedStatistic replicaAggregatedStatistic, in Weight previousWeight);
+        Weight Calculate(in AggregatedStatistic clusterAggregatedStatistic, in AggregatedStatistic replicaAggregatedStatistic, in Weight previousWeight, RelativeWeightSettings settings);
     }
 }

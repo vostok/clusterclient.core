@@ -12,7 +12,7 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed.Relative
         [SetUp]
         public void SetUp()
         {
-            clusterState = new ClusterState(new RelativeWeightSettings());
+            clusterState = new ClusterState();
         }
 
         [Test]
