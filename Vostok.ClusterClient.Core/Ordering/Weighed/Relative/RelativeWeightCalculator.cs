@@ -7,7 +7,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
     {
         public Weight Calculate(in AggregatedStatistic clusterAggregatedStatistic, in AggregatedStatistic replicaAggregatedStatistic, in Weight previousWeight, RelativeWeightSettings settings)
         {
-            var weightByStatuses = clusterAggregatedStatistic.TotalCount / settings.WeightUpdatePeriod.TotalSeconds <= settings.WeightByStatusesRpsThreshold;
+            var weightByStatuses = settings.WeightsByStatuses || clusterAggregatedStatistic.TotalCount / settings.WeightUpdatePeriod.TotalSeconds <= settings.WeightByStatusesRpsThreshold;
             var rawWeight = weightByStatuses
                 ? WeighingHelper.ComputeWeightByStatuses(replicaAggregatedStatistic.TotalCount, replicaAggregatedStatistic.ErrorFraction, clusterAggregatedStatistic.TotalCount, clusterAggregatedStatistic.ErrorFraction, settings.Sensitivity)
                 : WeighingHelper.ComputeWeightByLatency(replicaAggregatedStatistic.Mean, replicaAggregatedStatistic.StdDev, clusterAggregatedStatistic.Mean, clusterAggregatedStatistic.StdDev, settings.Sensitivity);

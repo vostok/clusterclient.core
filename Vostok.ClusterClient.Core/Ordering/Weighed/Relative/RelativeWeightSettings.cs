@@ -6,6 +6,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
     [PublicAPI]
     public class RelativeWeightSettings
     {
+        public bool WeightsByStatuses = false;
         public int PenaltyMultiplier = 100;
         public double MinWeight = 0.001;
         public double InitialWeight = 1;
