@@ -143,8 +143,8 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         
         private void LogWeights(IWeights oldWeights, IReadOnlyDictionary<Uri, Weight> newWeights)
         {
-            const double significantWeightChange = 0.1;
-            const double degradedWeightBorder = 0.7;
+            var significantWeightChange = settings.SignificantWeightChangeToLog;
+            var degradedWeightBorder = settings.DegradedWeightBorderToLog;
             foreach (var (replica, newWeight) in newWeights)
             {
                 var previousWeight = oldWeights.Get(replica, settings.WeightsTTL)?.Value ?? settings.InitialWeight;
