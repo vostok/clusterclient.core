@@ -1,3 +1,9 @@
+## 0.1.35 (17.08.2021)
+
+`RelativeWeightsModifier`: fix bug when RelativeWeightSettings were cached in ClusterState.
+`RelativeWeightsModifier`: fix bug when weights changes not logged.
+`RelativeWeightsSettings`: add new settings.
+
 ## 0.1.34 (04.08.2021)
 
 BREAKING CHANGE. Removed `Dont-Fork` header because another following mechanic was invented. It is expected that no one except drive used the header so it must be safe to remove it.
