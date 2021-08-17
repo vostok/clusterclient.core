@@ -6,6 +6,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
     [PublicAPI]
     public class RelativeWeightSettings
     {
+        public bool WeightsOnlyByStatuses = false;
         public int PenaltyMultiplier = 100;
         public double MinWeight = 0.001;
         public double InitialWeight = 1;
@@ -19,5 +20,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         public TimeSpan StatisticSmoothingConstant = TimeSpan.FromSeconds(1);
         public TimeSpan WeightsDownSmoothingConstant = TimeSpan.FromSeconds(1);
         public TimeSpan WeightsRaiseSmoothingConstant = TimeSpan.FromMinutes(1);
+        public double SignificantWeightChangeToLog = 0.1;
+        public double DegradedWeightBorderToLog = 0.7;
     }
 }

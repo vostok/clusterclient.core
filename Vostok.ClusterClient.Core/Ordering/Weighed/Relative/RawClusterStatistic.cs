@@ -9,17 +9,11 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
     internal class RawClusterStatistic : IRawClusterStatistic
     {
-        private readonly TimeSpan smoothingConstant;
-        private readonly int penaltyMultiplier;
-
         private readonly StatisticBucket clusterStatistic;
         private readonly ConcurrentDictionary<Uri, StatisticBucket> replicasStatistic;
 
-        public RawClusterStatistic(TimeSpan smoothingConstant, int penaltyMultiplier)
+        public RawClusterStatistic()
         {
-            this.smoothingConstant = smoothingConstant;
-            this.penaltyMultiplier = penaltyMultiplier;
-
             clusterStatistic = new StatisticBucket();
             replicasStatistic = new ConcurrentDictionary<Uri, StatisticBucket>();
         }
@@ -34,9 +28,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
                 .Report(result);
         }
 
-        public AggregatedClusterStatistic GetPenalizedAndSmoothedStatistic(DateTime currentTime, AggregatedClusterStatistic previous)
+        public AggregatedClusterStatistic GetPenalizedAndSmoothedStatistic(DateTime currentTime, AggregatedClusterStatistic previous, int penaltyMultiplier, TimeSpan smoothingConstant)
         {
-            var penalty = CalculatePenalty();
+            var penalty = CalculatePenalty(penaltyMultiplier);
 
             var smoothedAggregatedClusterStatistic = clusterStatistic
                 .Penalize(penalty)
@@ -63,7 +57,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             }
         }
 
-        internal double CalculatePenalty()
+        internal double CalculatePenalty(int penaltyMultiplier)
         {
             var globalStat = clusterStatistic.Aggregate(DateTime.UtcNow);
             return globalStat.Mean + globalStat.StdDev * penaltyMultiplier;

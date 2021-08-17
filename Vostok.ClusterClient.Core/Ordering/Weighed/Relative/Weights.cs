@@ -9,21 +9,17 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
     internal class Weights : IWeights
     {
-        private readonly RelativeWeightSettings settings;
         private volatile Dictionary<Uri, Weight> currentWeights =
             new Dictionary<Uri, Weight>();
 
-        public Weights(RelativeWeightSettings settings) =>
-            this.settings = settings;
-
-        public Weight? Get(Uri replica) =>
+        public Weight? Get(Uri replica, TimeSpan weightsTTL) =>
             currentWeights.TryGetValue(replica, out var weight)
-                ? DateTime.UtcNow - weight.Timestamp <= settings.WeightsTTL
+                ? DateTime.UtcNow - weight.Timestamp <= weightsTTL
                     ? weight
                     : (Weight?)null
                 : null;
 
-        public void Update(IReadOnlyDictionary<Uri, Weight> updatedWeights)
+        public void Update(IReadOnlyDictionary<Uri, Weight> updatedWeights, RelativeWeightSettings settings)
         {
             var newReplicas = new HashSet<Uri>(updatedWeights.Select(p => p.Key));
             var newWeights = new Dictionary<Uri, Weight>(updatedWeights.Count);
@@ -38,7 +34,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
                 }
 
                 if (currentTime - currentWeight.Timestamp < settings.WeightsTTL)
-                    newWeights[currentReplica] = ApplyRegenerationIfNeed(currentWeight);
+                    newWeights[currentReplica] = ApplyRegenerationIfNeed(currentWeight, settings);
             }
 
             foreach (var newReplica in newReplicas)
@@ -47,7 +43,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             currentWeights = newWeights;
         }
 
-        private Weight ApplyRegenerationIfNeed(Weight weight)
+        private Weight ApplyRegenerationIfNeed(Weight weight, RelativeWeightSettings settings)
         {
             var ageMinutes = (DateTime.UtcNow - weight.Timestamp).TotalMinutes;
             ageMinutes = Math.Max(0, ageMinutes - settings.RegenerationLag.TotalMinutes);
