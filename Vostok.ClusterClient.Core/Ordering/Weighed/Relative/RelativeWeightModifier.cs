@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
@@ -50,7 +49,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             
             ModifyClusterWeightsIfNeed(clusterState);
 
-            weight = ModifyAndApplyLimits(weight, clusterState.Weights.Get(replica));
+            weight = ModifyAndApplyLimits(weight, clusterState.Weights.Get(replica, settings.WeightsTTL));
         }
 
         /// <inheritdoc />
@@ -71,14 +70,16 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 
                 var aggregatedClusterStatistic = clusterState
                     .SwapToNewRawStatistic()
-                    .GetPenalizedAndSmoothedStatistic(currentTime, clusterState.StatisticHistory.Get());
+                    .GetPenalizedAndSmoothedStatistic(currentTime, clusterState.StatisticHistory.Get(),
+                        settings.PenaltyMultiplier, 
+                        settings.StatisticSmoothingConstant);
                 
                 ModifyWeights(aggregatedClusterStatistic, 
                     clusterState.RelativeWeightCalculator,
                     clusterState.WeightsNormalizer,
                     clusterState.Weights);
 
-                clusterState.StatisticHistory.Update(aggregatedClusterStatistic);
+                clusterState.StatisticHistory.Update(aggregatedClusterStatistic, settings.StatisticTTL);
             }
             finally
             {
@@ -98,11 +99,11 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             var relativeMaxWeight = 0d;
             foreach (var (replica, replicaStatistic) in aggregatedClusterStatistic.Replicas)
             {
-                var previousWeight = weights.Get(replica) ??
+                var previousWeight = weights.Get(replica, settings.WeightsTTL) ??
                                      new Weight(settings.InitialWeight, statisticCollectedTimestamp - settings.WeightUpdatePeriod);
                 
                 var newReplicaWeight = relativeWeightCalculator
-                    .Calculate(aggregatedClusterStatistic.Cluster, replicaStatistic, previousWeight);
+                    .Calculate(aggregatedClusterStatistic.Cluster, replicaStatistic, previousWeight, settings);
                 
                 newWeights.Add(replica, newReplicaWeight);
 
@@ -111,9 +112,10 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             }
             
             weightsNormalizer.Normalize(newWeights, relativeMaxWeight);
-            weights.Update(newWeights);
-            
+
             LogWeights(weights, newWeights);
+
+            weights.Update(newWeights, settings);
         }
 
         private double ModifyAndApplyLimits(double externalWeight, Weight? relativeWeight)
@@ -137,15 +139,15 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             $"{nameof(RelativeWeightModifier)}_{environment}_{service}";
 
         private ClusterState CreateClusterState() =>
-            new ClusterState(settings);
+            new ClusterState();
         
-        private void LogWeights(IWeights oldWeights, Dictionary<Uri, Weight> newWeights)
+        private void LogWeights(IWeights oldWeights, IReadOnlyDictionary<Uri, Weight> newWeights)
         {
-            const double significantWeightChange = 0.1;
-            const double degradedWeightBorder = 0.7;
+            var significantWeightChange = settings.SignificantWeightChangeToLog;
+            var degradedWeightBorder = settings.DegradedWeightBorderToLog;
             foreach (var (replica, newWeight) in newWeights)
             {
-                var previousWeight = oldWeights.Get(replica)?.Value ?? settings.InitialWeight;
+                var previousWeight = oldWeights.Get(replica, settings.WeightsTTL)?.Value ?? settings.InitialWeight;
 
                 if (Math.Abs(previousWeight - newWeight.Value) > significantWeightChange ||
                     previousWeight > degradedWeightBorder && newWeight.Value < degradedWeightBorder)

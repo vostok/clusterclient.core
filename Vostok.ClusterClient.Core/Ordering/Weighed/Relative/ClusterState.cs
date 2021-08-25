@@ -7,8 +7,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 {
     internal class ClusterState
     {
-        private readonly RelativeWeightSettings settings;
-        
         public AtomicBoolean IsUpdatingNow { get; }
         public DateTime LastUpdateTimestamp { get;  set; }
         public ITimeProvider TimeProvider { get; }
@@ -19,7 +17,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         public IWeights Weights { get; }
         
         public ClusterState(
-            RelativeWeightSettings settings,
             IRelativeWeightCalculator relativeWeightCalculator = null,
             IRawClusterStatistic rawClusterStatistic = null,
             ITimeProvider timeProvider = null,
@@ -27,15 +24,13 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             IWeightsNormalizer weightsNormalizer = null,
             IWeights weights = null)
         {
-            this.settings = settings;
-            
             IsUpdatingNow = new AtomicBoolean(false);
             TimeProvider = timeProvider ?? new TimeProvider();
-            RelativeWeightCalculator = relativeWeightCalculator ?? new RelativeWeightCalculator(settings);
-            Weights = weights ?? new Weights(settings);
+            RelativeWeightCalculator = relativeWeightCalculator ?? new RelativeWeightCalculator();
+            Weights = weights ?? new Weights();
             WeightsNormalizer = weightsNormalizer ?? new WeightsNormalizer();
-            CurrentStatistic = rawClusterStatistic ?? new RawClusterStatistic(settings.StatisticSmoothingConstant, settings.PenaltyMultiplier);
-            StatisticHistory = statisticHistory ?? new StatisticsHistory(settings.StatisticTTL);
+            CurrentStatistic = rawClusterStatistic ?? new RawClusterStatistic();
+            StatisticHistory = statisticHistory ?? new StatisticsHistory();
 
             LastUpdateTimestamp = TimeProvider.GetCurrentTime();
         }
@@ -44,7 +39,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         {
             var previousRawStatistic = CurrentStatistic;
 
-            CurrentStatistic = new RawClusterStatistic(settings.StatisticSmoothingConstant, settings.PenaltyMultiplier);
+            CurrentStatistic = new RawClusterStatistic();
 
             return previousRawStatistic;
         }
