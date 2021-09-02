@@ -93,7 +93,7 @@ namespace Vostok.Clusterclient.Core.Strategies
             if (budget.HasExpired)
                 return;
 
-            if (request.ContainsAlreadyUsedStream())
+            if (request.ContainsAlreadyUsedStream() || request.ContainsAlreadyUsedContent())
                 return;
 
             if (replicas.MoveNext())

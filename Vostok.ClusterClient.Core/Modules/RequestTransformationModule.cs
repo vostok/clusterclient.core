@@ -37,6 +37,7 @@ namespace Vostok.Clusterclient.Core.Modules
             }
 
             SubstituteStreamContent(context);
+            SubstituteContentProducer(context);
 
             return await next(context).ConfigureAwait(false);
         }
@@ -46,6 +47,13 @@ namespace Vostok.Clusterclient.Core.Modules
             var streamContent = context.Request.StreamContent;
             if (streamContent != null)
                 context.Request = context.Request.WithContent(new SingleUseStreamContent(streamContent.Stream, streamContent.Length));
+        }
+
+        private static void SubstituteContentProducer(IRequestContext context)
+        {
+            var contentProducer = context.Request.ContentProducer;
+            if (contentProducer != null)
+                context.Request = context.Request.WithContent(new UserContentProducerWrapper(contentProducer));
         }
     }
 }

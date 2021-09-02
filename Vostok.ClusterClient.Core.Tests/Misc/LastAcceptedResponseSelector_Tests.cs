@@ -81,12 +81,13 @@ namespace Vostok.Clusterclient.Core.Tests.Misc
             selector.Select(null, null, results).Should().BeSameAs(results.Last().Response);
         }
 
-        [Test]
-        public void Should_avoid_choosing_stream_reuse_failure_responses_when_there_are_others()
+        [TestCase(ResponseCode.StreamReuseFailure)]
+        [TestCase(ResponseCode.ContentReuseFailure)]
+        public void Should_avoid_choosing_reuse_failure_responses_when_there_are_others(ResponseCode failureCode)
         {
-            results.Add(CreateResult(ResponseVerdict.Reject, ResponseCode.StreamReuseFailure));
+            results.Add(CreateResult(ResponseVerdict.Reject, failureCode));
             results.Add(CreateResult(ResponseVerdict.Reject));
-            results.Add(CreateResult(ResponseVerdict.Reject, ResponseCode.StreamReuseFailure));
+            results.Add(CreateResult(ResponseVerdict.Reject, failureCode));
 
             selector.Select(null, null, results).Should().BeSameAs(results[1].Response);
         }

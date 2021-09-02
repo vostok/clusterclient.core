@@ -15,7 +15,7 @@ namespace Vostok.Clusterclient.Core.Model
         Stream Stream { get; }
 
         /// <summary>
-        /// A response body length. If value is provided, it will be used for <see cref="HeaderNames.ContentLength"/> header.
+        /// A request body length. If value is provided, it will be used for <see cref="HeaderNames.ContentLength"/> header.
         /// </summary>
         long? Length { get; }
     }

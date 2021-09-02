@@ -17,7 +17,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive
         public AdaptiveHealthAction SelectAction(ReplicaResult result)
         {
             if (result.Response.Code == ResponseCode.StreamReuseFailure ||
-                result.Response.Code == ResponseCode.StreamInputFailure)
+                result.Response.Code == ResponseCode.StreamInputFailure ||
+                result.Response.Code == ResponseCode.ContentInputFailure ||
+                result.Response.Code == ResponseCode.ContentReuseFailure)
                 return AdaptiveHealthAction.DontTouch;
 
             switch (result.Verdict)

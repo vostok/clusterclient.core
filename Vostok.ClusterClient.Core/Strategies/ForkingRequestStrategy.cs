@@ -76,7 +76,7 @@ namespace Vostok.Clusterclient.Core.Strategies
                         if (budget.HasExpired)
                             break;
 
-                        if (request.ContainsAlreadyUsedStream())
+                        if (request.ContainsAlreadyUsedStream() || request.ContainsAlreadyUsedContent())
                             break;
 
                         var connectionAttemptTimeout = i == replicasCount - 1 ? null : parameters.ConnectionTimeout;

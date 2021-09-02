@@ -1,3 +1,7 @@
+## 0.1.36 (02.09.2021)
+
+`IContentProducer`: add new mechanic which enables user to produce content into request stream in a custom manner.
+
 ## 0.1.35 (17.08.2021)
 
 `RelativeWeightsModifier`: fix bug when RelativeWeightSettings were cached in ClusterState.

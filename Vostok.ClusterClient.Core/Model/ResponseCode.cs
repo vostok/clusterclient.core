@@ -101,6 +101,16 @@ namespace Vostok.Clusterclient.Core.Model
         /// </summary>
         StreamInputFailure = 456,
 
+        /// <summary>
+        /// Represents inability to send request due to body content producer being already used.
+        /// </summary>
+        ContentReuseFailure = 457,
+
+        /// <summary>
+        /// Represents a failure to read request body data from user-provided content producer.
+        /// </summary>
+        ContentInputFailure = 458,
+
         // (iloktionov): Server error 5xx
         InternalServerError = 500,
         NotImplemented = 501,

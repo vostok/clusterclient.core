@@ -29,7 +29,8 @@ namespace Vostok.Clusterclient.Core.Misc
         private static Response GetLastKnownResponse(IList<ReplicaResult> results) =>
             results.LastOrDefault(
                     result => result.Response.Code != ResponseCode.Unknown &&
-                              result.Response.Code != ResponseCode.StreamReuseFailure)
+                              result.Response.Code != ResponseCode.StreamReuseFailure &&
+                              result.Response.Code != ResponseCode.ContentReuseFailure)
                 ?.Response;
 
         private static Response GetLastResponse(IList<ReplicaResult> results) =>
