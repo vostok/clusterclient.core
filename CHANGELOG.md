@@ -1,3 +1,7 @@
+## 0.1.37 (21.09.2021)
+
+Updated `EnvironmentInfo.Application` from `vostok.commons.environment` module.
+
 ## 0.1.36 (02.09.2021)
 
 `IContentProducer`: add new mechanic which enables user to produce content into request stream in a custom manner.
