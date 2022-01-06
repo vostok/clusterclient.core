@@ -17,6 +17,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
     [PublicAPI]
     public class RelativeWeightModifier : IReplicaWeightModifier
     {
+        private static readonly Func<ClusterState> ClusterStateFactory = () => new ClusterState();
         private readonly ILog log;
         private readonly IGlobalStorageProvider globalStorageProvider;
         private readonly RelativeWeightSettings settings;
@@ -45,7 +46,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
         /// <inheritdoc />
         public void Modify(Uri replica, IList<Uri> allReplicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, ref double weight)
         {
-            var clusterState = globalStorageProvider.ObtainGlobalValue(storageKey, CreateClusterState);
+            var clusterState = globalStorageProvider.ObtainGlobalValue(storageKey, ClusterStateFactory);
             
             ModifyClusterWeightsIfNeed(clusterState);
 
@@ -54,7 +55,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 
         /// <inheritdoc />
         public void Learn(ReplicaResult result, IReplicaStorageProvider storageProvider) =>
-            globalStorageProvider.ObtainGlobalValue(storageKey, CreateClusterState).CurrentStatistic.Report(result);
+            globalStorageProvider.ObtainGlobalValue(storageKey, ClusterStateFactory).CurrentStatistic.Report(result);
 
         private void ModifyClusterWeightsIfNeed(ClusterState clusterState)
         {
@@ -137,9 +138,6 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
 
         private string CreateStorageKey(string service, string environment) =>
             $"{nameof(RelativeWeightModifier)}_{environment}_{service}";
-
-        private ClusterState CreateClusterState() =>
-            new ClusterState();
         
         private void LogWeights(IWeights oldWeights, IReadOnlyDictionary<Uri, Weight> newWeights)
         {
