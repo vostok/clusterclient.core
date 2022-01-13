@@ -1,3 +1,7 @@
+## 0.1.40 (13-01-2022):
+
+Reduced memory traffic and added several optimizations (some .Net 6 only) around weights handling.
+
 ## 0.1.39 (06-12-2021):
 
 Added `net6.0` target.
