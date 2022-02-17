@@ -7,7 +7,6 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Ordering.Storage;
 using Vostok.Commons.Collections;
 using Vostok.Commons.Threading;
-// ReSharper disable ForCanBeConvertedToForeach
 
 namespace Vostok.Clusterclient.Core.Ordering.Weighed
 {
@@ -85,9 +84,8 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
 
             var count = 0;
             var weightsSum = 0.0;
-            for (var i = 0; i < replicas.Count; i++)
+            foreach (var replica in replicas)
             {
-                var replica = replicas[i];
                 var weight = weightCalculator.GetWeight(replica, replicas, storageProvider, request, parameters);
                 if (weight < 0.0)
                     throw new BugcheckException($"A negative weight has been calculated for replica '{replica}': {weight}.");
