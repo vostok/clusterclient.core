@@ -30,7 +30,7 @@ public class WeighedReplicaOrdering_Benchmarks
     [Params(true, false)]
     public bool UseNew { get; set; }
     
-    [Params(10, 20, 30)]
+    [Params(1, 3, 5, 10, 20, 30)]
     public int TotalReplicas { get; set; }
 
     [Params(1, 2, 3, 4, 5, 10)]
@@ -55,9 +55,12 @@ public class WeighedReplicaOrdering_Benchmarks
         parameters = new RequestParameters();
     }
 
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public void Select()
     {
+        if (SelectReplicas > TotalReplicas)
+            return;
+        
         var ordered = ordering.Order(replicas, storageProvider, request, parameters);
         using var replicasEnumerator = ordered.GetEnumerator();
         for (var i = 0; i < SelectReplicas; i++)
