@@ -26,7 +26,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
     {
         private const int PooledArraySize = 25;
 
-        private static readonly UnboundedObjectPool<TreeNode[]> TreeArrays = new(() => new TreeNode[PooledArraySize]);
+        private static readonly UnboundedObjectPool<ArrayElement[]> Arrays = new(() => new ArrayElement[PooledArraySize]);
 
         private readonly IList<IReplicaWeightModifier> modifiers;
         private readonly IReplicaWeightCalculator weightCalculator;
@@ -66,23 +66,23 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
                 return replicas;
 
             return replicas.Count > PooledArraySize 
-                ? OrderInternal(replicas, storageProvider, request, parameters, new TreeNode[replicas.Count]) 
+                ? OrderInternal(replicas, storageProvider, request, parameters, new ArrayElement[replicas.Count]) 
                 : OrderUsingPooledArray(replicas, storageProvider, request, parameters);
         }
 
         private IEnumerable<Uri> OrderUsingPooledArray(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters)
         {
-            using (TreeArrays.Acquire(out var treeArray))
-                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, treeArray))
+            using (Arrays.Acquire(out var array))
+                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, array))
                     yield return replica;
         }
 
-        private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, TreeNode[] tree)
+        private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, ArrayElement[] array)
         {
             List<Uri> replicasWithInfiniteWeight = null;
             List<Uri> replicasWithZeroWeight = null;
 
-            var treeReplicas = 0;
+            var count = 0;
             var weightsSum = 0.0;
             foreach (var replica in replicas)
             {
@@ -105,7 +105,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
                 }
 
                 // (iloktionov): Заполняем листовую ноду дерева:
-                tree[treeReplicas++] = new TreeNode
+                array[count++] = new ArrayElement
                 {
                     Exists = true,
                     Weight = weight,
@@ -123,12 +123,12 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
                     yield return replica;
             }
 
-            for (var i = 0; i < treeReplicas; i++)
+            for (var i = 0; i < count; i++)
             {
-                var replica = SelectReplicaFromTree(treeReplicas, tree, weightsSum);
-                yield return tree[replica].Replica;
-                tree[replica].Exists = false;
-                weightsSum -= tree[replica].Weight;
+                var replica = SelectReplicaFromArray(count, array, weightsSum);
+                yield return array[replica].Replica;
+                array[replica].Exists = false;
+                weightsSum -= array[replica].Weight;
             }
 
             // (iloktionov): Реплики с нулевым весом должны идти последними, при этом случайно переупорядочиваясь между собой:
@@ -141,16 +141,17 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
             }
         }
         
-        private static int SelectReplicaFromTree(int count, TreeNode[] tree, double weightsSum)
+        private static int SelectReplicaFromArray(int count, ArrayElement[] array, double weightsSum)
         {
             weightsSum *= ThreadSafeRandom.NextDouble();
             var result = -1;
             
+            // (kungurtsev): Даже если weightsSum = 0 мы должны вернуть ещё существующий элемент:
             for (var i = 0; i < count && (weightsSum > 0 || result == -1); i++)
             {
-                if (tree[i].Exists)
+                if (array[i].Exists)
                 {
-                    weightsSum -= tree[i].Weight;
+                    weightsSum -= array[i].Weight;
                     result = i;
                 }
             }
@@ -174,7 +175,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
             (replicas[i], replicas[j]) = (replicas[j], replicas[i]);
         }
 
-        private struct TreeNode
+        private struct ArrayElement
         {
             public bool Exists;
             public double Weight;
