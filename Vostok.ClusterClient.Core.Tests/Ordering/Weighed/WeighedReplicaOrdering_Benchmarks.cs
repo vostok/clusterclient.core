@@ -27,15 +27,15 @@ public class WeighedReplicaOrdering_Benchmarks
                 .WithOption(ConfigOptions.DisableOptimizationsValidator, true));
     }
 
+    [Params(1, 3, 5, 10, 20, 30, 100)]
+    public int TotalReplicas { get; set; }
+
+    [Params(1, 2, 3, 10, -1)]
+    public int SelectReplicas { get; set; }
+
     [Params(true, false)]
     public bool UseNew { get; set; }
     
-    [Params(1, 3, 5, 10, 20, 30)]
-    public int TotalReplicas { get; set; }
-
-    [Params(1, 2, 3, 4, 5, 10)]
-    public int SelectReplicas { get; set; }
-
     private Uri[] replicas;
     private IReplicaOrdering ordering;
     private IReplicaStorageProvider storageProvider;
@@ -45,6 +45,9 @@ public class WeighedReplicaOrdering_Benchmarks
     [GlobalSetup]
     public void SetUp()
     {
+        if (SelectReplicas == -1)
+            SelectReplicas = TotalReplicas;
+        
         ordering = UseNew
             ? new WeighedReplicaOrdering(new List<IReplicaWeightModifier>())
             : new WeighedReplicaOrderingOld(new List<IReplicaWeightModifier>());
