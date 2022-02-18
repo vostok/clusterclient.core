@@ -32,9 +32,6 @@ public class WeighedReplicaOrdering_Benchmarks
 
     [Params(1, 2, 3, 10, -1)]
     public int SelectReplicas { get; set; }
-
-    [Params(true, false)]
-    public bool UseNew { get; set; }
     
     private Uri[] replicas;
     private IReplicaOrdering ordering;
@@ -48,9 +45,7 @@ public class WeighedReplicaOrdering_Benchmarks
         if (SelectReplicas == -1)
             SelectReplicas = TotalReplicas;
         
-        ordering = UseNew
-            ? new WeighedReplicaOrdering(new List<IReplicaWeightModifier>())
-            : new WeighedReplicaOrderingOld(new List<IReplicaWeightModifier>());
+        ordering = new WeighedReplicaOrdering(new List<IReplicaWeightModifier>());
         
         replicas = Enumerable.Range(0, TotalReplicas).Select(j => new Uri($"http://foo/bar/{j}")).ToArray();
         storageProvider = new PerInstanceReplicaStorageProvider();
