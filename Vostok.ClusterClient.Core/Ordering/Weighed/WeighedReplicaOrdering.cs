@@ -73,8 +73,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         private IEnumerable<Uri> OrderUsingPooledArray(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters)
         {
             using (Arrays.Acquire(out var array))
-                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, array))
-                    yield return replica;
+                return OrderInternal(replicas, storageProvider, request, parameters, array);
         }
 
         private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, ArrayElement[] array)
@@ -157,7 +156,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
             }
             
             if (result == -1)
-                throw new BugcheckException("Result is -1. Surely, this is a bug in code.");
+                throw new BugcheckException("Did not succeed in selecting a replica. Surely, this is a bug in code.");
 
             return result;
         }
