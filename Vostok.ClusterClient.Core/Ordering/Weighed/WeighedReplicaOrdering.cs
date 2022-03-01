@@ -24,9 +24,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
     [PublicAPI]
     public class WeighedReplicaOrdering : IReplicaOrdering
     {
-        private const int PooledArraySize = 50;
+        private const int PooledArraySize = 25;
 
-        private static readonly UnboundedObjectPool<TreeNode[]> TreeArrays = new UnboundedObjectPool<TreeNode[]>(() => new TreeNode[PooledArraySize]);
+        private static readonly UnboundedObjectPool<ArrayElement[]> Arrays = new(() => new ArrayElement[PooledArraySize]);
 
         private readonly IList<IReplicaWeightModifier> modifiers;
         private readonly IReplicaWeightCalculator weightCalculator;
@@ -65,156 +65,54 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
             if (replicas.Count < 2)
                 return replicas;
 
-            var requiredCapacity = replicas.Count * 2 - 1;
-            if (requiredCapacity > PooledArraySize)
-                return OrderInternal(replicas, storageProvider, request, parameters, new TreeNode[requiredCapacity]);
-
-            return OrderUsingPooledArray(replicas, storageProvider, request, parameters);
-        }
-
-        private static void CleanupTree(TreeNode[] tree)
-        {
-            for (var i = 0; i < tree.Length; i++)
-            {
-                tree[i].Exists = false;
-                tree[i].Replica = null;
-                tree[i].Weight = 0;
-            }
-        }
-
-        private static Uri SelectReplicaFromTree(TreeNode[] tree)
-        {
-            var weightsSum = tree[0].Weight;
-            var randomPoint = ThreadSafeRandom.NextDouble() * weightsSum;
-            var index = 0;
-            var leftBehind = 0.0;
-
-            while (true)
-            {
-                var node = tree[index];
-                if (!node.Exists)
-                    throw new BugcheckException("Attempt to select a replica from empty tree. Surely, this is a bug in code.");
-
-                if (node.IsLeafNode)
-                {
-                    RemoveLeafFromTree(tree, index);
-                    return node.Replica;
-                }
-
-                var leftChildNode = GetLeftChildNodeIfExists(tree, index);
-                if (leftChildNode.HasValue && leftChildNode.Value.Weight >= randomPoint - leftBehind)
-                {
-                    index = GetLeftChildIndex(index);
-                    continue;
-                }
-
-                var rightChildNode = GetRightChildNodeIfExists(tree, index);
-                if (rightChildNode.HasValue)
-                {
-                    if (leftChildNode.HasValue)
-                        leftBehind += leftChildNode.Value.Weight;
-
-                    index = GetRightChildIndex(index);
-                    continue;
-                }
-
-                throw new BugcheckException("A non-leaf tree node does not have any children. Surely, this is a bug in code.");
-            }
-        }
-
-        private static void RemoveLeafFromTree(TreeNode[] tree, int index)
-        {
-            var leafWeight = tree[index].Weight;
-
-            tree[index].Exists = false;
-
-            // (iloktionov): После удаления листа необходимо сделать две вещи:
-            // (iloktionov): 1. Вычесть его вес по цепочке вверх вплоть до корня дерева.
-            // (iloktionov): 2. Удалить все промежуточные ноды, которые теперь не связаны с листьями.
-            while (index > 0)
-            {
-                index = GetParentIndex(index);
-
-                tree[index].Weight -= leafWeight;
-
-                if (GetLeftChildNodeIfExists(tree, index).HasValue)
-                    continue;
-
-                if (GetRightChildNodeIfExists(tree, index).HasValue)
-                    continue;
-
-                tree[index].Exists = false;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TreeNode? GetLeftChildNodeIfExists(TreeNode[] tree, int parentIndex)
-        {
-            var leftChildIndex = GetLeftChildIndex(parentIndex);
-            if (leftChildIndex >= tree.Length)
-                return null;
-
-            var leftChildNode = tree[leftChildIndex];
-            if (leftChildNode.Exists)
-                return leftChildNode;
-
-            return null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TreeNode? GetRightChildNodeIfExists(TreeNode[] tree, int parentIndex)
-        {
-            var rightChildIndex = GetRightChildIndex(parentIndex);
-            if (rightChildIndex >= tree.Length)
-                return null;
-
-            var rightChildNode = tree[rightChildIndex];
-            if (rightChildNode.Exists)
-                return rightChildNode;
-
-            return null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetParentIndex(int childIndex) => (childIndex - 1) / 2;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetLeftChildIndex(int parentIndex) => parentIndex * 2 + 1;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetRightChildIndex(int parentIndex) => parentIndex * 2 + 2;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Shuffle(List<Uri> replicas)
-        {
-            for (var i = 0; i < replicas.Count - 1; i++)
-                Swap(replicas, i, ThreadSafeRandom.Next(i, replicas.Count));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Swap(List<Uri> replicas, int i, int j)
-        {
-            var temp = replicas[i];
-            replicas[i] = replicas[j];
-            replicas[j] = temp;
+            return replicas.Count > PooledArraySize 
+                ? OrderInternal(replicas, storageProvider, request, parameters, new ArrayElement[replicas.Count]) 
+                : OrderUsingPooledArray(replicas, storageProvider, request, parameters);
         }
 
         private IEnumerable<Uri> OrderUsingPooledArray(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters)
         {
-            using (TreeArrays.Acquire(out var treeArray))
-                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, treeArray))
+            using (Arrays.Acquire(out var array))
+                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, array))
                     yield return replica;
         }
 
-        private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, TreeNode[] tree)
+        private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, ArrayElement[] array)
         {
-            var replicasWithInfiniteWeight = null as List<Uri>;
-            var replicasWithZeroWeight = null as List<Uri>;
+            List<Uri> replicasWithInfiniteWeight = null;
+            List<Uri> replicasWithZeroWeight = null;
 
-            CleanupTree(tree);
+            var count = 0;
+            var weightsSum = 0.0;
+            foreach (var replica in replicas)
+            {
+                var weight = weightCalculator.GetWeight(replica, replicas, storageProvider, request, parameters);
+                if (weight < 0.0)
+                    throw new BugcheckException($"A negative weight has been calculated for replica '{replica}': {weight}.");
 
-            // (iloktionov): Построим суммирующее дерево отрезков, листьями в котором будут являться реплики со своими весами. В корне этого дерева будет сумма весов всех реплик. 
-            BuildTree(tree, replicas, storageProvider, request, parameters, ref replicasWithInfiniteWeight, ref replicasWithZeroWeight);
+                // (iloktionov): Бесконечности портят расчёты на дереве, поэтому они обрабатываются отдельно и не вставляются в него:
+                if (double.IsPositiveInfinity(weight))
+                {
+                    (replicasWithInfiniteWeight ??= new List<Uri>()).Add(replica);
+                    continue;
+                }
+
+                // (iloktionov): Чтобы избежать детерминированного упорядочивания реплик с нулевым весом, их тоже придётся рассмотреть отдельно:
+                if (weight < double.Epsilon)
+                {
+                    (replicasWithZeroWeight ??= new List<Uri>()).Add(replica);
+                    continue;
+                }
+
+                // (iloktionov): Заполняем листовую ноду дерева:
+                array[count++] = new ArrayElement
+                {
+                    Exists = true,
+                    Weight = weight,
+                    Replica = replica
+                };
+                weightsSum += weight;
+            }
 
             // (iloktionov): Реплики с бесконечным весом должны иметь безусловный приоритет, при этом случайно переупорядочиваясь между собой:
             if (replicasWithInfiniteWeight != null)
@@ -225,13 +123,13 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
                     yield return replica;
             }
 
-            var replicasToSelectFromTree = replicas.Count;
-
-            replicasToSelectFromTree -= replicasWithInfiniteWeight?.Count ?? 0;
-            replicasToSelectFromTree -= replicasWithZeroWeight?.Count ?? 0;
-
-            for (var i = 0; i < replicasToSelectFromTree; i++)
-                yield return SelectReplicaFromTree(tree);
+            for (var i = 0; i < count; i++)
+            {
+                var replica = SelectReplicaFromArray(count, array, weightsSum);
+                yield return array[replica].Replica;
+                array[replica].Exists = false;
+                weightsSum -= array[replica].Weight;
+            }
 
             // (iloktionov): Реплики с нулевым весом должны идти последними, при этом случайно переупорядочиваясь между собой:
             if (replicasWithZeroWeight != null)
@@ -242,90 +140,46 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
                     yield return replica;
             }
         }
-
-        private void BuildTree(
-            TreeNode[] tree,
-            IList<Uri> replicas,
-            IReplicaStorageProvider storageProvider,
-            Request request,
-            RequestParameters parameters,
-            ref List<Uri> replicasWithInfiniteWeight,
-            ref List<Uri> replicasWithZeroWeight)
+        
+        private static int SelectReplicaFromArray(int count, ArrayElement[] array, double weightsSum)
         {
-            var firstLeafIndex = FillLeaves(tree, replicas, storageProvider, request, parameters, 
-                ref replicasWithInfiniteWeight, ref replicasWithZeroWeight);
-
-            GetWeight(tree, 0, firstLeafIndex);
-        }
-
-        /// <summary>
-        /// Returns first leaf index.
-        /// </summary>
-        private int FillLeaves(
-            TreeNode[] tree,
-            IList<Uri> replicas,
-            IReplicaStorageProvider storageProvider,
-            Request request,
-            RequestParameters parameters,
-            ref List<Uri> replicasWithInfiniteWeight,
-            ref List<Uri> replicasWithZeroWeight)
-        {
-            var firstLeafIndex = replicas.Count - 1;
-            var currentLeafIndex = firstLeafIndex;
-
-            foreach (var replica in replicas)
+            weightsSum *= ThreadSafeRandom.NextDouble();
+            var result = -1;
+            
+            // (kungurtsev): Даже если weightsSum = 0 мы должны вернуть ещё существующий элемент:
+            for (var i = 0; i < count && (weightsSum > 0 || result == -1); i++)
             {
-                var weight = weightCalculator.GetWeight(replica, replicas, storageProvider, request, parameters);
-                if (weight < 0.0)
-                    throw new BugcheckException($"A negative weight has been calculated for replica '{replica}': {weight}.");
-
-                // (iloktionov): Бесконечности портят расчёты на дереве, поэтому они обрабатываются отдельно и не вставляются в него:
-                if (double.IsPositiveInfinity(weight))
+                if (array[i].Exists)
                 {
-                    (replicasWithInfiniteWeight ?? (replicasWithInfiniteWeight = new List<Uri>())).Add(replica);
-                    continue;
+                    weightsSum -= array[i].Weight;
+                    result = i;
                 }
-
-                // (iloktionov): Чтобы избежать детерминированного упорядочивания реплик с нулевым весом, их тоже придётся рассмотреть отдельно:
-                if (weight < double.Epsilon)
-                {
-                    (replicasWithZeroWeight ?? (replicasWithZeroWeight = new List<Uri>())).Add(replica);
-                    continue;
-                }
-
-                // (iloktionov): Заполняем листовую ноду дерева:
-                tree[currentLeafIndex++] = new TreeNode
-                {
-                    Exists = true,
-                    Weight = weight,
-                    Replica = replica
-                };
             }
+            
+            if (result == -1)
+                throw new BugcheckException("Did not succeed in selecting a replica. Surely, this is a bug in code.");
 
-            return firstLeafIndex;
+            return result;
         }
-
-        private static double GetWeight(TreeNode[] tree, int index, int firstLeafIndex)
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Shuffle(List<Uri> replicas)
         {
-            if (index >= firstLeafIndex)
-                return tree[index].Exists ? tree[index].Weight : 0;
-
-            var weight =
-                GetWeight(tree, GetLeftChildIndex(index), firstLeafIndex) +
-                GetWeight(tree, GetRightChildIndex(index), firstLeafIndex);
-
-            tree[index].Exists = true;
-            tree[index].Weight = weight;
-
-            return weight;
+            for (var i = 0; i < replicas.Count - 1; i++)
+                Swap(replicas, i, ThreadSafeRandom.Next(i, replicas.Count));
         }
 
-        private struct TreeNode
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void Swap(List<Uri> replicas, int i, int j)
+        {
+            (replicas[i], replicas[j]) = (replicas[j], replicas[i]);
+        }
+
+        private struct ArrayElement
         {
             public bool Exists;
             public double Weight;
             public Uri Replica;
-            public bool IsLeafNode => Replica != null;
         }
     }
 }

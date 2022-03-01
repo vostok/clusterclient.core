@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.4.1" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Vostok.ClusterClient.Core\Vostok.ClusterClient.Core.csproj" />
@@ -23,9 +24,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\vostok.logging.console\Vostok.Logging.Console\bin\Release\$(ReferencesFramework)\Vostok.Logging.Console.dll</HintPath>
     </Reference>
-    <Reference Include="Vostok.Commons.Testing">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\vostok.commons.testing\Vostok.Commons.Testing\bin\Release\$(ReferencesFramework)\Vostok.Commons.Testing.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\vostok.commons.testing\Vostok.Commons.Testing\*.cs" LinkBase="Commons\Testing\" />
   </ItemGroup>
 </Project>

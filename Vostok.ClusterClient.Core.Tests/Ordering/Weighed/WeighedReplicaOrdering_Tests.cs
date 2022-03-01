@@ -140,6 +140,47 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed
             distribution[replica4].Should().BeInRange(2500, 2800);
             distribution[replica5].Should().BeInRange(3200, 3500);
         }
+        
+        [Test]
+        public void Order_should_exhibit_a_linear_dependency_between_weights_and_the_probability_of_replica_being_chosen_second()
+        {
+            SetupWeight(replica1, 0.2);
+            SetupWeight(replica2, 0.4);
+            SetupWeight(replica3, 0.6);
+            SetupWeight(replica4, 0.8);
+            SetupWeight(replica5, 1.0);
+
+            var distribution = new Dictionary<Uri, double>();
+            var count = 10_000;
+            
+            for (var i = 0; i < count; i++)
+            {
+                // note (kungurtsev, 01.03.2022): forces replica2 to be extracted first
+                var ordered = Order().Take(2).ToList();
+                while (ordered[0] != replica2)
+                    ordered = Order().Take(2).ToList();
+
+                if (distribution.ContainsKey(ordered[1]))
+                {
+                    distribution[ordered[1]]++;
+                }
+                else
+                {
+                    distribution[ordered[1]] = 1;
+                }
+            }
+
+            distribution.Should().HaveCount(replicas.Length - 1);
+
+            var (p1, p3, p4, p5) = (distribution[replica1] / count, distribution[replica3] / count, distribution[replica4] / count, distribution[replica5] / count);
+
+            // note (kungurtsev, 01.03.2022): all replicas except replica2 should have corresponding probabilities
+            // 2.6 = 0.2 + 0.6 + 0.8 + 1.0
+            p1.Should().BeApproximately(0.2 / 2.6, 0.1);
+            p3.Should().BeApproximately(0.6 / 2.6, 0.1);
+            p4.Should().BeApproximately(0.8 / 2.6, 0.1);
+            p5.Should().BeApproximately(1.0 / 2.6, 0.1);
+        }
 
         [Test]
         public void Order_should_give_priority_to_replicas_with_infinite_weight()
