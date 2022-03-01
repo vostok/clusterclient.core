@@ -73,7 +73,8 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         private IEnumerable<Uri> OrderUsingPooledArray(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters)
         {
             using (Arrays.Acquire(out var array))
-                return OrderInternal(replicas, storageProvider, request, parameters, array);
+                foreach (var replica in OrderInternal(replicas, storageProvider, request, parameters, array))
+                    yield return replica;
         }
 
         private IEnumerable<Uri> OrderInternal(IList<Uri> replicas, IReplicaStorageProvider storageProvider, Request request, RequestParameters parameters, ArrayElement[] array)
