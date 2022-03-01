@@ -1,3 +1,8 @@
+## 0.1.41 (01-03-2022):
+
+Rewrote `WeighedReplicaOrdering`: now uses linear replica selection instead of logarithmic one.
+It is approximately 30% faster.
+
 ## 0.1.40 (13-01-2022):
 
 Reduced memory traffic and added several optimizations (some .Net 6 only) around weights handling.
