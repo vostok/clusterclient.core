@@ -107,6 +107,11 @@ namespace Vostok.Clusterclient.Core
         public const bool LogReplicaResults = true;
 
         /// <summary>
+        /// The default value of <see cref="LoggingOptions.LoggingMode"/>.
+        /// </summary>
+        public const LoggingMode LoggingMode = Misc.LoggingMode.Detailed;
+
+        /// <summary>
         /// The default value of <see cref="IClusterClientConfiguration.DeduplicateRequestUrl"/>.
         /// </summary>
         public const bool DeduplicateRequestUrl = false;

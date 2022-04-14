@@ -31,5 +31,8 @@ namespace Vostok.Clusterclient.Core.Misc
         /// <para>This parameter is optional and has a default value (see <see cref="ClusterClientDefaults.LogReplicaResults"/>).</para>
         /// </summary>
         public bool LogReplicaResults { get; set; } = ClusterClientDefaults.LogReplicaResults;
+
+        //TODO
+        public LoggingMode LoggingMode { get; set; } = LoggingMode.Detailed;
     }
 }

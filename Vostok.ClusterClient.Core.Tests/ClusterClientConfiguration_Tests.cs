@@ -148,6 +148,7 @@ namespace Vostok.Clusterclient.Core.Tests
             configuration.Logging.LogResultDetails.Should().BeTrue();
             configuration.Logging.LogReplicaRequests.Should().BeTrue();
             configuration.Logging.LogReplicaResults.Should().BeTrue();
+            configuration.Logging.LoggingMode.Should().Be(LoggingMode.Detailed);
         }
 
         [Test]
