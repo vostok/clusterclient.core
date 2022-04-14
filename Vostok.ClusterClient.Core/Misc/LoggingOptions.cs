@@ -32,7 +32,11 @@ namespace Vostok.Clusterclient.Core.Misc
         /// </summary>
         public bool LogReplicaResults { get; set; } = ClusterClientDefaults.LogReplicaResults;
 
-        //TODO
+        /// <summary>
+        /// If <see cref="Misc.LoggingMode.Detailed"/> is set, each message will be written individually according to the flags set.
+        /// If <see cref="Misc.LoggingMode.SingleShortMessage"/> is set, only one short message about communication with the cluster will be logged.
+        /// If <see cref="Misc.LoggingMode.SingleVerboseMessage"/> is set, only one detailed message about communication with the cluster will be logged with the results from each replica.
+        /// </summary>
         public LoggingMode LoggingMode { get; set; } = LoggingMode.Detailed;
     }
 }
