@@ -1,3 +1,7 @@
+## 0.1.42 (15-04-2022):
+
+Added new logging options to ClusterClient. Now it can log all information about communication with the cluster in one line.
+
 ## 0.1.41 (01-03-2022):
 
 Rewrote `WeighedReplicaOrdering`: now uses linear replica selection instead of logarithmic one.
