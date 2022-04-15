@@ -13,7 +13,6 @@ using Vostok.Clusterclient.Core.Ordering.Weighed;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed;
 
 [Explicit]
 public class WeighedReplicaOrdering_Benchmarks

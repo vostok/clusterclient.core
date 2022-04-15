@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Criteria;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Ordering;
 using Vostok.Clusterclient.Core.Ordering.Storage;
@@ -41,7 +42,10 @@ namespace Vostok.Clusterclient.Core.Sending
             TimeSpan timeout,
             CancellationToken cancellationToken)
         {
-            if (configuration.Logging.LogReplicaRequests)
+            var loggingConfiguration = configuration.Logging;
+            var detailedLog = loggingConfiguration.LoggingMode == LoggingMode.Detailed;
+
+            if (detailedLog && loggingConfiguration.LogReplicaRequests)
                 LogRequest(replica, timeout);
 
             var timeBudget = TimeBudget.StartNew(timeout, TimeSpan.FromMilliseconds(1));
@@ -54,7 +58,7 @@ namespace Vostok.Clusterclient.Core.Sending
 
             var result = new ReplicaResult(replica, response, responseVerdict, timeBudget.Elapsed);
 
-            if (configuration.Logging.LogReplicaResults)
+            if (detailedLog && loggingConfiguration.LogReplicaResults)
                 LogResult(result);
 
             replicaOrdering.Learn(result, storageProvider);
