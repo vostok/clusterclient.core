@@ -129,13 +129,14 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private void LogVerboseMessage(IRequestContext context, ClusterResult result)
         {
-            const string template = "'{Request}' to '{TargetService}', Timeout = {Timeout}. {Status} in {ElapsedTime}, Code = {ResponseCode:D}. Replicas result = {ReplicasResult}";
+            const string template = "'{Request}' to '{TargetService}', Timeout = {Timeout}, Strategy = '{Strategy}'. {Status} in {ElapsedTime}, Code = {ResponseCode:D}. Replicas result = {ReplicasResult}";
             var properties = new
             {
                 Request = context.Request.ToString(false, false),
                 TargetService = targetService ?? "somewhere",
                 Timeout = context.Budget.Total.ToPrettyString(),
                 TimeoutMs = context.Budget.Total.TotalMilliseconds,
+                Strategy = context.Parameters.Strategy?.ToString(),
                 result.Status,
                 ElapsedTime = context.Budget.Elapsed.ToPrettyString(),
                 ElapsedTimeMs = context.Budget.Elapsed.TotalMilliseconds,
@@ -168,7 +169,7 @@ namespace Vostok.Clusterclient.Core.Modules
                     res.Replica,
                     ResponseCode = (int)res.Response.Code,
                     res.Verdict,
-                    ElapsedTime = res.Time
+                    ElapsedTime = res.Time.ToPrettyString()
                 };
             }
 
