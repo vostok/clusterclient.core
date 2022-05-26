@@ -21,7 +21,7 @@ namespace Vostok.Clusterclient.Core
 {
     /// <summary>
     /// <para>Represents a configuration of <see cref="ClusterClient"/> instance which must be filled during client construction.</para>
-    /// <para>The only required parameters are <see cref="Transport"/> and <see cref="ClusterProvider"/>.</para>
+    /// <para>The only required parameters are <see cref="Transport"/> and <see cref="ClusterProvider"/>/<see cref="AsyncClusterProvider"/>.</para>
     /// </summary>
     [PublicAPI]
     public interface IClusterClientConfiguration
@@ -40,9 +40,15 @@ namespace Vostok.Clusterclient.Core
 
         /// <summary>
         /// <para>An implementation of cluster provider. See <see cref="IClusterProvider.GetCluster"/> for more details.</para>
-        /// <para>This parameter is REQUIRED.</para>
+        /// <para>This parameter or <see cref="AsyncClusterProvider"/> is REQUIRED.</para>
         /// </summary>
         IClusterProvider ClusterProvider { get; set; }
+        
+        /// <summary>
+        /// <para>An implementation of cluster provider. See <see cref="IAsyncClusterProvider.GetClusterAsync"/> for more details.</para>
+        /// <para>This parameter or <see cref="ClusterProvider"/> is REQUIRED.</para>
+        /// </summary>
+        IAsyncClusterProvider AsyncClusterProvider { get; set; }
 
         /// <summary>
         /// <para>A list of replica filters. See <see cref="IReplicasFilter"/> for more details.</para>

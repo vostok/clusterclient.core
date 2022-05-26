@@ -60,5 +60,22 @@ namespace Vostok.Clusterclient.Core.Tests
 
             clusterClient.ClusterProvider.Should().BeOfType<TransformingClusterProvider>();
         }
+        
+        [Test]
+        public void Should_wrap_async_cluster_provider()
+        {
+            var clusterProvider = Substitute.For<IAsyncClusterProvider>();
+
+            var clusterClient = new ClusterClient(
+                log,
+                config =>
+                {
+                    config.AsyncClusterProvider = clusterProvider;
+                    config.Transport = Substitute.For<ITransport>();
+                });
+
+            clusterClient.AsyncClusterProvider.Should().BeSameAs(clusterProvider);
+            clusterClient.ClusterProvider.Should().NotBeNull();
+        }
     }
 }

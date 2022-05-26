@@ -53,6 +53,7 @@ namespace Vostok.Clusterclient.Core
         public ITransport Transport { get; set; }
 
         public IClusterProvider ClusterProvider { get; set; }
+        public IAsyncClusterProvider AsyncClusterProvider { get; set; }
         
         public List<IReplicasFilter> ReplicasFilters { get; set; }
 
@@ -109,7 +110,7 @@ namespace Vostok.Clusterclient.Core
             if (Transport == null)
                 yield return "Transport implementation is not set. It is a required part of configuration.";
 
-            if (ClusterProvider == null)
+            if (ClusterProvider == null && AsyncClusterProvider == null)
                 yield return "Cluster provider implementation is not set. It is a required part of configuration.";
 
             if (ResponseCriteria?.Count > 0)
@@ -168,6 +169,9 @@ namespace Vostok.Clusterclient.Core
 
         public void AugmentWithDefaults()
         {
+            if (AsyncClusterProvider != null && ClusterProvider == null)
+                ClusterProvider = new SyncClusterProviderAdapter(AsyncClusterProvider);
+            
             if (ReplicaOrdering == null)
                 ReplicaOrdering = ClusterClientDefaults.ReplicaOrdering(Log);
 

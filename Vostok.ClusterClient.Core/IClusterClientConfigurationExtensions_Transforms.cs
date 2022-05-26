@@ -53,6 +53,7 @@ namespace Vostok.Clusterclient.Core
                 return;
 
             configuration.ClusterProvider = new TransformingClusterProvider(configuration.ClusterProvider, configuration.ReplicaTransform);
+            configuration.AsyncClusterProvider = new TransformingAsyncClusterProvider(configuration.AsyncClusterProvider, configuration.ReplicaTransform);
         }
 
         private static void AddRequestTransform(this IClusterClientConfiguration configuration, IRequestTransformMetadata transform)

@@ -73,6 +73,11 @@ namespace Vostok.Clusterclient.Core
         /// An <see cref="IClusterProvider"/> implementation that used by this <see cref="ClusterClient"/> instance.
         /// </summary>
         public IClusterProvider ClusterProvider => configuration.ClusterProvider;
+        
+        /// <summary>
+        /// An <see cref="IAsyncClusterProvider"/> implementation that used by this <see cref="ClusterClient"/> instance.
+        /// </summary>
+        public IAsyncClusterProvider AsyncClusterProvider => configuration.AsyncClusterProvider;
 
         /// <summary>
         /// An <see cref="IReplicaStorageProvider"/> implementation that used by this <see cref="ClusterClient"/> instance.
@@ -93,6 +98,7 @@ namespace Vostok.Clusterclient.Core
                     RequestTimeBudget.StartNew(timeout ?? configuration.DefaultTimeout, BudgetPrecision),
                     configuration.Log,
                     configuration.ClusterProvider,
+                    configuration.AsyncClusterProvider,
                     configuration.ReplicaOrdering,
                     configuration.Transport,
                     configuration.MaxReplicasUsedPerRequest,

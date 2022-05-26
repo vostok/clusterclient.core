@@ -39,10 +39,16 @@ namespace Vostok.Clusterclient.Core.Modules
         ILog Log { get; }
 
         /// <summary>
-        /// Gets or sets ClusterProvider instance used to send request.
+        /// Gets or sets <see cref="ClusterProvider"/> instance used to send request.
         /// </summary>
         [NotNull]
         IClusterProvider ClusterProvider { get; set; }
+        
+        /// <summary>
+        /// Gets or sets <see cref="AsyncClusterProvider"/> instance used to send request.
+        /// </summary>
+        [CanBeNull]
+        IAsyncClusterProvider AsyncClusterProvider { get; set; }
 
         /// <summary>
         /// Gets or sets ReplicaOrdering instance used to send request.

@@ -44,6 +44,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 RequestTimeBudget.Infinite,
                 new SilentLog(),
                 clusterProvider: default,
+                asyncClusterProvider: default,
                 replicaOrdering: default,
                 transport: default,
                 maximumReplicasToUse: default,
