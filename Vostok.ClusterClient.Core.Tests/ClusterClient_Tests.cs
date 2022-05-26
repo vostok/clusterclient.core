@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
@@ -62,9 +64,10 @@ namespace Vostok.Clusterclient.Core.Tests
         }
         
         [Test]
-        public void Should_wrap_async_cluster_provider()
+        public async Task Should_wrap_async_cluster_provider()
         {
-            var clusterProvider = Substitute.For<IAsyncClusterProvider>();
+            IList<Uri> replicas = new[] {new Uri("http://kontur.ru/1"), new Uri("http://kontur.ru/2")};
+            var clusterProvider = new AdHocAsyncClusterProvider(() => Task.FromResult<IList<Uri>>(replicas));
 
             var clusterClient = new ClusterClient(
                 log,
@@ -76,6 +79,9 @@ namespace Vostok.Clusterclient.Core.Tests
 
             clusterClient.AsyncClusterProvider.Should().BeSameAs(clusterProvider);
             clusterClient.ClusterProvider.Should().NotBeNull();
+
+            (await clusterClient.AsyncClusterProvider.GetClusterAsync()).Should().BeEquivalentTo(replicas);
+            clusterClient.ClusterProvider.GetCluster().Should().BeEquivalentTo(replicas);
         }
     }
 }
