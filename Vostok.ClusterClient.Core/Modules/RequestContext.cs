@@ -56,7 +56,9 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             // note (kungurtsev, 26.05.2022): should be not null
             get =>
-                clusterProvider ?? new SyncClusterProviderAdapter(asyncClusterProvider);
+                asyncClusterProvider != null
+                    ? new SyncClusterProviderAdapter(asyncClusterProvider)
+                    : clusterProvider;
             set
             {
                 clusterProvider = value;
