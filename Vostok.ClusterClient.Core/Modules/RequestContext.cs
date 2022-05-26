@@ -33,8 +33,8 @@ namespace Vostok.Clusterclient.Core.Modules
             Request = request;
             Budget = budget;
             Log = log;
-            ClusterProvider = clusterProvider;
-            AsyncClusterProvider = asyncClusterProvider;
+            this.clusterProvider = clusterProvider;
+            this.asyncClusterProvider = asyncClusterProvider;
             ReplicaOrdering = replicaOrdering;
             Transport = transport;
             Parameters = parameters;
