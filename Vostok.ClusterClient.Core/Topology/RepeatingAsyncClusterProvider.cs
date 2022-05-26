@@ -21,7 +21,7 @@ internal class RepeatingAsyncClusterProvider : IAsyncClusterProvider
     }
 
     public async Task<IList<Uri>> GetClusterAsync() 
-        => cache.Get(await provider.GetClusterAsync());
+        => cache.Get(await provider.GetClusterAsync().ConfigureAwait(false));
 
     private static IList<Uri> Repeat(IList<Uri> currentReplicas, int repeatCount)
     {

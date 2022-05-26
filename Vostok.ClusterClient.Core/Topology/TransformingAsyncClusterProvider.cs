@@ -21,7 +21,7 @@ namespace Vostok.Clusterclient.Core.Topology
         }
 
         public async Task<IList<Uri>> GetClusterAsync() 
-            => cache.Get(await provider.GetClusterAsync());
+            => cache.Get(await provider.GetClusterAsync().ConfigureAwait(false));
         
         private IList<Uri> ApplyTransform(IList<Uri> replicas)
             => replicas == null
