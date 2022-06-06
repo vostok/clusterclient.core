@@ -112,6 +112,8 @@ namespace Vostok.Clusterclient.Core
 
             if (ClusterProvider == null && AsyncClusterProvider == null)
                 yield return "Cluster provider implementation is not set. It is a required part of configuration.";
+            if (ClusterProvider != null && AsyncClusterProvider != null)
+                yield return "Cluster provider implementation should be provided only once.";
 
             if (ResponseCriteria?.Count > 0)
             {
