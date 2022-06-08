@@ -35,7 +35,9 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
-            var replicas = context.ClusterProvider.GetCluster();
+            var replicas = context.AsyncClusterProvider != null 
+                ? await context.AsyncClusterProvider.GetClusterAsync().ConfigureAwait(false)
+                : context.ClusterProvider.GetCluster();
             if (replicas == null || replicas.Count == 0)
             {
                 LogReplicasNotFound(context);

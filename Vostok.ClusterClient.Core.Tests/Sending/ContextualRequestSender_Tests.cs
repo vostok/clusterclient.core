@@ -61,6 +61,7 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
                 Budget.WithRemaining(timeout),
                 new ConsoleLog(),
                 Substitute.For<IClusterProvider>(),
+                Substitute.For<IAsyncClusterProvider>(),
                 Substitute.For<IReplicaOrdering>(),
                 Substitute.For<ITransport>(),
                 int.MaxValue,

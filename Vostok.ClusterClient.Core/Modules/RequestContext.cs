@@ -13,6 +13,8 @@ namespace Vostok.Clusterclient.Core.Modules
     {
         private readonly object resultsLock = new object();
         private List<ReplicaResult> results;
+        private IClusterProvider clusterProvider;
+        private IAsyncClusterProvider asyncClusterProvider;
 
         public RequestContext(
             Request request,
@@ -20,6 +22,7 @@ namespace Vostok.Clusterclient.Core.Modules
             IRequestTimeBudget budget,
             ILog log,
             IClusterProvider clusterProvider,
+            IAsyncClusterProvider asyncClusterProvider,
             IReplicaOrdering replicaOrdering,
             ITransport transport,
             int maximumReplicasToUse,
@@ -30,7 +33,8 @@ namespace Vostok.Clusterclient.Core.Modules
             Request = request;
             Budget = budget;
             Log = log;
-            ClusterProvider = clusterProvider;
+            this.clusterProvider = clusterProvider;
+            this.asyncClusterProvider = asyncClusterProvider;
             ReplicaOrdering = replicaOrdering;
             Transport = transport;
             Parameters = parameters;
@@ -48,7 +52,29 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public ILog Log { get; }
 
-        public IClusterProvider ClusterProvider { get; set; }
+        public IClusterProvider ClusterProvider
+        {
+            // note (kungurtsev, 26.05.2022): should be not null
+            get =>
+                asyncClusterProvider != null
+                    ? new SyncClusterProviderAdapter(asyncClusterProvider)
+                    : clusterProvider;
+            set
+            {
+                clusterProvider = value;
+                asyncClusterProvider = null;
+            }
+        }
+        public IAsyncClusterProvider AsyncClusterProvider
+        {
+            // note (kungurtsev, 26.05.2022): may be null, then ClusterProvider not null
+            get => asyncClusterProvider;
+            set
+            {
+                asyncClusterProvider = value;
+                clusterProvider = null;
+            }
+        }
 
         public IReplicaOrdering ReplicaOrdering { get; set; }
 

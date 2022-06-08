@@ -31,10 +31,11 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         public static void RepeatReplicas(this IClusterClientConfiguration configuration, int repeatCount)
         {
-            if (configuration.ClusterProvider == null)
-                return;
+            if (configuration.ClusterProvider != null)
+                configuration.ClusterProvider = new RepeatingClusterProvider(configuration.ClusterProvider, repeatCount);
 
-            configuration.ClusterProvider = new RepeatingClusterProvider(configuration.ClusterProvider, repeatCount);
+            if (configuration.AsyncClusterProvider != null)
+                configuration.AsyncClusterProvider = new RepeatingAsyncClusterProvider(configuration.AsyncClusterProvider, repeatCount);
         }
 
         /// <summary>

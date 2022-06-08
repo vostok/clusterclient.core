@@ -25,6 +25,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 budget: default,
                 log: default,
                 clusterProvider: default,
+                asyncClusterProvider: default,
                 replicaOrdering: default,
                 transport: default,
                 maximumReplicasToUse: default,

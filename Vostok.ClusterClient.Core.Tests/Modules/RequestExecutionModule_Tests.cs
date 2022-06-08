@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
@@ -19,9 +20,11 @@ using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Tests.Modules
 {
-    [TestFixture]
+    [TestFixture(false)]
+    [TestFixture(true)]
     internal class RequestExecutionModule_Tests
     {
+        private readonly bool useAsyncProvider;
         private Uri replica1;
         private Uri replica2;
         private Response response1;
@@ -31,6 +34,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private ReplicaResult result2;
 
         private IClusterProvider clusterProvider;
+        private IAsyncClusterProvider asyncClusterProvider;
         private List<IReplicasFilter> replicaFilters;
         private IReplicaOrdering replicaOrdering;
         private IResponseSelector responseSelector;
@@ -39,6 +43,9 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private IClusterResultStatusSelector resultStatusSelector;
         private RequestContext context;
         private RequestExecutionModule module;
+
+        public RequestExecutionModule_Tests(bool useAsyncProvider) =>
+            this.useAsyncProvider = useAsyncProvider;
 
         [SetUp]
         public void TestSetup()
@@ -56,8 +63,16 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             var parameters = RequestParameters.Empty
                 .WithStrategy(Substitute.For<IRequestStrategy>());
 
-            clusterProvider = Substitute.For<IClusterProvider>();
-            clusterProvider.GetCluster().Returns(new[] {replica1, replica2});
+            if (useAsyncProvider)
+            {
+                asyncClusterProvider = Substitute.For<IAsyncClusterProvider>();
+                asyncClusterProvider.GetClusterAsync().Returns(Task.FromResult<IList<Uri>>(new[] {replica1, replica2}));
+            }
+            else
+            {
+                clusterProvider = Substitute.For<IClusterProvider>();
+                clusterProvider.GetCluster().Returns(new[] {replica1, replica2});
+            }
 
             replicaOrdering = Substitute.For<IReplicaOrdering>();
             replicaOrdering.Order(null, null, null, null).ReturnsForAnyArgs(info => info.Arg<IList<Uri>>().Reverse());
@@ -68,6 +83,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 Budget.Infinite,
                 new SilentLog(),
                 clusterProvider,
+                asyncClusterProvider,
                 replicaOrdering,
                 transport: default,
                 maximumReplicasToUse: int.MaxValue,
@@ -129,7 +145,10 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         [Test]
         public void Should_return_no_replicas_result_when_cluster_provider_returns_null()
         {
-            clusterProvider.GetCluster().Returns(null as IList<Uri>);
+            if (useAsyncProvider)
+                asyncClusterProvider.GetClusterAsync().Returns(Task.FromResult<IList<Uri>>(null));
+            else
+                clusterProvider.GetCluster().Returns(null as IList<Uri>);
 
             Execute().Status.Should().Be(ClusterResultStatus.ReplicasNotFound);
         }
@@ -137,7 +156,10 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         [Test]
         public void Should_return_no_replicas_result_when_cluster_provider_returns_an_empty_list()
         {
-            clusterProvider.GetCluster().Returns(new List<Uri>());
+            if (useAsyncProvider)
+                asyncClusterProvider.GetClusterAsync().Returns(Task.FromResult<IList<Uri>>(new List<Uri>()));
+            else
+                clusterProvider.GetCluster().Returns(new List<Uri>());
 
             Execute().Status.Should().Be(ClusterResultStatus.ReplicasNotFound);
         }
@@ -215,6 +237,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 context.Budget,
                 context.Log,
                 clusterProvider,
+                asyncClusterProvider,
                 replicaOrdering,
                 transport: default,
                 maximumReplicasToUse: int.MaxValue,

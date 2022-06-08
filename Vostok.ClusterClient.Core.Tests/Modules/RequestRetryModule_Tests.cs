@@ -188,6 +188,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 context.Budget,
                 new ConsoleLog(),
                 clusterProvider: default,
+                asyncClusterProvider: default,
                 replicaOrdering: default,
                 transport: default,
                 maximumReplicasToUse: int.MaxValue,
