@@ -1,3 +1,7 @@
+## 0.1.43 (09-06-2022):
+
+Added `IAsyncClusterProvider`.
+
 ## 0.1.42 (15-04-2022):
 
 Added new logging options to ClusterClient. Now it can log all information about communication with the cluster in one line.
