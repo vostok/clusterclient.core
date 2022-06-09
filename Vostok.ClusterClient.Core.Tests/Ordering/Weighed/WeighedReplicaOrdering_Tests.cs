@@ -111,13 +111,13 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed
         [Test]
         public void Order_should_produce_a_uniform_random_distribution_when_all_weights_are_equal()
         {
-            var distribution = ComputeDistribution(10 * 1000);
+            var distribution = ComputeDistribution(100 * 1000);
 
             distribution.Should().HaveCount(replicas.Length);
 
             foreach (var value in distribution.Values)
             {
-                value.Should().BeInRange(1800, 2200);
+                value.Should().BeInRange(18000, 22000);
             }
         }
 
@@ -130,15 +130,15 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed
             SetupWeight(replica4, 0.8);
             SetupWeight(replica5, 1.0);
 
-            var distribution = ComputeDistribution(10 * 1000);
+            var distribution = ComputeDistribution(100 * 1000);
 
             distribution.Should().HaveCount(replicas.Length);
 
-            distribution[replica1].Should().BeInRange(500, 800);
-            distribution[replica2].Should().BeInRange(1200, 1500);
-            distribution[replica3].Should().BeInRange(1800, 2200);
-            distribution[replica4].Should().BeInRange(2500, 2800);
-            distribution[replica5].Should().BeInRange(3200, 3500);
+            distribution[replica1].Should().BeInRange(5000, 8000);
+            distribution[replica2].Should().BeInRange(12000, 15000);
+            distribution[replica3].Should().BeInRange(18000, 22000);
+            distribution[replica4].Should().BeInRange(25000, 28000);
+            distribution[replica5].Should().BeInRange(32000, 35000);
         }
         
         [Test]
@@ -210,12 +210,12 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed
             SetupWeight(replica4, double.PositiveInfinity);
             SetupWeight(replica5, double.PositiveInfinity);
 
-            var distribution = ComputeDistribution(10 * 1000);
+            var distribution = ComputeDistribution(100 * 1000);
 
             distribution.Should().HaveCount(2);
 
-            distribution[replica4].Should().BeInRange(4000, 6000);
-            distribution[replica5].Should().BeInRange(4000, 6000);
+            distribution[replica4].Should().BeInRange(40000, 60000);
+            distribution[replica5].Should().BeInRange(40000, 60000);
         }
 
         [Test]
@@ -226,13 +226,13 @@ namespace Vostok.Clusterclient.Core.Tests.Ordering.Weighed
                 SetupWeight(replica, 0);
             }
 
-            var distribution = ComputeDistribution(10 * 1000);
+            var distribution = ComputeDistribution(100 * 1000);
 
             distribution.Should().HaveCount(replicas.Length);
 
             foreach (var value in distribution.Values)
             {
-                value.Should().BeInRange(1800, 2200);
+                value.Should().BeInRange(18000, 22000);
             }
         }
 
