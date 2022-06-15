@@ -24,7 +24,7 @@ namespace Vostok.Clusterclient.Core
         /// <summary>
         /// Adds an <see cref="AdHocRequestTransform"/> with given <paramref name="transform"/> function to configuration's <see cref="IClusterClientConfiguration.RequestTransforms"/> list.
         /// </summary>
-        public static void AddRequestTransform(this IClusterClientConfiguration configuration, Func<Request, Request> transform) => 
+        public static void AddRequestTransform(this IClusterClientConfiguration configuration, Func<Request, Request> transform) =>
             AddRequestTransform(configuration, new AdHocRequestTransform(transform));
 
         /// <summary>
@@ -52,8 +52,11 @@ namespace Vostok.Clusterclient.Core
             if (configuration.ReplicaTransform == null)
                 return;
 
-            configuration.ClusterProvider = new TransformingClusterProvider(configuration.ClusterProvider, configuration.ReplicaTransform);
-            configuration.AsyncClusterProvider = new TransformingAsyncClusterProvider(configuration.AsyncClusterProvider, configuration.ReplicaTransform);
+            if (configuration.ClusterProvider != null)
+                configuration.ClusterProvider = new TransformingClusterProvider(configuration.ClusterProvider, configuration.ReplicaTransform);
+
+            if (configuration.AsyncClusterProvider != null)
+                configuration.AsyncClusterProvider = new TransformingAsyncClusterProvider(configuration.AsyncClusterProvider, configuration.ReplicaTransform);
         }
 
         private static void AddRequestTransform(this IClusterClientConfiguration configuration, IRequestTransformMetadata transform)

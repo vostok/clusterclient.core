@@ -46,6 +46,7 @@ namespace Vostok.Clusterclient.Core.Tests
                 });
 
             clusterClient.ClusterProvider.Should().BeSameAs(clusterProvider);
+            clusterClient.AsyncClusterProvider.Should().BeNull();
         }
 
         [Test]
@@ -61,6 +62,7 @@ namespace Vostok.Clusterclient.Core.Tests
                 });
 
             clusterClient.ClusterProvider.Should().BeOfType<TransformingClusterProvider>();
+            clusterClient.AsyncClusterProvider.Should().BeNull();
         }
         
         [Test]

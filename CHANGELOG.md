@@ -1,3 +1,7 @@
+## 0.1.44 (15-06-2022):
+
+Fixed transformation of null `AsyncClusterProvider`.
+
 ## 0.1.43 (09-06-2022):
 
 Added `IAsyncClusterProvider`.
