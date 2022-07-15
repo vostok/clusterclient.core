@@ -160,7 +160,7 @@ namespace Vostok.Clusterclient.Core.Model
         {
             EnsureNotDisposed();
 
-            if (string.IsNullOrEmpty(key) || value == null || !allowEmptyValue && string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(key) || !allowEmptyValue && string.IsNullOrEmpty(value))
                 return this;
 
             if (hasQueryParameters)
@@ -174,8 +174,12 @@ namespace Vostok.Clusterclient.Core.Model
             }
 
             builder.Append(Escape(key));
-            builder.Append('=');
-            builder.Append(Escape(value));
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                builder.Append('=');
+                builder.Append(Escape(value));
+            }
 
             return this;
         }
