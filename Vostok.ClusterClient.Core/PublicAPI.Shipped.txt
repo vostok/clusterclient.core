@@ -1,0 +1,1060 @@
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthDownMultiplier = 0.5 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthMinimumValue = 0.001 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthUpMultiplier = 1.5 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingCriticalRatio = 2 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingMinimumRequests = 30 -> int
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack = 2 -> int
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap = 0.8 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.ConnectionAttempts = 2 -> int
+const Vostok.Clusterclient.Core.ClusterClientDefaults.DeduplicateRequestUrl = false -> bool
+const Vostok.Clusterclient.Core.ClusterClientDefaults.InitialReplicaWeight = 1 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.LoggingMode = Vostok.Clusterclient.Core.Misc.LoggingMode.Detailed -> Vostok.Clusterclient.Core.Misc.LoggingMode
+const Vostok.Clusterclient.Core.ClusterClientDefaults.LogReplicaRequests = true -> bool
+const Vostok.Clusterclient.Core.ClusterClientDefaults.LogReplicaResults = true -> bool
+const Vostok.Clusterclient.Core.ClusterClientDefaults.LogRequestDetails = true -> bool
+const Vostok.Clusterclient.Core.ClusterClientDefaults.LogResultDetails = true -> bool
+const Vostok.Clusterclient.Core.ClusterClientDefaults.MaximumReplicaWeight = 10 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.MaxReplicasUsedPerRequest = 3 -> int
+const Vostok.Clusterclient.Core.ClusterClientDefaults.MinimumReplicaWeight = 0 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.ReplicaBudgetingCriticalRatio = 1.2 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.ReplicaBudgetingMinimumRequests = 30 -> int
+const Vostok.Clusterclient.Core.ClusterClientDefaults.ReplicaBudgetingMinutesToTrack = 2 -> int
+const Vostok.Clusterclient.Core.Model.HeaderNames.Accept = "Accept" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AcceptCharset = "Accept-Charset" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AcceptEncoding = "Accept-Encoding" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AcceptLanguage = "Accept-Language" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlAllowCredentials = "Access-Control-Allow-Credentials" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlAllowHeaders = "Access-Control-Allow-Headers" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlAllowMethods = "Access-Control-Allow-Methods" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlAllowOrigin = "Access-Control-Allow-Origin" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlMaxAge = "Access-Control-Max-Age" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlRequestHeader = "Access-Control-Request-Headers" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.AccessControlRequestMethod = "Access-Control-Request-Method" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Age = "Age" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Allow = "Allow" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ApplicationIdentity = "Application-Identity" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Authorization = "Authorization" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.CacheControl = "Cache-Control" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ConcurrencyLevel = "Concurrency-Level" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Connection = "Connection" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentDisposition = "Content-Disposition" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentEncoding = "Content-Encoding" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentLanguage = "Content-Language" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentLength = "Content-Length" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentLocation = "Content-Location" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentMD5 = "Content-MD5" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentRange = "Content-Range" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContentType = "Content-Type" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContextGlobals = "Context-Globals" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ContextProperties = "Context-Properties" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Cookie = "Cookie" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Date = "Date" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.DontAccept = "Dont-Accept" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.DontRetry = "Dont-Retry" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ETag = "ETag" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Expect = "Expect" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Expires = "Expires" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.From = "From" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Host = "Host" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.IfMatch = "If-Match" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.IfModifiedSince = "If-Modified-Since" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.IfNoneMatch = "If-None-Match" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.IfRange = "If-Range" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.IfUnmodifiedSince = "If-Unmodified-Since" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.KeepAlive = "Keep-Alive" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.LastModified = "Last-Modified" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Location = "Location" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Origin = "Origin" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Pragma = "Pragma" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ProxyAuthenticate = "Proxy-Authenticate" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.ProxyConnection = "Proxy-Connection" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Range = "Range" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Referer = "Referer" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.RequestPriority = "Request-Priority" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.RequestTimeout = "Request-Timeout" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.RetryAfter = "Retry-After" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Server = "Server" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.SetCookie = "Set-Cookie" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.TE = "TE" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Trailer = "Trailer" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.TransferEncoding = "Transfer-Encoding" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.UnreliableResponse = "Unreliable-Response" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Upgrade = "Upgrade" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.UserAgent = "User-Agent" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Vary = "Vary" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Via = "Via" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.Warning = "Warning" -> string
+const Vostok.Clusterclient.Core.Model.HeaderNames.WWWAuthenticate = "WWW-Authenticate" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Delete = "DELETE" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Get = "GET" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Head = "HEAD" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Options = "OPTIONS" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Patch = "PATCH" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Post = "POST" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Put = "PUT" -> string
+const Vostok.Clusterclient.Core.Model.RequestMethods.Trace = "TRACE" -> string
+override Vostok.Clusterclient.Core.Model.Content.ToString() -> string
+override Vostok.Clusterclient.Core.Model.Header.Equals(object obj) -> bool
+override Vostok.Clusterclient.Core.Model.Header.GetHashCode() -> int
+override Vostok.Clusterclient.Core.Model.Header.ToString() -> string
+override Vostok.Clusterclient.Core.Model.Headers.ToString() -> string
+override Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.ToString() -> string
+override Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.Equals(object obj) -> bool
+override Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.GetHashCode() -> int
+override Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.ToString() -> string
+override Vostok.Clusterclient.Core.Model.Request.ToString() -> string
+override Vostok.Clusterclient.Core.Model.Response.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocDelaysProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocThenEqualDelaysProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.DelayProviders.EqualDelaysProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedDelaysProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedThenEqualDelaysProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.SingleReplicaRequestStrategy.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocThenEqualTimeoutsProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocTimeoutsProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.TimeoutProviders.EqualTimeoutsProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedThenEqualTimeoutsProvider.ToString() -> string
+override Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedTimeoutsProvider.ToString() -> string
+readonly Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay.DecayPivot -> System.DateTime
+readonly Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay.Value -> double
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthDamageDecayDuration -> System.TimeSpan
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.ConnectionTimeout -> System.TimeSpan
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.ReplicaStorageScope -> Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.RequestStrategy -> Vostok.Clusterclient.Core.Strategies.IRequestStrategy
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.ResponseSelector -> Vostok.Clusterclient.Core.Misc.IResponseSelector
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.RetryPolicy -> Vostok.Clusterclient.Core.Retry.IRetryPolicy
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.RetryStrategy -> Vostok.Clusterclient.Core.Retry.IRetryStrategy
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.RetryStrategyEx -> Vostok.Clusterclient.Core.Retry.IRetryStrategyEx
+static readonly Vostok.Clusterclient.Core.ClusterClientDefaults.Timeout -> System.TimeSpan
+static readonly Vostok.Clusterclient.Core.Model.Content.Empty -> Vostok.Clusterclient.Core.Model.Content
+static readonly Vostok.Clusterclient.Core.Model.Headers.Empty -> Vostok.Clusterclient.Core.Model.Headers
+static readonly Vostok.Clusterclient.Core.Model.RequestParameters.Empty -> Vostok.Clusterclient.Core.Model.RequestParameters
+static readonly Vostok.Clusterclient.Core.Model.Responses.Accepted -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.BadGateway -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.BadRequest -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Canceled -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Conflict -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ConnectFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ContentInputFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ContentReuseFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Created -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Forbidden -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Gone -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.InternalServerError -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.MethodNotAllowed -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.MovedPermanently -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.NoContent -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.NotFound -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.NotImplemented -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.NotModified -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Ok -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.PartialContent -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ProxyTimeout -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ReceiveFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.SendFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.ServiceUnavailable -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.StreamInputFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.StreamReuseFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Throttled -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Timeout -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Unauthorized -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.Unknown -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Model.Responses.UnknownFailure -> Vostok.Clusterclient.Core.Model.Response
+static readonly Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseVerdict -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Forking2 -> Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Forking3 -> Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Parallel2 -> Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Parallel3 -> Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.ParallelUnlimited -> Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Sequential1 -> Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Sequential2 -> Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.Sequential3 -> Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+static readonly Vostok.Clusterclient.Core.Strategies.Strategy.SingleReplica -> Vostok.Clusterclient.Core.Strategies.SingleReplicaRequestStrategy
+static Vostok.Clusterclient.Core.ClusterClientCachesCleaner.Clean() -> void
+static Vostok.Clusterclient.Core.ClusterClientDefaults.ClientApplicationName.get -> string
+static Vostok.Clusterclient.Core.ClusterClientDefaults.ClientApplicationName.set -> void
+static Vostok.Clusterclient.Core.ClusterClientDefaults.ReplicaOrdering(Vostok.Logging.Abstractions.ILog log) -> Vostok.Clusterclient.Core.Ordering.IReplicaOrdering
+static Vostok.Clusterclient.Core.ClusterClientDefaults.ResponseCriteria() -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Criteria.IResponseCriterion>
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddReplicasFilter(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Topology.IReplicasFilter filter) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestModule(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Modules.IRequestModule module, System.Type type, Vostok.Clusterclient.Core.Misc.ModulePosition position = Vostok.Clusterclient.Core.Misc.ModulePosition.Before) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestModule(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Modules.IRequestModule module, Vostok.Clusterclient.Core.Modules.RequestModule relatedModule = Vostok.Clusterclient.Core.Modules.RequestModule.Logging, Vostok.Clusterclient.Core.Misc.ModulePosition position = Vostok.Clusterclient.Core.Misc.ModulePosition.Before) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Func<Vostok.Clusterclient.Core.Model.Request, System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Request>> transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Func<Vostok.Clusterclient.Core.Model.Request, Vostok.Clusterclient.Core.Model.Request> transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Transforms.IAsyncRequestTransform transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddRequestTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Transforms.IRequestTransform transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddResponseTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Func<Vostok.Clusterclient.Core.Model.Response, Vostok.Clusterclient.Core.Model.Response> transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.AddResponseTransform(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Transforms.IResponseTransform transform) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.RemoveRequestModule(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Type moduleType) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.RemoveRequestModule(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Modules.RequestModule moduleType) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.RepeatReplicas(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, int repeatCount) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAuxiliaryHeaders(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string priorityHeader = "Request-Priority", string identityHeader = "Application-Identity") -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupExternalUrl(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Uri url) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupHttpMethodValidation(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupReplicaBudgeting(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 1.2) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupReplicaBudgeting(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 1.2) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupRequestTimeoutHeader(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string header = "Request-Timeout") -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupResponseCriteria(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, params Vostok.Clusterclient.Core.Criteria.IResponseCriterion[] criteria) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupThreadPoolLimitsTuning(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupWeighedReplicaOrdering(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Action<Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder> build) -> void
+static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.ClusterResult
+static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
+static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
+static Vostok.Clusterclient.Core.IClusterClientExtensions.SendAsync(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+static Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Parse(string headerValue) -> Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection
+static Vostok.Clusterclient.Core.Model.Request.Delete(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Delete(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Get(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Get(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Head(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Head(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Options(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Options(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Patch(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Patch(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Post(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Post(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Put(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Put(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Trace(string url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.Request.Trace(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, byte[] buffer, int offset, int length) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, string content) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, string content, System.Text.Encoding encoding) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.ArraySegment<byte> content) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<byte[]> buffers) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<System.ArraySegment<byte>> segments) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<Vostok.Clusterclient.Core.Model.Content> contents) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.IO.Stream stream) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.IO.Stream stream, long length) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.AppendToHeaderWithQuality(this Vostok.Clusterclient.Core.Model.Request request, string name, string value, decimal quality = 1) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptCharsetHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptCharsetHeader(this Vostok.Clusterclient.Core.Model.Request request, System.Text.Encoding value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptEncodingHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAuthorizationHeader(this Vostok.Clusterclient.Core.Model.Request request, string scheme, string parameter) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAuthorizationHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithBasicAuthorizationHeader(this Vostok.Clusterclient.Core.Model.Request request, string user, string password) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentEncodingHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, long from, long to, long length, string unit = "bytes") -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, long from, long to, string unit = "bytes") -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, long length, string unit = "bytes") -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithContentTypeHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithIfMatchHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithIfModifiedSinceHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithIfModifiedSinceHeader(this Vostok.Clusterclient.Core.Model.Request request, System.DateTime value, string format = "R") -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithIfNoneMatchHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, long? from, long? to, string unit = "bytes") -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithRangeHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithUserAgentHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedContent(this Vostok.Clusterclient.Core.Model.Request request) -> bool
+static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedStream(this Vostok.Clusterclient.Core.Model.Request request) -> bool
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsClientError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsInformational(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsNetworkError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsRedirection(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsServerError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsSuccessful(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, byte[] buffer, int offset, int length) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, string content) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, string content, System.Text.Encoding encoding) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, System.ArraySegment<byte> content) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseTime(System.Func<System.TimeSpan> timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseTime(System.TimeSpan timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseVerdictAndTime(System.Func<System.TimeSpan> timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseVerdictAndTime(System.TimeSpan timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddAdaptiveHealthModifierWithLinearDecay(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, System.TimeSpan decayDuration, double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddAdaptiveHealthModifierWithLinearDecay(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy tuningPolicy, System.TimeSpan decayDuration, double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddAdaptiveHealthModifierWithoutDecay(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddAdaptiveHealthModifierWithoutDecay(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy tuningPolicy, double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddGrayListModifier(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, System.TimeSpan grayPeriod) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddGrayListModifier(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, Vostok.Clusterclient.Core.Ordering.Weighed.Gray.IGrayPeriodProvider grayPeriodProvider) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddLeadershipModifier(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.ILeaderResultDetector leaderResultDetector) -> void
+static Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions.AddRelativeWeightModifier(this Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder builder, Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings settings, Vostok.Clusterclient.Core.Ordering.Storage.IGlobalStorageProvider globalStorageProvider = null) -> void
+static Vostok.Clusterclient.Core.Strategies.Strategy.Forking(int maximumParallelism) -> Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy
+static Vostok.Clusterclient.Core.Strategies.Strategy.Forking(Vostok.Clusterclient.Core.Strategies.DelayProviders.IForkingDelaysProvider delaysProvider, int maximumParallelism) -> Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy
+static Vostok.Clusterclient.Core.Strategies.Strategy.Parallel(int parallelismLevel) -> Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy
+static Vostok.Clusterclient.Core.Strategies.Strategy.Sequential(int divisionFactor) -> Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+static Vostok.Clusterclient.Core.Strategies.Strategy.Sequential(Vostok.Clusterclient.Core.Strategies.TimeoutProviders.ISequentialTimeoutsProvider timeoutsProvider) -> Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+static Vostok.Clusterclient.Core.Transforms.IReplicaTransformExtensions.Transform(this Vostok.Clusterclient.Core.Transforms.IReplicaTransform transform, System.Collections.Generic.IList<System.Uri> replicas) -> System.Collections.Generic.IList<System.Uri>
+static Vostok.Clusterclient.Core.Transport.ITransportExtensions.Supports(this Vostok.Clusterclient.Core.Transport.ITransport transport, Vostok.Clusterclient.Core.Transport.TransportCapabilities capabilities) -> bool
+Vostok.Clusterclient.Core.ClusterClient
+Vostok.Clusterclient.Core.ClusterClient.AsyncClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider
+Vostok.Clusterclient.Core.ClusterClient.ClusterClient(Vostok.Logging.Abstractions.ILog log, Vostok.Clusterclient.Core.ClusterClientSetup setup) -> void
+Vostok.Clusterclient.Core.ClusterClient.ClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IClusterProvider
+Vostok.Clusterclient.Core.ClusterClient.ReplicaStorageProvider.get -> Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider
+Vostok.Clusterclient.Core.ClusterClient.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+Vostok.Clusterclient.Core.ClusterClientCachesCleaner
+Vostok.Clusterclient.Core.ClusterClientDefaults
+Vostok.Clusterclient.Core.ClusterClientException
+Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException() -> void
+Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException(string message) -> void
+Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException(string message, System.Exception innerException) -> void
+Vostok.Clusterclient.Core.ClusterClientSetup
+Vostok.Clusterclient.Core.Criteria.AcceptHeaderCriterion
+Vostok.Clusterclient.Core.Criteria.AcceptHeaderCriterion.AcceptHeaderCriterion(string headerName) -> void
+Vostok.Clusterclient.Core.Criteria.AcceptHeaderCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.AcceptNonRetriableCriterion
+Vostok.Clusterclient.Core.Criteria.AcceptNonRetriableCriterion.AcceptNonRetriableCriterion(string headerName = "Dont-Retry") -> void
+Vostok.Clusterclient.Core.Criteria.AlwaysAcceptCriterion
+Vostok.Clusterclient.Core.Criteria.AlwaysAcceptCriterion.AlwaysAcceptCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.AlwaysAcceptCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.AlwaysRejectCriterion
+Vostok.Clusterclient.Core.Criteria.AlwaysRejectCriterion.AlwaysRejectCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.AlwaysRejectCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.IResponseCriterion
+Vostok.Clusterclient.Core.Criteria.IResponseCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectContentErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectContentErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectContentErrorsCriterion.RejectContentErrorsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectHeaderCriterion
+Vostok.Clusterclient.Core.Criteria.RejectHeaderCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectHeaderCriterion.RejectHeaderCriterion(string headerName) -> void
+Vostok.Clusterclient.Core.Criteria.RejectNetworkErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectNetworkErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectNetworkErrorsCriterion.RejectNetworkErrorsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectNonAcceptableCriterion
+Vostok.Clusterclient.Core.Criteria.RejectNonAcceptableCriterion.RejectNonAcceptableCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectRedirectionsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectRedirectionsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectRedirectionsCriterion.RejectRedirectionsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectServerErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectServerErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectServerErrorsCriterion.RejectServerErrorsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectStreamingErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectStreamingErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectStreamingErrorsCriterion.RejectStreamingErrorsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectThrottlingErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectThrottlingErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectThrottlingErrorsCriterion.RejectThrottlingErrorsCriterion() -> void
+Vostok.Clusterclient.Core.Criteria.RejectUnknownErrorsCriterion
+Vostok.Clusterclient.Core.Criteria.RejectUnknownErrorsCriterion.Decide(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Criteria.RejectUnknownErrorsCriterion.RejectUnknownErrorsCriterion() -> void
+Vostok.Clusterclient.Core.IClusterClient
+Vostok.Clusterclient.Core.IClusterClient.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+Vostok.Clusterclient.Core.IClusterClientConfiguration
+Vostok.Clusterclient.Core.IClusterClientConfiguration.AsyncClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider
+Vostok.Clusterclient.Core.IClusterClientConfiguration.AsyncClusterProvider.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ClientApplicationName.get -> string
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ClientApplicationName.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IClusterProvider
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ClusterProvider.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ConnectionAttempts.get -> int
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ConnectionAttempts.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DeduplicateRequestUrl.get -> bool
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DeduplicateRequestUrl.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultConnectionTimeout.get -> System.TimeSpan?
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultConnectionTimeout.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultPriority.get -> Vostok.Clusterclient.Core.Model.RequestPriority?
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultPriority.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultRequestStrategy.get -> Vostok.Clusterclient.Core.Strategies.IRequestStrategy
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultRequestStrategy.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultTimeout.get -> System.TimeSpan
+Vostok.Clusterclient.Core.IClusterClientConfiguration.DefaultTimeout.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Log.get -> Vostok.Logging.Abstractions.ILog
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Logging.get -> Vostok.Clusterclient.Core.Misc.LoggingOptions
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Logging.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.MaxReplicasUsedPerRequest.get -> int
+Vostok.Clusterclient.Core.IClusterClientConfiguration.MaxReplicasUsedPerRequest.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Modules.get -> System.Collections.Generic.IDictionary<System.Type, Vostok.Clusterclient.Core.Misc.RelatedModules>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Modules.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ModulesToRemove.get -> System.Collections.Generic.ISet<System.Type>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ModulesToRemove.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaOrdering.get -> Vostok.Clusterclient.Core.Ordering.IReplicaOrdering
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaOrdering.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicasFilters.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Topology.IReplicasFilter>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicasFilters.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaStorageScope.get -> Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaStorageScope.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaTransform.get -> Vostok.Clusterclient.Core.Transforms.IReplicaTransform
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ReplicaTransform.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RequestTransforms.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Transforms.IRequestTransformMetadata>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RequestTransforms.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseCriteria.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Criteria.IResponseCriterion>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseCriteria.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseSelector.get -> Vostok.Clusterclient.Core.Misc.IResponseSelector
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseSelector.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseTransforms.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Transforms.IResponseTransform>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.ResponseTransforms.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryPolicy.get -> Vostok.Clusterclient.Core.Retry.IRetryPolicy
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryPolicy.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryStrategy.get -> Vostok.Clusterclient.Core.Retry.IRetryStrategy
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryStrategy.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryStrategyEx.get -> Vostok.Clusterclient.Core.Retry.IRetryStrategyEx
+Vostok.Clusterclient.Core.IClusterClientConfiguration.RetryStrategyEx.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetEnvironment.get -> string
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetEnvironment.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetServiceName.get -> string
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetServiceName.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.get -> Vostok.Clusterclient.Core.Transport.ITransport
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions
+Vostok.Clusterclient.Core.IClusterClientExtensions
+Vostok.Clusterclient.Core.Misc.IResponseSelector
+Vostok.Clusterclient.Core.Misc.IResponseSelector.Select(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Misc.LastAcceptedResponseSelector
+Vostok.Clusterclient.Core.Misc.LastAcceptedResponseSelector.LastAcceptedResponseSelector() -> void
+Vostok.Clusterclient.Core.Misc.LastAcceptedResponseSelector.Select(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Misc.LoggingMode
+Vostok.Clusterclient.Core.Misc.LoggingMode.Detailed = 0 -> Vostok.Clusterclient.Core.Misc.LoggingMode
+Vostok.Clusterclient.Core.Misc.LoggingMode.SingleShortMessage = 1 -> Vostok.Clusterclient.Core.Misc.LoggingMode
+Vostok.Clusterclient.Core.Misc.LoggingMode.SingleVerboseMessage = 2 -> Vostok.Clusterclient.Core.Misc.LoggingMode
+Vostok.Clusterclient.Core.Misc.LoggingOptions
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingMode.get -> Vostok.Clusterclient.Core.Misc.LoggingMode
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingMode.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingOptions() -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaRequests.get -> bool
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaRequests.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaResults.get -> bool
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaResults.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestDetails.get -> bool
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestDetails.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResultDetails.get -> bool
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResultDetails.set -> void
+Vostok.Clusterclient.Core.Misc.ModulePosition
+Vostok.Clusterclient.Core.Misc.ModulePosition.After = 1 -> Vostok.Clusterclient.Core.Misc.ModulePosition
+Vostok.Clusterclient.Core.Misc.ModulePosition.Before = 0 -> Vostok.Clusterclient.Core.Misc.ModulePosition
+Vostok.Clusterclient.Core.Misc.RelatedModules
+Vostok.Clusterclient.Core.Misc.RelatedModules.After.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
+Vostok.Clusterclient.Core.Misc.RelatedModules.Before.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
+Vostok.Clusterclient.Core.Misc.RelatedModules.RelatedModules() -> void
+Vostok.Clusterclient.Core.Model.ClusterResult
+Vostok.Clusterclient.Core.Model.ClusterResult.ClusterResult(Vostok.Clusterclient.Core.Model.ClusterResultStatus status, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> replicaResults, Vostok.Clusterclient.Core.Model.Response selectedResponse, Vostok.Clusterclient.Core.Model.Request request) -> void
+Vostok.Clusterclient.Core.Model.ClusterResult.Dispose() -> void
+Vostok.Clusterclient.Core.Model.ClusterResult.Replica.get -> System.Uri
+Vostok.Clusterclient.Core.Model.ClusterResult.ReplicaResults.get -> System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult>
+Vostok.Clusterclient.Core.Model.ClusterResult.Request.get -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.ClusterResult.Response.get -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.ClusterResult.Status.get -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.Canceled = 6 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.IncorrectArguments = 4 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.ReplicasExhausted = 3 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.ReplicasNotFound = 2 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.Success = 0 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.Throttled = 7 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.TimeExpired = 1 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.ClusterResultStatus.UnexpectedException = 5 -> Vostok.Clusterclient.Core.Model.ClusterResultStatus
+Vostok.Clusterclient.Core.Model.CompositeContent
+Vostok.Clusterclient.Core.Model.CompositeContent.CompositeContent(Vostok.Clusterclient.Core.Model.Content[] parts) -> void
+Vostok.Clusterclient.Core.Model.CompositeContent.Length.get -> long
+Vostok.Clusterclient.Core.Model.CompositeContent.Parts.get -> Vostok.Clusterclient.Core.Model.Content[]
+Vostok.Clusterclient.Core.Model.Content
+Vostok.Clusterclient.Core.Model.Content.Buffer.get -> byte[]
+Vostok.Clusterclient.Core.Model.Content.Content(byte[] buffer) -> void
+Vostok.Clusterclient.Core.Model.Content.Content(byte[] buffer, int offset, int length) -> void
+Vostok.Clusterclient.Core.Model.Content.Content(System.ArraySegment<byte> segment) -> void
+Vostok.Clusterclient.Core.Model.Content.Length.get -> int
+Vostok.Clusterclient.Core.Model.Content.Offset.get -> int
+Vostok.Clusterclient.Core.Model.Content.ToArray() -> byte[]
+Vostok.Clusterclient.Core.Model.Content.ToArraySegment() -> System.ArraySegment<byte>
+Vostok.Clusterclient.Core.Model.Content.ToMemoryStream() -> System.IO.MemoryStream
+Vostok.Clusterclient.Core.Model.Content.ToString(System.Text.Encoding encoding) -> string
+Vostok.Clusterclient.Core.Model.ContentAlreadyUsedException
+Vostok.Clusterclient.Core.Model.ContentAlreadyUsedException.ContentAlreadyUsedException(string message) -> void
+Vostok.Clusterclient.Core.Model.Header
+Vostok.Clusterclient.Core.Model.Header.Equals(Vostok.Clusterclient.Core.Model.Header other) -> bool
+Vostok.Clusterclient.Core.Model.Header.Header() -> void
+Vostok.Clusterclient.Core.Model.Header.Header(string name, string value) -> void
+Vostok.Clusterclient.Core.Model.Header.Name.get -> string
+Vostok.Clusterclient.Core.Model.Header.Value.get -> string
+Vostok.Clusterclient.Core.Model.HeaderNames
+Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Headers.Accept.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Age.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Authorization.get -> string
+Vostok.Clusterclient.Core.Model.Headers.ContentEncoding.get -> string
+Vostok.Clusterclient.Core.Model.Headers.ContentLength.get -> string
+Vostok.Clusterclient.Core.Model.Headers.ContentRange.get -> string
+Vostok.Clusterclient.Core.Model.Headers.ContentType.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Count.get -> int
+Vostok.Clusterclient.Core.Model.Headers.Date.get -> string
+Vostok.Clusterclient.Core.Model.Headers.ETag.get -> string
+Vostok.Clusterclient.Core.Model.Headers.GetEnumerator() -> System.Collections.Generic.IEnumerator<Vostok.Clusterclient.Core.Model.Header>
+Vostok.Clusterclient.Core.Model.Headers.Headers(int capacity) -> void
+Vostok.Clusterclient.Core.Model.Headers.Host.get -> string
+Vostok.Clusterclient.Core.Model.Headers.LastModified.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Location.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Names.get -> System.Collections.Generic.IEnumerable<string>
+Vostok.Clusterclient.Core.Model.Headers.Range.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Referer.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Remove(string name) -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Headers.RetryAfter.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Server.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Set(string name, string value) -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Headers.Set<T>(string name, T value) -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Headers.this[string name].get -> string
+Vostok.Clusterclient.Core.Model.Headers.TransferEncoding.get -> string
+Vostok.Clusterclient.Core.Model.Headers.UserAgent.get -> string
+Vostok.Clusterclient.Core.Model.Headers.Values.get -> System.Collections.Generic.IEnumerable<string>
+Vostok.Clusterclient.Core.Model.Headers.WWWAuthenticate.get -> string
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Add(string value, decimal quality = 1) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Add(Vostok.Clusterclient.Core.Model.HeaderValueWithQuality valueWithQuality) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Clear() -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Count.get -> int
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.GetEnumerator() -> System.Collections.Generic.IEnumerator<Vostok.Clusterclient.Core.Model.HeaderValueWithQuality>
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.HeaderValuesWithQualityCollection() -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(string value) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(string value, decimal quality) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(Vostok.Clusterclient.Core.Model.HeaderValueWithQuality valueWithQuality) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.this[int idx].get -> Vostok.Clusterclient.Core.Model.HeaderValueWithQuality
+Vostok.Clusterclient.Core.Model.HeaderValueWithQuality
+Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.Equals(Vostok.Clusterclient.Core.Model.HeaderValueWithQuality other) -> bool
+Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.HeaderValueWithQuality(string value, decimal quality = 1) -> void
+Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.Quality.get -> decimal
+Vostok.Clusterclient.Core.Model.HeaderValueWithQuality.Value.get -> string
+Vostok.Clusterclient.Core.Model.IContentProducer
+Vostok.Clusterclient.Core.Model.IContentProducer.IsReusable.get -> bool
+Vostok.Clusterclient.Core.Model.IContentProducer.Length.get -> long?
+Vostok.Clusterclient.Core.Model.IContentProducer.ProduceAsync(System.IO.Stream requestStream, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Model.IRequestTimeBudget
+Vostok.Clusterclient.Core.Model.IRequestTimeBudget.Elapsed.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Model.IRequestTimeBudget.HasExpired.get -> bool
+Vostok.Clusterclient.Core.Model.IRequestTimeBudget.Remaining.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Model.IRequestTimeBudget.Total.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Model.IStreamContent
+Vostok.Clusterclient.Core.Model.IStreamContent.Length.get -> long?
+Vostok.Clusterclient.Core.Model.IStreamContent.Stream.get -> System.IO.Stream
+Vostok.Clusterclient.Core.Model.ReplicaResult
+Vostok.Clusterclient.Core.Model.ReplicaResult.Replica.get -> System.Uri
+Vostok.Clusterclient.Core.Model.ReplicaResult.ReplicaResult(System.Uri replica, Vostok.Clusterclient.Core.Model.Response response, Vostok.Clusterclient.Core.Model.ResponseVerdict verdict, System.TimeSpan time) -> void
+Vostok.Clusterclient.Core.Model.ReplicaResult.Response.get -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.ReplicaResult.Time.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Model.ReplicaResult.Verdict.get -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.CompositeContent.get -> Vostok.Clusterclient.Core.Model.CompositeContent
+Vostok.Clusterclient.Core.Model.Request.Content.get -> Vostok.Clusterclient.Core.Model.Content
+Vostok.Clusterclient.Core.Model.Request.ContentProducer.get -> Vostok.Clusterclient.Core.Model.IContentProducer
+Vostok.Clusterclient.Core.Model.Request.HasBody.get -> bool
+Vostok.Clusterclient.Core.Model.Request.Headers.get -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Request.Method.get -> string
+Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, Vostok.Clusterclient.Core.Model.CompositeContent content, Vostok.Clusterclient.Core.Model.Headers headers = null) -> void
+Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null) -> void
+Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, Vostok.Clusterclient.Core.Model.IContentProducer contentProducer, Vostok.Clusterclient.Core.Model.Headers headers = null) -> void
+Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, Vostok.Clusterclient.Core.Model.IStreamContent content, Vostok.Clusterclient.Core.Model.Headers headers = null) -> void
+Vostok.Clusterclient.Core.Model.Request.StreamContent.get -> Vostok.Clusterclient.Core.Model.IStreamContent
+Vostok.Clusterclient.Core.Model.Request.ToString(bool includeQuery, bool includeHeaders) -> string
+Vostok.Clusterclient.Core.Model.Request.Url.get -> System.Uri
+Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.CompositeContent content) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.Content content) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.IContentProducer content) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.IStreamContent content) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithHeader(string name, string value) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithHeader<T>(string name, T value) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithHeaders(Vostok.Clusterclient.Core.Model.Headers headers) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithUrl(string url) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.Request.WithUrl(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Model.RequestContentExtensions
+Vostok.Clusterclient.Core.Model.RequestHeadersExtensions
+Vostok.Clusterclient.Core.Model.RequestMethods
+Vostok.Clusterclient.Core.Model.RequestMiscExtensions
+Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Model.RequestParameters.ConnectionTimeout.get -> System.TimeSpan?
+Vostok.Clusterclient.Core.Model.RequestParameters.Priority.get -> Vostok.Clusterclient.Core.Model.RequestPriority?
+Vostok.Clusterclient.Core.Model.RequestParameters.Properties.get -> System.Collections.Generic.IReadOnlyDictionary<string, object>
+Vostok.Clusterclient.Core.Model.RequestParameters.RequestParameters(Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null) -> void
+Vostok.Clusterclient.Core.Model.RequestParameters.Strategy.get -> Vostok.Clusterclient.Core.Strategies.IRequestStrategy
+Vostok.Clusterclient.Core.Model.RequestParameters.WithPriority(Vostok.Clusterclient.Core.Model.RequestPriority? priority) -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Model.RequestParameters.WithProperty(string key, object value) -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Model.RequestParameters.WithStrategy(Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy) -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Model.RequestPriority
+Vostok.Clusterclient.Core.Model.RequestPriority.Critical = 2 -> Vostok.Clusterclient.Core.Model.RequestPriority
+Vostok.Clusterclient.Core.Model.RequestPriority.Ordinary = 1 -> Vostok.Clusterclient.Core.Model.RequestPriority
+Vostok.Clusterclient.Core.Model.RequestPriority.Sheddable = 0 -> Vostok.Clusterclient.Core.Model.RequestPriority
+Vostok.Clusterclient.Core.Model.RequestQueryExtensions
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add(string key, string value) -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add(string segment) -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add<T>(string key, T value) -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add<T>(T segment) -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToPath(string segment) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToPath<T>(T segment) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery(string key, string value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery(string key, string value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery<T>(string key, T value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery<T>(string key, T value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Build() -> System.Uri
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Dispose() -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.EnsureNotDisposed() -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.EnsureQueryNotStarted() -> void
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.IsDisposed.get -> bool
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.RequestUrlBuilder(string initialUrl = "") -> void
+Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.Code.get -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.Response.Content.get -> Vostok.Clusterclient.Core.Model.Content
+Vostok.Clusterclient.Core.Model.Response.Dispose() -> void
+Vostok.Clusterclient.Core.Model.Response.EnsureSuccessStatusCode() -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.HasContent.get -> bool
+Vostok.Clusterclient.Core.Model.Response.HasHeaders.get -> bool
+Vostok.Clusterclient.Core.Model.Response.HasStream.get -> bool
+Vostok.Clusterclient.Core.Model.Response.Headers.get -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Response.IsSuccessful.get -> bool
+Vostok.Clusterclient.Core.Model.Response.RemoveHeader(string name) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null) -> void
+Vostok.Clusterclient.Core.Model.Response.Stream.get -> System.IO.Stream
+Vostok.Clusterclient.Core.Model.Response.ToString(bool includeHeaders) -> string
+Vostok.Clusterclient.Core.Model.Response.WithContent(Vostok.Clusterclient.Core.Model.Content newContent) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithHeader(string name, string value) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithHeader<T>(string name, T value) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithStream(System.IO.Stream newStream) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Accepted = 202 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.BadGateway = 502 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.BadRequest = 400 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Canceled = 454 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Conflict = 409 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ConnectFailure = 450 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ContentInputFailure = 458 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ContentReuseFailure = 457 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Continue = 100 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Created = 201 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ExpectationFailed = 417 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Forbidden = 403 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Found = 302 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Gone = 410 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.HttpVersionNotSupported = 505 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.InsufficientStorage = 507 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.InternalServerError = 500 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.LengthRequired = 411 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.MethodNotAllowed = 405 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.MovedPermanently = 301 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.MultipleChoices = 300 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NoContent = 204 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NonAuthoritativeInformation = 203 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NotAcceptable = 406 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NotFound = 404 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NotImplemented = 501 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.NotModified = 304 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Ok = 200 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.PartialContent = 206 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.PaymentRequired = 402 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.PreconditionFailed = 412 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ProxyAuthenticationRequired = 407 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ProxyTimeout = 504 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ReceiveFailure = 451 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.RequestedRangeNotSatisfiable = 416 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.RequestEntityTooLarge = 413 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.RequestTimeout = 408 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.RequestURITooLong = 414 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ResetContent = 205 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.SeeOther = 303 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.SendFailure = 452 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.ServiceUnavailable = 503 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.StreamInputFailure = 456 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.StreamReuseFailure = 455 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.SwitchingProtocols = 101 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.TemporaryRedirect = 307 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.TooManyRequests = 429 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Unauthorized = 401 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.Unknown = 0 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.UnknownFailure = 453 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.UnsupportedMediaType = 415 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCode.UseProxy = 305 -> Vostok.Clusterclient.Core.Model.ResponseCode
+Vostok.Clusterclient.Core.Model.ResponseCodeExtensions
+Vostok.Clusterclient.Core.Model.ResponseContentExtensions
+Vostok.Clusterclient.Core.Model.Responses
+Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Model.ResponseVerdict.Accept = 0 -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Model.ResponseVerdict.DontKnow = 2 -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Model.ResponseVerdict.Reject = 1 -> Vostok.Clusterclient.Core.Model.ResponseVerdict
+Vostok.Clusterclient.Core.Model.StreamAlreadyUsedException
+Vostok.Clusterclient.Core.Model.StreamAlreadyUsedException.StreamAlreadyUsedException(string message) -> void
+Vostok.Clusterclient.Core.Model.StreamContent
+Vostok.Clusterclient.Core.Model.StreamContent.Length.get -> long?
+Vostok.Clusterclient.Core.Model.StreamContent.Stream.get -> System.IO.Stream
+Vostok.Clusterclient.Core.Model.StreamContent.StreamContent(System.IO.Stream stream, long? length = null) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.CriticalRatio.get -> double
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MaximumRejectProbability.get -> double
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MinimumRequests.get -> int
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MinutesToTrack.get -> int
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.StorageKey.get -> string
+Vostok.Clusterclient.Core.Modules.IRequestContext
+Vostok.Clusterclient.Core.Modules.IRequestContext.AsyncClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider
+Vostok.Clusterclient.Core.Modules.IRequestContext.AsyncClusterProvider.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.Budget.get -> Vostok.Clusterclient.Core.Model.IRequestTimeBudget
+Vostok.Clusterclient.Core.Modules.IRequestContext.CancellationToken.get -> System.Threading.CancellationToken
+Vostok.Clusterclient.Core.Modules.IRequestContext.ClientApplicationName.get -> string
+Vostok.Clusterclient.Core.Modules.IRequestContext.ClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IClusterProvider
+Vostok.Clusterclient.Core.Modules.IRequestContext.ClusterProvider.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.ConnectionAttempts.get -> int
+Vostok.Clusterclient.Core.Modules.IRequestContext.ConnectionAttempts.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.Log.get -> Vostok.Logging.Abstractions.ILog
+Vostok.Clusterclient.Core.Modules.IRequestContext.MaximumReplicasToUse.get -> int
+Vostok.Clusterclient.Core.Modules.IRequestContext.MaximumReplicasToUse.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.Parameters.get -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Modules.IRequestContext.Parameters.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.ReplicaOrdering.get -> Vostok.Clusterclient.Core.Ordering.IReplicaOrdering
+Vostok.Clusterclient.Core.Modules.IRequestContext.ReplicaOrdering.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.Request.get -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Modules.IRequestContext.Request.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.ResetReplicaResults() -> void
+Vostok.Clusterclient.Core.Modules.IRequestContext.Transport.get -> Vostok.Clusterclient.Core.Transport.ITransport
+Vostok.Clusterclient.Core.Modules.IRequestContext.Transport.set -> void
+Vostok.Clusterclient.Core.Modules.IRequestModule
+Vostok.Clusterclient.Core.Modules.IRequestModule.ExecuteAsync(Vostok.Clusterclient.Core.Modules.IRequestContext context, System.Func<Vostok.Clusterclient.Core.Modules.IRequestContext, System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>> next) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions.CriticalRatio.get -> double
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions.MinimumRequests.get -> int
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions.MinutesToTrack.get -> int
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions.ReplicaBudgetingOptions(string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 1.2) -> void
+Vostok.Clusterclient.Core.Modules.ReplicaBudgetingOptions.StorageKey.get -> string
+Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.AbsoluteUrlSender = 13 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.AdaptiveThrottling = 12 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.AuxiliaryHeaders = 3 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.ErrorCatching = 7 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.GlobalErrorCatching = 1 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.HttpMethodValidation = 9 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.LeakPrevention = 0 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.Logging = 5 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.ReplicaBudgeting = 14 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.RequestExecution = 15 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.RequestRetry = 11 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.RequestTransformation = 2 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.RequestValidation = 8 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.ResponseTransformation = 6 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.ThreadPoolTuning = 4 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Modules.RequestModule.TimeoutValidation = 10 -> Vostok.Clusterclient.Core.Modules.RequestModule
+Vostok.Clusterclient.Core.Ordering.AsIsReplicaOrdering
+Vostok.Clusterclient.Core.Ordering.AsIsReplicaOrdering.AsIsReplicaOrdering() -> void
+Vostok.Clusterclient.Core.Ordering.AsIsReplicaOrdering.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.AsIsReplicaOrdering.Order(System.Collections.Generic.IList<System.Uri> replicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters) -> System.Collections.Generic.IEnumerable<System.Uri>
+Vostok.Clusterclient.Core.Ordering.IReplicaOrdering
+Vostok.Clusterclient.Core.Ordering.IReplicaOrdering.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.IReplicaOrdering.Order(System.Collections.Generic.IList<System.Uri> replicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters) -> System.Collections.Generic.IEnumerable<System.Uri>
+Vostok.Clusterclient.Core.Ordering.RandomReplicaOrdering
+Vostok.Clusterclient.Core.Ordering.RandomReplicaOrdering.RandomReplicaOrdering() -> void
+Vostok.Clusterclient.Core.Ordering.Storage.IGlobalStorageProvider
+Vostok.Clusterclient.Core.Ordering.Storage.IGlobalStorageProvider.ObtainGlobalValue<TValue>(string storageKey, System.Func<TValue> factory) -> TValue
+Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider
+Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider.Obtain<TValue>(string storageKey = null) -> System.Collections.Concurrent.ConcurrentDictionary<System.Uri, TValue>
+Vostok.Clusterclient.Core.Ordering.Storage.PerInstanceGlobalStorageProvider
+Vostok.Clusterclient.Core.Ordering.Storage.PerInstanceGlobalStorageProvider.ObtainGlobalValue<TValue>(string storageKey, System.Func<TValue> factory) -> TValue
+Vostok.Clusterclient.Core.Ordering.Storage.PerInstanceGlobalStorageProvider.PerInstanceGlobalStorageProvider() -> void
+Vostok.Clusterclient.Core.Ordering.Storage.PerProcessGlobalStorageProvider
+Vostok.Clusterclient.Core.Ordering.Storage.PerProcessGlobalStorageProvider.ObtainGlobalValue<TValue>(string storageKey, System.Func<TValue> factory) -> TValue
+Vostok.Clusterclient.Core.Ordering.Storage.PerProcessGlobalStorageProvider.PerProcessGlobalStorageProvider() -> void
+Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope
+Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope.Instance = 1 -> Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope
+Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope.Process = 0 -> Vostok.Clusterclient.Core.Ordering.Storage.ReplicaStorageScope
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction.Decrease = 2 -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction.DontTouch = 0 -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction.Increase = 1 -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthModifier<THealth>
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthModifier<THealth>.AdaptiveHealthModifier(Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth> implementation, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy tuningPolicy, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthModifier<THealth>.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthModifier<THealth>.Modify(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.AdaptiveHealthWithLinearDecay(System.TimeSpan decayDuration, double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.AreEqual(Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay x, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay y) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.CreateDefaultHealth() -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.DecayDuration.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.DecreaseHealth(Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay current) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.DownMultiplier.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.IncreaseHealth(Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay current) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.LogHealthChange(System.Uri replica, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay oldHealth, Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay newHealth, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.MinimumHealthValue.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.ModifyWeight(Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay health, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithLinearDecay.UpMultiplier.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.AdaptiveHealthWithoutDecay(double upMultiplier = 1.5, double downMultiplier = 0.5, double minimumHealthValue = 0.001) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.AreEqual(double x, double y) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.CreateDefaultHealth() -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.DecreaseHealth(double current) -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.DownMultiplier.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.IncreaseHealth(double current) -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.LogHealthChange(System.Uri replica, double oldHealth, double newHealth, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.MinimumHealthValue.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.ModifyWeight(double health, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthWithoutDecay.UpMultiplier.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.CompositeTuningPolicy
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.CompositeTuningPolicy.CompositeTuningPolicy(params Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy[] policies) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.CompositeTuningPolicy.SelectAction(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay.HealthWithDecay() -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.HealthWithDecay.HealthWithDecay(double value, System.DateTime decayPivot) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.AreEqual(THealth x, THealth y) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.CreateDefaultHealth() -> THealth
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.DecreaseHealth(THealth current) -> THealth
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.IncreaseHealth(THealth current) -> THealth
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.LogHealthChange(System.Uri replica, THealth oldHealth, THealth newHealth, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthImplementation<THealth>.ModifyWeight(THealth health, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy.SelectAction(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseTimeTuningPolicy
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseTimeTuningPolicy.ResponseTimeTuningPolicy(System.Func<System.TimeSpan> thresholdProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseTimeTuningPolicy.ResponseTimeTuningPolicy(System.TimeSpan threshold) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseTimeTuningPolicy.SelectAction(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseVerdictTuningPolicy
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseVerdictTuningPolicy.ResponseVerdictTuningPolicy() -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.ResponseVerdictTuningPolicy.SelectAction(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies
+Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.SelectAction(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.AdaptiveHealthAction
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.FixedGrayPeriodProvider
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.FixedGrayPeriodProvider.FixedGrayPeriodProvider(System.TimeSpan grayPeriod) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.FixedGrayPeriodProvider.GetGrayPeriod() -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.GrayListModifier
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.GrayListModifier.GrayListModifier(System.TimeSpan grayPeriod, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.GrayListModifier.GrayListModifier(Vostok.Clusterclient.Core.Ordering.Weighed.Gray.IGrayPeriodProvider grayPeriodProvider, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.GrayListModifier.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.GrayListModifier.Modify(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.IGrayPeriodProvider
+Vostok.Clusterclient.Core.Ordering.Weighed.Gray.IGrayPeriodProvider.GetGrayPeriod() -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightCalculator
+Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightCalculator.GetWeight(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters) -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier
+Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier.Modify(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.AddModifier(Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier modifier) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.Environment.get -> string
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.Environment.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.InitialWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.InitialWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.Log.get -> Vostok.Logging.Abstractions.ILog
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.MaximumWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.MaximumWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.MinimumWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.MinimumWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.ServiceName.get -> string
+Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder.ServiceName.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictLeaderDetector
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictLeaderDetector.AcceptedVerdictLeaderDetector() -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictLeaderDetector.IsLeaderResult(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictOr503LeaderDetector
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictOr503LeaderDetector.AcceptedVerdictOr503LeaderDetector() -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.AcceptedVerdictOr503LeaderDetector.IsLeaderResult(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.ILeaderResultDetector
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.ILeaderResultDetector.IsLeaderResult(Vostok.Clusterclient.Core.Model.ReplicaResult result) -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.LeadershipWeightModifier
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.LeadershipWeightModifier.LeadershipWeightModifier(Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.ILeaderResultDetector resultDetector, Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.LeadershipWeightModifier.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Leadership.LeadershipWeightModifier.Modify(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightModifier
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightModifier.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightModifier.Modify(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, ref double weight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightModifier.RelativeWeightModifier(Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings settings, string service, string environment, double minWeight = 0, double maxWeight = 10, Vostok.Clusterclient.Core.Ordering.Storage.IGlobalStorageProvider globalStorageProvider = null, Vostok.Logging.Abstractions.ILog log = null) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.DegradedWeightBorderToLog -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.InitialWeight -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.MinWeight -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.PenaltyMultiplier -> int
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.RegenerationLag -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.RegenerationRatePerMinute -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.RelativeWeightSettings() -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.Sensitivity -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.SignificantWeightChangeToLog -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.StatisticSmoothingConstant -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.StatisticTTL -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightByStatusesRpsThreshold -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightsDownSmoothingConstant -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightsOnlyByStatuses -> bool
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightsRaiseSmoothingConstant -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightsTTL -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.Relative.RelativeWeightSettings.WeightUpdatePeriod -> System.TimeSpan
+Vostok.Clusterclient.Core.Ordering.Weighed.ReplicaWeightCalculator
+Vostok.Clusterclient.Core.Ordering.Weighed.ReplicaWeightCalculator.GetWeight(System.Uri replica, System.Collections.Generic.IList<System.Uri> allReplicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters) -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.ReplicaWeightCalculator.ReplicaWeightCalculator(System.Collections.Generic.IList<Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier> modifiers, double minimumWeight, double maximumWeight, double initialWeight) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrdering
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrdering.Learn(Vostok.Clusterclient.Core.Model.ReplicaResult result, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrdering.Order(System.Collections.Generic.IList<System.Uri> replicas, Vostok.Clusterclient.Core.Ordering.Storage.IReplicaStorageProvider storageProvider, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters) -> System.Collections.Generic.IEnumerable<System.Uri>
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrdering.WeighedReplicaOrdering(System.Collections.Generic.IList<Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier> modifiers, double minimumWeight = 0, double maximumWeight = 10, double initialWeight = 1) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.AddModifier(Vostok.Clusterclient.Core.Ordering.Weighed.IReplicaWeightModifier modifier) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.Build() -> Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrdering
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.Environment.get -> string
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.Environment.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.InitialWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.InitialWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.Log.get -> Vostok.Logging.Abstractions.ILog
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.MaximumWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.MaximumWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.MinimumWeight.get -> double
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.MinimumWeight.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.ServiceName.get -> string
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.ServiceName.set -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilder.WeighedReplicaOrderingBuilder(Vostok.Logging.Abstractions.ILog log) -> void
+Vostok.Clusterclient.Core.Ordering.Weighed.WeighedReplicaOrderingBuilderExtensions
+Vostok.Clusterclient.Core.Retry.AdHocRetryPolicy
+Vostok.Clusterclient.Core.Retry.AdHocRetryPolicy.AdHocRetryPolicy(System.Func<Vostok.Clusterclient.Core.Model.Request, Vostok.Clusterclient.Core.Model.RequestParameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult>, bool> criterion) -> void
+Vostok.Clusterclient.Core.Retry.AdHocRetryPolicy.NeedToRetry(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> bool
+Vostok.Clusterclient.Core.Retry.ConstantDelayRetryStrategy
+Vostok.Clusterclient.Core.Retry.ConstantDelayRetryStrategy.AttemptsCount.get -> int
+Vostok.Clusterclient.Core.Retry.ConstantDelayRetryStrategy.ConstantDelayRetryStrategy(int attemptsCount, System.TimeSpan retryDelay) -> void
+Vostok.Clusterclient.Core.Retry.ConstantDelayRetryStrategy.GetRetryDelay(int attemptsUsed) -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ConstantDelayRetryStrategy.RetryDelay.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.AttemptsCount.get -> int
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.ExponentialBackoffRetryStrategy(int attemptsCount, System.TimeSpan initialRetryDelay, System.TimeSpan maximumRetryDelay, double retryDelayMultiplier = 2, double jitter = 0.2) -> void
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.GetRetryDelay(int attemptsUsed) -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.InitialRetryDelay.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.Jitter.get -> double
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.MaximumRetryDelay.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ExponentialBackoffRetryStrategy.RetryDelayMultiplier.get -> double
+Vostok.Clusterclient.Core.Retry.ImmediateRetryStrategy
+Vostok.Clusterclient.Core.Retry.ImmediateRetryStrategy.AttemptsCount.get -> int
+Vostok.Clusterclient.Core.Retry.ImmediateRetryStrategy.GetRetryDelay(int attemptsUsed) -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.ImmediateRetryStrategy.ImmediateRetryStrategy(int attemptsCount) -> void
+Vostok.Clusterclient.Core.Retry.IRetryPolicy
+Vostok.Clusterclient.Core.Retry.IRetryPolicy.NeedToRetry(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> bool
+Vostok.Clusterclient.Core.Retry.IRetryStrategy
+Vostok.Clusterclient.Core.Retry.IRetryStrategy.AttemptsCount.get -> int
+Vostok.Clusterclient.Core.Retry.IRetryStrategy.GetRetryDelay(int attemptsUsed) -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.IRetryStrategyEx
+Vostok.Clusterclient.Core.Retry.IRetryStrategyEx.GetRetryDelay(Vostok.Clusterclient.Core.Modules.IRequestContext context, Vostok.Clusterclient.Core.Model.ClusterResult lastResult, int attemptsUsed) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.AttemptsCount.get -> int
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.GetRetryDelay(int attemptsUsed) -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.InitialRetryDelay.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.Jitter.get -> double
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.LinearBackoffRetryStrategy(int attemptsCount, System.TimeSpan initialRetryDelay, System.TimeSpan maximumRetryDelay, double jitter = 0.2) -> void
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.LinearBackoffRetryStrategy(int attemptsCount, System.TimeSpan initialRetryDelay, System.TimeSpan maximumRetryDelay, System.TimeSpan retryDelayIncrement, double jitter = 0.2) -> void
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.MaximumRetryDelay.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.LinearBackoffRetryStrategy.RetryDelayIncrement.get -> System.TimeSpan
+Vostok.Clusterclient.Core.Retry.NeverRetryPolicy
+Vostok.Clusterclient.Core.Retry.NeverRetryPolicy.NeedToRetry(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> bool
+Vostok.Clusterclient.Core.Retry.NeverRetryPolicy.NeverRetryPolicy() -> void
+Vostok.Clusterclient.Core.Retry.VerdictBasedRetryPolicy
+Vostok.Clusterclient.Core.Retry.VerdictBasedRetryPolicy.NeedToRetry(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> bool
+Vostok.Clusterclient.Core.Retry.VerdictBasedRetryPolicy.VerdictBasedRetryPolicy() -> void
+Vostok.Clusterclient.Core.Sending.IRequestSender
+Vostok.Clusterclient.Core.Sending.IRequestSender.SendToReplicaAsync(System.Uri replica, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? connectionTimeout, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ReplicaResult>
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocDelaysProvider.AdHocDelaysProvider(Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour tailBehaviour, params System.Func<System.TimeSpan>[] providers) -> void
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocThenEqualDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocThenEqualDelaysProvider.AdHocThenEqualDelaysProvider(int tailDivisionFactor, params System.Func<System.TimeSpan>[] firstDelays) -> void
+Vostok.Clusterclient.Core.Strategies.DelayProviders.AdHocThenEqualDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.EqualDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.EqualDelaysProvider.EqualDelaysProvider(int divisionFactor) -> void
+Vostok.Clusterclient.Core.Strategies.DelayProviders.EqualDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedDelaysProvider.FixedDelaysProvider(Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour tailBehaviour, params System.TimeSpan[] delays) -> void
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedThenEqualDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedThenEqualDelaysProvider.FixedThenEqualDelaysProvider(int tailDivisionFactor, params System.TimeSpan[] firstDelays) -> void
+Vostok.Clusterclient.Core.Strategies.DelayProviders.FixedThenEqualDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.IForkingDelaysProvider
+Vostok.Clusterclient.Core.Strategies.DelayProviders.IForkingDelaysProvider.GetForkingDelay(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan?
+Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour
+Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour.RepeatAllValues = 1 -> Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour
+Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour.RepeatLastValue = 0 -> Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour
+Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour.StopIssuingDelays = 2 -> Vostok.Clusterclient.Core.Strategies.DelayProviders.TailDelayBehaviour
+Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy
+Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy.ForkingRequestStrategy(Vostok.Clusterclient.Core.Strategies.DelayProviders.IForkingDelaysProvider delaysProvider, int maximumParallelism) -> void
+Vostok.Clusterclient.Core.Strategies.ForkingRequestStrategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.IRequestStrategy
+Vostok.Clusterclient.Core.Strategies.IRequestStrategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy
+Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy.ParallelismLevel.get -> int
+Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy.ParallelRequestStrategy(int parallelismLevel) -> void
+Vostok.Clusterclient.Core.Strategies.ParallelRequestStrategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy
+Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.SequentialRequestStrategy.SequentialRequestStrategy(Vostok.Clusterclient.Core.Strategies.TimeoutProviders.ISequentialTimeoutsProvider timeoutsProvider) -> void
+Vostok.Clusterclient.Core.Strategies.SingleReplicaRequestStrategy
+Vostok.Clusterclient.Core.Strategies.SingleReplicaRequestStrategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.SingleReplicaRequestStrategy.SingleReplicaRequestStrategy() -> void
+Vostok.Clusterclient.Core.Strategies.Strategy
+Vostok.Clusterclient.Core.Strategies.Strategy.SendAsync(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, Vostok.Clusterclient.Core.Sending.IRequestSender sender, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, System.Collections.Generic.IEnumerable<System.Uri> replicas, int replicasCount, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocThenEqualTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocThenEqualTimeoutsProvider.AdHocThenEqualTimeoutsProvider(int tailDivisionFactor, params System.Func<System.TimeSpan>[] firstTimeouts) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocThenEqualTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocTimeoutsProvider.AdHocTimeoutsProvider(params System.Func<System.TimeSpan>[] providers) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocTimeoutsProvider.AdHocTimeoutsProvider(Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour tailBehaviour, params System.Func<System.TimeSpan>[] providers) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.AdHocTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.EqualTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.EqualTimeoutsProvider.EqualTimeoutsProvider(int divisionFactor) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.EqualTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedThenEqualTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedThenEqualTimeoutsProvider.FixedThenEqualTimeoutsProvider(int tailDivisionFactor, params System.TimeSpan[] firstTimeouts) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedThenEqualTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedTimeoutsProvider.FixedTimeoutsProvider(params System.TimeSpan[] timeouts) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedTimeoutsProvider.FixedTimeoutsProvider(Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour tailBehaviour, params System.TimeSpan[] timeouts) -> void
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.FixedTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.ISequentialTimeoutsProvider
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.ISequentialTimeoutsProvider.GetTimeout(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.IRequestTimeBudget budget, int currentReplicaIndex, int totalReplicas) -> System.TimeSpan
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour.RepeatLastValue = 0 -> Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour
+Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour.UseRemainingBudget = 1 -> Vostok.Clusterclient.Core.Strategies.TimeoutProviders.TailTimeoutBehaviour
+Vostok.Clusterclient.Core.Topology.AdHocAsyncClusterProvider
+Vostok.Clusterclient.Core.Topology.AdHocAsyncClusterProvider.AdHocAsyncClusterProvider(System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IList<System.Uri>>> replicasProvider) -> void
+Vostok.Clusterclient.Core.Topology.AdHocAsyncClusterProvider.GetClusterAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IList<System.Uri>>
+Vostok.Clusterclient.Core.Topology.AdHocClusterProvider
+Vostok.Clusterclient.Core.Topology.AdHocClusterProvider.AdHocClusterProvider(System.Func<System.Collections.Generic.IList<System.Uri>> replicasProvider) -> void
+Vostok.Clusterclient.Core.Topology.AdHocClusterProvider.GetCluster() -> System.Collections.Generic.IList<System.Uri>
+Vostok.Clusterclient.Core.Topology.FixedClusterProvider
+Vostok.Clusterclient.Core.Topology.FixedClusterProvider.FixedClusterProvider(params string[] replicas) -> void
+Vostok.Clusterclient.Core.Topology.FixedClusterProvider.FixedClusterProvider(params System.Uri[] replicas) -> void
+Vostok.Clusterclient.Core.Topology.FixedClusterProvider.FixedClusterProvider(System.Collections.Generic.IList<System.Uri> replicas) -> void
+Vostok.Clusterclient.Core.Topology.FixedClusterProvider.GetCluster() -> System.Collections.Generic.IList<System.Uri>
+Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider
+Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider.GetClusterAsync() -> System.Threading.Tasks.Task<System.Collections.Generic.IList<System.Uri>>
+Vostok.Clusterclient.Core.Topology.IClusterProvider
+Vostok.Clusterclient.Core.Topology.IClusterProvider.GetCluster() -> System.Collections.Generic.IList<System.Uri>
+Vostok.Clusterclient.Core.Topology.IReplicasFilter
+Vostok.Clusterclient.Core.Topology.IReplicasFilter.Filter(System.Collections.Generic.IEnumerable<System.Uri> replicas, Vostok.Clusterclient.Core.Modules.IRequestContext requestContext) -> System.Collections.Generic.IEnumerable<System.Uri>
+Vostok.Clusterclient.Core.Transforms.AdHocAsyncRequestTransform
+Vostok.Clusterclient.Core.Transforms.AdHocAsyncRequestTransform.AdHocAsyncRequestTransform(System.Func<Vostok.Clusterclient.Core.Model.Request, System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Request>> transform) -> void
+Vostok.Clusterclient.Core.Transforms.AdHocAsyncRequestTransform.TransformAsync(Vostok.Clusterclient.Core.Model.Request request) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Request>
+Vostok.Clusterclient.Core.Transforms.AdHocReplicaTransform
+Vostok.Clusterclient.Core.Transforms.AdHocReplicaTransform.AdHocReplicaTransform(System.Func<System.Uri, System.Uri> transform) -> void
+Vostok.Clusterclient.Core.Transforms.AdHocReplicaTransform.Transform(System.Uri replica) -> System.Uri
+Vostok.Clusterclient.Core.Transforms.AdHocRequestTransform
+Vostok.Clusterclient.Core.Transforms.AdHocRequestTransform.AdHocRequestTransform(System.Func<Vostok.Clusterclient.Core.Model.Request, Vostok.Clusterclient.Core.Model.Request> transform) -> void
+Vostok.Clusterclient.Core.Transforms.AdHocRequestTransform.Transform(Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Transforms.AdHocResponseTransform
+Vostok.Clusterclient.Core.Transforms.AdHocResponseTransform.AdHocResponseTransform(System.Func<Vostok.Clusterclient.Core.Model.Response, Vostok.Clusterclient.Core.Model.Response> transform) -> void
+Vostok.Clusterclient.Core.Transforms.AdHocResponseTransform.Transform(Vostok.Clusterclient.Core.Model.Response request) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.Add(string name, string value) -> void
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.Add(Vostok.Clusterclient.Core.Model.Header header) -> void
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.DefaultHeaders.get -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.DefaultHeadersTransform(System.Collections.Generic.IEnumerable<Vostok.Clusterclient.Core.Model.Header> defaultHeaders = null) -> void
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.GetEnumerator() -> System.Collections.Generic.IEnumerator<Vostok.Clusterclient.Core.Model.Header>
+Vostok.Clusterclient.Core.Transforms.DefaultHeadersTransform.Transform(Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Transforms.IAsyncRequestTransform
+Vostok.Clusterclient.Core.Transforms.IAsyncRequestTransform.TransformAsync(Vostok.Clusterclient.Core.Model.Request request) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Request>
+Vostok.Clusterclient.Core.Transforms.IReplicaTransform
+Vostok.Clusterclient.Core.Transforms.IReplicaTransform.Transform(System.Uri replica) -> System.Uri
+Vostok.Clusterclient.Core.Transforms.IReplicaTransformExtensions
+Vostok.Clusterclient.Core.Transforms.IRequestTransform
+Vostok.Clusterclient.Core.Transforms.IRequestTransform.Transform(Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.Request
+Vostok.Clusterclient.Core.Transforms.IRequestTransformMetadata
+Vostok.Clusterclient.Core.Transforms.IResponseTransform
+Vostok.Clusterclient.Core.Transforms.IResponseTransform.Transform(Vostok.Clusterclient.Core.Model.Response response) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Transport.ConnectionAttemptsTransport
+Vostok.Clusterclient.Core.Transport.ConnectionAttemptsTransport.Capabilities.get -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.ConnectionAttemptsTransport.ConnectionAttemptsTransport(Vostok.Clusterclient.Core.Transport.ITransport transport, int connectionAttempts) -> void
+Vostok.Clusterclient.Core.Transport.ConnectionAttemptsTransport.SendAsync(Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? connectionTimeout, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Response>
+Vostok.Clusterclient.Core.Transport.ITransport
+Vostok.Clusterclient.Core.Transport.ITransport.Capabilities.get -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.ITransport.SendAsync(Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? connectionTimeout, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Response>
+Vostok.Clusterclient.Core.Transport.ITransportExtensions
+Vostok.Clusterclient.Core.Transport.TimeoutHeaderTransport
+Vostok.Clusterclient.Core.Transport.TimeoutHeaderTransport.Capabilities.get -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TimeoutHeaderTransport.SendAsync(Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? connectionTimeout, System.TimeSpan timeout, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.Response>
+Vostok.Clusterclient.Core.Transport.TimeoutHeaderTransport.TimeoutHeaderTransport(Vostok.Clusterclient.Core.Transport.ITransport transport, string header = "Request-Timeout") -> void
+Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.None = 0 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestCompositeBody = 4 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestStreaming = 1 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseStreaming = 2 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
