@@ -15,7 +15,7 @@ internal class RequestUrlParser_Tests
             "foo/", "bar/", "baz",
             {"a", 1},
             {"b", "2+2=5?"},
-            {"=?=", "==!!=="}
+            {"=?=&=", "==!!=="}
         };
 
         var parser = new RequestUrlParser(builder.Build().OriginalString);
@@ -26,7 +26,7 @@ internal class RequestUrlParser_Tests
         parser.TryGetQueryParameter("b", out value).Should().BeTrue();
         value.Should().Be("2+2=5?");
         
-        parser.TryGetQueryParameter("=?=", out value).Should().BeTrue();
+        parser.TryGetQueryParameter("=?=&=", out value).Should().BeTrue();
         value.Should().Be("==!!==");
 
         parser.TryGetQueryParameter("=+=", out value).Should().BeFalse();
