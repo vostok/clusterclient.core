@@ -62,5 +62,11 @@ namespace Vostok.Clusterclient.Core.Model
         public static Request WithAdditionalQueryParameter<T>([NotNull] this Request request, [CanBeNull] string key, [CanBeNull] T value)
             => WithAdditionalQueryParameter(request, key, value, false);
 
+        /// <summary>
+        /// <para>Searches for query parameter with <paramref name="key"/> key in given <paramref name="request"/>.</para>
+        /// </summary>
+        [Pure]
+        public static bool TryGetQueryParameter([NotNull] this Request request, [CanBeNull] string key, [CanBeNull] out string value)
+            => new RequestUrlParser(request.Url.ToString()).TryGetQueryParameter(key, out value);
     }
 }

@@ -730,5 +730,20 @@ namespace Vostok.Clusterclient.Core.Tests.Model
             absoluteRequest.Url.IsAbsoluteUri.Should().BeTrue();
             relativeRequest.Url.IsAbsoluteUri.Should().BeFalse();
         }
+
+        [Test]
+        public void TryGetQueryParameter_should_work()
+        {
+            request = request.WithAdditionalQueryParameter("abc", "123");
+            request = request.WithAdditionalQueryParameter("x", "1?=&2");
+            
+            request.TryGetQueryParameter("abc", out var value).Should().BeTrue();
+            value.Should().Be("123");
+            
+            request.TryGetQueryParameter("x", out value).Should().BeTrue();
+            value.Should().Be("1?=&2");
+            
+            request.TryGetQueryParameter("y", out value).Should().BeFalse();
+        }
     }
 }
