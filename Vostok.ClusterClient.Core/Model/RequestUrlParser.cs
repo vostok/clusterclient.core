@@ -24,7 +24,7 @@ internal readonly struct RequestUrlParser
         {
             var tokens = parameter.Split('=');
             query[Uri.UnescapeDataString(tokens[0])] = 
-                tokens.Length > 1 ? Uri.UnescapeDataString(tokens[1]) : string.Empty;
+                tokens.Length > 1 && !string.IsNullOrEmpty(tokens[1]) ? Uri.UnescapeDataString(tokens[1]) : string.Empty;
         }
     }
 
