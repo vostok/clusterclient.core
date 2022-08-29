@@ -1,1 +1,0 @@
-static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.TryGetQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, out string value) -> bool
