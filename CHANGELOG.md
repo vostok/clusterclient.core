@@ -1,3 +1,7 @@
+## 0.1.45 (29-08-2022):
+
+Added `TryGetQueryParameter` request extension.
+
 ## 0.1.44 (15-06-2022):
 
 Fixed transformation of null `AsyncClusterProvider`.
