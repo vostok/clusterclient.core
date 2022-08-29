@@ -1,4 +1,4 @@
-const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthDownMultiplier = 0.5 -> double
+﻿const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthDownMultiplier = 0.5 -> double
 const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthMinimumValue = 0.001 -> double
 const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveHealthUpMultiplier = 1.5 -> double
 const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingCriticalRatio = 2 -> double
@@ -255,6 +255,7 @@ static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithRangeHeader(
 static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithUserAgentHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedContent(this Vostok.Clusterclient.Core.Model.Request request) -> bool
 static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedStream(this Vostok.Clusterclient.Core.Model.Request request) -> bool
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.TryGetQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, out string value) -> bool
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value) -> Vostok.Clusterclient.Core.Model.Request
