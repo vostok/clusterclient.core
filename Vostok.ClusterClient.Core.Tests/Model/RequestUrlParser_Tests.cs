@@ -82,6 +82,14 @@ internal class RequestUrlParser_Tests
     }
     
     [Test]
+    public void Should_not_throw_on_null_or_empty_keys()
+    {
+        new RequestUrlParser("http://example.com/foo?bar=xyz").TryGetQueryParameter("bar", out _).Should().BeTrue();
+        new RequestUrlParser("http://example.com/foo?bar=xyz").TryGetQueryParameter(null, out _).Should().BeFalse();
+        new RequestUrlParser("http://example.com/foo?bar=xyz").TryGetQueryParameter("", out _).Should().BeFalse();
+    }
+    
+    [Test]
     public void Should_not_throw_on_incorrect_url()
     {
         new RequestUrlParser("??==??").TryGetQueryParameter("x", out _).Should().BeFalse();
