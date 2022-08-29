@@ -51,6 +51,15 @@ internal class RequestUrlParser_Tests
         parser.TryGetQueryParameter("d", out value).Should().BeTrue();
         value.Should().Be("");
     }
+
+    [Test]
+    public void Should_work_with_parameters_without_value()
+    {
+        var parser = new RequestUrlParser("http://example.com/foo?bar");
+
+        parser.TryGetQueryParameter("bar", out var value).Should().BeTrue();
+        value.Should().Be("");
+    }
     
     [Test]
     public void Should_work_without_parameters()

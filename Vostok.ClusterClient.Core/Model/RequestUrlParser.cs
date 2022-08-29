@@ -5,7 +5,7 @@ using StringComparison = System.StringComparison;
 
 namespace Vostok.Clusterclient.Core.Model;
 
-internal class RequestUrlParser
+internal readonly struct RequestUrlParser
 {
     private readonly Dictionary<string, string> query = new();
 
