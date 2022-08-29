@@ -85,5 +85,8 @@ internal class RequestUrlParser_Tests
     public void Should_not_throw_on_incorrect_url()
     {
         new RequestUrlParser("??==??").TryGetQueryParameter("x", out _).Should().BeFalse();
+        new RequestUrlParser("http://example.com/foo?").TryGetQueryParameter("x", out _).Should().BeFalse();
+        new RequestUrlParser("http://example.com/foo?&").TryGetQueryParameter("x", out _).Should().BeFalse();
+        new RequestUrlParser("http://example.com/foo&").TryGetQueryParameter("x", out _).Should().BeFalse();
     }
 }
