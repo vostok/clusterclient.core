@@ -19,6 +19,18 @@ namespace Vostok.Clusterclient.Core.Modules
             RequestMethods.Options,
             RequestMethods.Trace
         };
+        
+        private readonly Func<IRequestContext, Action<string, string>> logFunctionProvider;
+
+        public HttpMethodValidationModule() : this(LogLevel.Error)
+        {
+            
+        }
+
+        public HttpMethodValidationModule(LogLevel logLevel)
+        {
+            logFunctionProvider = GetLogFunction(logLevel);
+        }
 
         public Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
@@ -27,8 +39,23 @@ namespace Vostok.Clusterclient.Core.Modules
             if (All.Contains(method))
                 return next(context);
 
-            context.Log.Error("Request HTTP method '{Method}' is not valid.", method);
+            var logFunction = logFunctionProvider(context);
+            logFunction("Request HTTP method '{Method}' is not valid.", method);
+            
             return Task.FromResult(ClusterResult.IncorrectArguments(context.Request));
+        }
+        
+        private Func<IRequestContext, Action<string, string>> GetLogFunction(LogLevel logLevel)
+        {
+            return logLevel switch
+            {
+                LogLevel.Debug => r => r.Log.Debug,
+                LogLevel.Info => r => r.Log.Info,
+                LogLevel.Warn => r => r.Log.Warn,
+                LogLevel.Error => r => r.Log.Error,
+                LogLevel.Fatal => r => r.Log.Fatal,
+                _ => throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, null)
+            };
         }
     }
 }
