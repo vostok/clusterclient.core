@@ -51,7 +51,7 @@ namespace Vostok.Clusterclient.Core
         /// <summary>
         /// Enables HTTP request method validation with given log level. Valid HTTP methods listed in <see cref="RequestMethods" /> class.
         /// </summary>
-        public static void SetupHttpMethodValidationWithInfoLogLevel(this IClusterClientConfiguration configuration, LogLevel logLevel)
+        public static void SetupHttpMethodValidationWithInfoLogLevel(this IClusterClientConfiguration configuration)
         {
             configuration.AddRequestModule(new HttpMethodValidationModuleInfo(), typeof(RequestValidationModule), ModulePosition.After);
         }
