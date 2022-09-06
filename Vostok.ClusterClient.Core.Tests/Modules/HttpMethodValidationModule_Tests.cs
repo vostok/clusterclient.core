@@ -4,6 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
+using Vostok.Clusterclient.Core.Modules.HttpMethodValidation;
 using Vostok.Clusterclient.Core.Strategies;
 using Vostok.Logging.Abstractions;
 
@@ -11,7 +12,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
 {
     internal class HttpMethodValidationModule_Tests
     {
-        private readonly HttpMethodValidationModule module = new HttpMethodValidationModule();
+        private readonly HttpMethodValidationModuleError module = new HttpMethodValidationModuleError();
 
         [TestCase(RequestMethods.Get)]
         [TestCase(RequestMethods.Delete)]

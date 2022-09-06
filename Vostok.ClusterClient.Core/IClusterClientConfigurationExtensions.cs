@@ -5,6 +5,7 @@ using Vostok.Clusterclient.Core.Criteria;
 using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
+using Vostok.Clusterclient.Core.Modules.HttpMethodValidation;
 using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Logging.Abstractions;
@@ -44,15 +45,15 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         public static void SetupHttpMethodValidation(this IClusterClientConfiguration configuration)
         {
-            configuration.AddRequestModule(new HttpMethodValidationModule(), typeof(RequestValidationModule), ModulePosition.After);
+            configuration.AddRequestModule(new HttpMethodValidationModuleError(), typeof(RequestValidationModule), ModulePosition.After);
         }
         
         /// <summary>
         /// Enables HTTP request method validation with given log level. Valid HTTP methods listed in <see cref="RequestMethods" /> class.
         /// </summary>
-        public static void SetupHttpMethodValidation(this IClusterClientConfiguration configuration, LogLevel logLevel)
+        public static void SetupHttpMethodValidationWithInfoLogLevel(this IClusterClientConfiguration configuration, LogLevel logLevel)
         {
-            configuration.AddRequestModule(new HttpMethodValidationModule(logLevel), typeof(RequestValidationModule), ModulePosition.After);
+            configuration.AddRequestModule(new HttpMethodValidationModuleInfo(), typeof(RequestValidationModule), ModulePosition.After);
         }
 
         /// <summary>
