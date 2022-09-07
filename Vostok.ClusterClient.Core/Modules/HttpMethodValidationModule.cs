@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Vostok.Clusterclient.Core.Model;
+using Vostok.Logging.Abstractions;
 
-namespace Vostok.Clusterclient.Core.Modules.HttpMethodValidation
+namespace Vostok.Clusterclient.Core.Modules
 {
-    internal abstract class HttpMethodValidationModuleBase : IRequestModule
+    internal class HttpMethodValidationModule : IRequestModule
     {
         internal static readonly HashSet<string> All = new HashSet<string>
         {
@@ -18,19 +19,16 @@ namespace Vostok.Clusterclient.Core.Modules.HttpMethodValidation
             RequestMethods.Options,
             RequestMethods.Trace
         };
-        
+
         public Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
             var method = context.Request.Method;
 
             if (All.Contains(method))
                 return next(context);
-            
-            Log(context, "", method);
 
+            context.Log.Info("Request HTTP method '{Method}' is not valid.", method);
             return Task.FromResult(ClusterResult.IncorrectArguments(context.Request));
         }
-
-        internal abstract void Log(IRequestContext requestContext, string message, string method);
     }
 }

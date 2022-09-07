@@ -1,1 +1,0 @@
-static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupHttpMethodValidationWithInfoLogLevel(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration) -> void

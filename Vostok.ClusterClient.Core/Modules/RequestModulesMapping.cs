@@ -1,5 +1,4 @@
 using System;
-using Vostok.Clusterclient.Core.Modules.HttpMethodValidation;
 
 namespace Vostok.Clusterclient.Core.Modules
 {
@@ -40,7 +39,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 case RequestModule.ReplicaBudgeting:
                     return typeof(ReplicaBudgetingModule);
                 case RequestModule.HttpMethodValidation:
-                    return typeof(HttpMethodValidationModuleError);
+                    return typeof(HttpMethodValidationModule);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(module), module, $"Unexpected {nameof(RequestModule)} value.");
             }
