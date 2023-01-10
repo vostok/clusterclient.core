@@ -84,8 +84,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
 
             var count = 0;
             var weightsSum = 0.0;
-            foreach (var replica in replicas)
+            for (var index = 0; index < replicas.Count; index++)
             {
+                var replica = replicas[index];
                 var weight = weightCalculator.GetWeight(replica, replicas, storageProvider, request, parameters);
                 if (weight < 0.0)
                     throw new BugcheckException($"A negative weight has been calculated for replica '{replica}': {weight}.");
