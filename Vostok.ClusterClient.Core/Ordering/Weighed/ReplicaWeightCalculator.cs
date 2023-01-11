@@ -44,8 +44,9 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
         {
             var weight = initialWeight;
 
-            foreach (var modifier in modifiers)
+            for (var index = 0; index < modifiers.Count; index++)
             {
+                var modifier = modifiers[index];
                 modifier.Modify(replica, allReplicas, storageProvider, request, parameters, ref weight);
 
                 if (weight < minimumWeight)
