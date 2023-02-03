@@ -15,15 +15,14 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingModule : IRequestModule
     {
-        private static readonly ConcurrentDictionary<string, Counter> Counters = new ConcurrentDictionary<string, Counter>();
+        private static readonly ConcurrentDictionary<string, Counter> Counters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
-        private readonly AdaptiveThrottlingOptions options;
         private readonly Func<string, Counter> counterFactory;
 
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
         {
-            this.options = options;
+            this.Options = options;
             counterFactory = _ => new Counter(options.MinutesToTrack);
         }
 
@@ -32,13 +31,15 @@ namespace Vostok.Clusterclient.Core.Modules
             Counters.Clear();
         }
 
+        public AdaptiveThrottlingOptions Options { get; }
+
         public int Requests => GetCounter().GetMetrics().Requests;
 
         public int Accepts => GetCounter().GetMetrics().Accepts;
 
         public double Ratio => ComputeRatio(GetCounter().GetMetrics());
 
-        public double RejectionProbability => ComputeRejectionProbability(GetCounter().GetMetrics(), options);
+        public double RejectionProbability => ComputeRejectionProbability(GetCounter().GetMetrics(), Options);
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
@@ -56,9 +57,9 @@ namespace Vostok.Clusterclient.Core.Modules
                 double rejectionProbability;
 
                 var metrics = counter.GetMetrics();
-                if (metrics.Requests >= options.MinimumRequests &&
-                    (ratio = ComputeRatio(metrics)) >= options.CriticalRatio &&
-                    (rejectionProbability = ComputeRejectionProbability(metrics, options)) > ThreadSafeRandom.NextDouble())
+                if (metrics.Requests >= Options.MinimumRequests &&
+                    (ratio = ComputeRatio(metrics)) >= Options.CriticalRatio &&
+                    (rejectionProbability = ComputeRejectionProbability(metrics, Options)) > ThreadSafeRandom.NextDouble())
                 {
                     LogThrottledRequest(context, ratio, rejectionProbability);
 
@@ -102,7 +103,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 counter.AddAccept();
         }
 
-        private Counter GetCounter() => Counters.GetOrAdd(options.StorageKey, counterFactory);
+        private Counter GetCounter() => Counters.GetOrAdd(Options.StorageKey, counterFactory);
 
         #region Logging
 

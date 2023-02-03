@@ -37,7 +37,7 @@ namespace Vostok.Clusterclient.Core
             int minimumRequests = ClusterClientDefaults.ReplicaBudgetingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.ReplicaBudgetingCriticalRatio)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironment, configuration.TargetServiceName);
+            var storageKey = GenerateStorageKey(configuration);
 
             SetupReplicaBudgeting(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio);
         }
