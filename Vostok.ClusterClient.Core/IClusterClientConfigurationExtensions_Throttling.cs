@@ -46,7 +46,7 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironment, configuration.TargetServiceName);
+            var storageKey = GenerateStorageKey(configuration);
 
             SetupAdaptiveThrottling(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio, maximumRejectProbability);
         }
