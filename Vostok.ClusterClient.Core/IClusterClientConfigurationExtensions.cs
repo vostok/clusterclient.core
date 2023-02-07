@@ -74,8 +74,14 @@ namespace Vostok.Clusterclient.Core
 
         private static string GenerateStorageKey(IClusterClientConfiguration configuration, [CallerMemberName] string callingMember = "")
         {
-            if (string.IsNullOrEmpty(configuration.TargetEnvironment) || string.IsNullOrEmpty(configuration.TargetServiceName))
+            var isEmptyEnvironment = string.IsNullOrEmpty(configuration.TargetEnvironment);
+            var isEmptyService = string.IsNullOrEmpty(configuration.TargetServiceName);
+            
+            if (isEmptyEnvironment || isEmptyService)
             {
+                if (!isEmptyService)
+                    return configuration.TargetServiceName;
+                
                 configuration
                     .Log.Error($"Incorrect client configuration. You must set '{nameof(configuration.TargetServiceName)}' and " +
                                $"'{nameof(configuration.TargetEnvironment)}' properties before calling {callingMember} method.");
