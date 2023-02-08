@@ -25,7 +25,8 @@ namespace Vostok.Clusterclient.Core
         }
 
         /// <summary>
-        /// Sets up a replica budgeting mechanism with given parameters using <see cref="IClusterClientConfiguration.TargetServiceName"/> and <see cref="IClusterClientConfiguration.TargetEnvironment"/> as a storage key.
+        /// <para> Sets up a replica budgeting mechanism with given parameters using <see cref="IClusterClientConfiguration.TargetServiceName"/> and <see cref="IClusterClientConfiguration.TargetEnvironment"/> as a storage key.</para>
+        /// <para> <b>N.B.</b> Ensure that <see cref="IClusterClientConfiguration.TargetServiceName"/> and <see cref="IClusterClientConfiguration.TargetEnvironment"/> is set before calling this method.</para>
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
         /// <param name="minutesToTrack">See <see cref="ReplicaBudgetingOptions.MinutesToTrack"/>.</param>
@@ -37,7 +38,7 @@ namespace Vostok.Clusterclient.Core
             int minimumRequests = ClusterClientDefaults.ReplicaBudgetingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.ReplicaBudgetingCriticalRatio)
         {
-            var storageKey = GenerateStorageKey(configuration.TargetEnvironment, configuration.TargetServiceName);
+            var storageKey = GenerateStorageKey(configuration);
 
             SetupReplicaBudgeting(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio);
         }
