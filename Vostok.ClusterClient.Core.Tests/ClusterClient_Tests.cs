@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Modules;
 using Vostok.Clusterclient.Core.Topology;
 using Vostok.Clusterclient.Core.Transforms;
 using Vostok.Clusterclient.Core.Transport;
@@ -21,7 +23,7 @@ namespace Vostok.Clusterclient.Core.Tests
         [SetUp]
         public void TestSetup()
         {
-            log = new ConsoleLog();
+            log = new SynchronousConsoleLog();
         }
 
         [Test]
@@ -84,6 +86,118 @@ namespace Vostok.Clusterclient.Core.Tests
 
             (await clusterClient.AsyncClusterProvider.GetClusterAsync()).Should().BeEquivalentTo(replicas);
             clusterClient.ClusterProvider.GetCluster().Should().BeEquivalentTo(replicas);
+        }
+
+        [Test]
+        public void Should_log_error_when_setup_throttling_and_target_service_and_environment_not_defined()
+        {
+            var messageTemplate = "";
+            log = Substitute.For<ILog>();
+            log.IsEnabledFor(LogLevel.Error).Returns(true);
+            log.When(l => l.Log(Arg.Any<LogEvent>()))
+                .Do(info => messageTemplate = info.Arg<LogEvent>().MessageTemplate);
+            
+            var _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupAdaptiveThrottling();
+                });
+
+            log.Received(1).Log(Arg.Is<LogEvent>(e => e.Level == LogLevel.Error));
+            messageTemplate.Should().Match("Incorrect client configuration.*");
+        }
+        
+        [Test]
+        public void Should_log_error_when_setup_replica_budgeting_and_target_service_and_environment_not_defined()
+        {
+            var messageTemplate = "";
+            log = Substitute.For<ILog>();
+            log.IsEnabledFor(LogLevel.Error).Returns(true);
+            log.When(l => l.Log(Arg.Any<LogEvent>()))
+                .Do(info => messageTemplate = info.Arg<LogEvent>().MessageTemplate);
+            
+            var _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupReplicaBudgeting();
+                });
+
+            log.Received(1).Log(Arg.Is<LogEvent>(e => e.Level == LogLevel.Error));
+            messageTemplate.Should().Match("Incorrect client configuration.*");
+        }
+
+        [Test]
+        public void Should_set_different_keys_to_adaptive_throttling_storage()
+        {
+            var firstConfiguration = (IClusterClientConfiguration)null;
+            var secondConfiguration =  (IClusterClientConfiguration)null;
+            
+            var _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupAdaptiveThrottling();
+
+                    firstConfiguration = configuration;
+                });
+
+            _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupAdaptiveThrottling();
+
+                    secondConfiguration = configuration;
+                });
+
+            var firstThrottling = (AdaptiveThrottlingModule)firstConfiguration.Modules.First()
+                .Value.Before[0];
+            
+            var secondThrottling = (AdaptiveThrottlingModule)secondConfiguration.Modules.First()
+                .Value.Before[0];
+
+            firstThrottling.Options.StorageKey.Should().NotBe(secondThrottling.Options.StorageKey);
+        }
+        
+        [Test]
+        public void Should_set_different_keys_to_replica_budgeting_storage()
+        {
+            var firstConfiguration = (IClusterClientConfiguration)null;
+            var secondConfiguration =  (IClusterClientConfiguration)null;
+            
+            var _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupReplicaBudgeting();
+
+                    firstConfiguration = configuration;
+                });
+
+            _ = new ClusterClient(log,
+                configuration =>
+                {
+                    configuration.Transport = Substitute.For<ITransport>();
+                    configuration.ClusterProvider = new FixedClusterProvider("https://test.ru");
+                    configuration.SetupReplicaBudgeting();
+
+                    secondConfiguration = configuration;
+                });
+
+            var firstThrottling = (ReplicaBudgetingModule)firstConfiguration.Modules.First()
+                .Value.Before[0];
+            
+            var secondThrottling = (ReplicaBudgetingModule)secondConfiguration.Modules.First()
+                .Value.Before[0];
+
+            firstThrottling.Options.StorageKey.Should().NotBe(secondThrottling.Options.StorageKey);
         }
     }
 }

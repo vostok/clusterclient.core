@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Criteria;
 using Vostok.Clusterclient.Core.Misc;
@@ -7,6 +8,7 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
 using Vostok.Clusterclient.Core.Ordering.Weighed;
 using Vostok.Clusterclient.Core.Topology;
+using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -70,9 +72,23 @@ namespace Vostok.Clusterclient.Core
             (configuration.ReplicasFilters ?? (configuration.ReplicasFilters = new List<IReplicasFilter>())).Add(filter);
         }
 
-        private static string GenerateStorageKey(string environment, string serviceName)
+        private static string GenerateStorageKey(IClusterClientConfiguration configuration, [CallerMemberName] string callingMember = "")
         {
-            return (environment ?? string.Empty, serviceName ?? string.Empty).ToString();
+            var isEmptyEnvironment = string.IsNullOrEmpty(configuration.TargetEnvironment);
+            var isEmptyService = string.IsNullOrEmpty(configuration.TargetServiceName);
+            
+            if (isEmptyEnvironment || isEmptyService)
+            {
+                if (!isEmptyService)
+                    return configuration.TargetServiceName;
+                
+                configuration
+                    .Log.Error($"Incorrect client configuration. You must set '{nameof(configuration.TargetServiceName)}' and " +
+                               $"'{nameof(configuration.TargetEnvironment)}' properties before calling {callingMember} method.");
+                return Guid.NewGuid().ToString();
+            }
+            
+            return (configuration.TargetEnvironment, configuration.TargetServiceName).ToString();
         }
     }
 }

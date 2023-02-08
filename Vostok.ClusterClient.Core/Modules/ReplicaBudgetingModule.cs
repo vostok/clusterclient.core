@@ -13,19 +13,20 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class ReplicaBudgetingModule : IRequestModule
     {
-        private static readonly ConcurrentDictionary<string, Counter> Counters = new ConcurrentDictionary<string, Counter>();
+        private static readonly ConcurrentDictionary<string, Counter> Counters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
-        private readonly ReplicaBudgetingOptions options;
         private readonly Func<string, Counter> counterFactory;
 
         public ReplicaBudgetingModule(ReplicaBudgetingOptions options)
         {
-            this.options = options;
+            Options = options;
             counterFactory = _ => new Counter(options.MinutesToTrack);
         }
 
         public static void ClearCache() => Counters.Clear();
+
+        public ReplicaBudgetingOptions Options { get; }
 
         public int Requests => GetCounter().GetMetrics().Requests;
 
@@ -40,8 +41,8 @@ namespace Vostok.Clusterclient.Core.Modules
             double ratio;
 
             var metrics = counter.GetMetrics();
-            if (metrics.Requests >= options.MinimumRequests &&
-                (ratio = ComputeRatio(counter.GetMetrics())) >= options.CriticalRatio)
+            if (metrics.Requests >= Options.MinimumRequests &&
+                (ratio = ComputeRatio(counter.GetMetrics())) >= Options.CriticalRatio)
             {
                 LogLimitingReplicasToUse(context, ratio);
                 context.MaximumReplicasToUse = 1;
@@ -57,7 +58,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static double ComputeRatio(CounterMetrics metrics) =>
             1.0 * metrics.Replicas / Math.Max(1.0, metrics.Requests);
 
-        private Counter GetCounter() => Counters.GetOrAdd(options.StorageKey, counterFactory);
+        private Counter GetCounter() => Counters.GetOrAdd(Options.StorageKey, counterFactory);
 
         #region Logging
 
