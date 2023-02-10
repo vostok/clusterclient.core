@@ -23,6 +23,8 @@ namespace Vostok.Clusterclient.Core
             if (!url.IsAbsoluteUri)
                 throw new ArgumentException($"External url must be an absolute URI. Instead, got this: '{url}'.");
 
+            configuration.TargetServiceName = url.AbsoluteUri;
+            
             configuration.ClusterProvider = new FixedClusterProvider(url);
 
             configuration.MaxReplicasUsedPerRequest = 3;
@@ -36,8 +38,6 @@ namespace Vostok.Clusterclient.Core
             configuration.DefaultRequestStrategy = Strategy.Sequential1;
 
             configuration.DeduplicateRequestUrl = true;
-
-            configuration.TargetServiceName = url.AbsoluteUri;
         }
     }
 }
