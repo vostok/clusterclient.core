@@ -1,6 +1,10 @@
+## 0.1.47 (10-02-2023):
+
+`SetupExternalUrl`: fix incorrect configuration when `TargetService` is set after call `SetupReplicaBudgeting`
+
 ## 0.1.46 (08-02-2023):
 
-`SetupAdaptiveThrottling` and `SetupReplicasBufget`: now statistics saved in random generated key if `TargetService` and `TargetEnvironment` properties is not set.
+`SetupAdaptiveThrottling` and `SetupReplicaBudgeting`: now statistics saved in random generated key if `TargetService` and `TargetEnvironment` properties is not set.
 
 ## 0.1.45 (29-08-2022):
 
