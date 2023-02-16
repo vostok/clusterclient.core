@@ -30,7 +30,7 @@ namespace Vostok.Clusterclient.Core.Modules
         /// Returns request time budget. Use <see cref="IRequestTimeBudget.Remaining"/> method to check remaining time.
         /// </summary>
         [NotNull]
-        IRequestTimeBudget Budget { get; }
+        IRequestTimeBudget Budget { get; set; }
 
         /// <summary>
         /// Returns an <see cref="ILog"/> instance intended for use in custom modules.

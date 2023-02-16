@@ -48,7 +48,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public Request Request { get; set; }
 
-        public IRequestTimeBudget Budget { get; }
+        public IRequestTimeBudget Budget { get; set; }
 
         public ILog Log { get; }
 

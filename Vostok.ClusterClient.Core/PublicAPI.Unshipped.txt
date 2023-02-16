@@ -1,0 +1,1 @@
+Vostok.Clusterclient.Core.Modules.IRequestContext.Budget.set -> void
