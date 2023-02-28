@@ -84,7 +84,8 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed
 
             var count = 0;
             var weightsSum = 0.0;
-            for (var index = 0; index < replicas.Count; index++)
+            var replicasCount = replicas.Count;
+            for (var index = 0; index < replicasCount; index++)
             {
                 var replica = replicas[index];
                 var weight = weightCalculator.GetWeight(replica, replicas, storageProvider, request, parameters);
