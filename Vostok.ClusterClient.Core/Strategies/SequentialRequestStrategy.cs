@@ -7,6 +7,7 @@ using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies.TimeoutProviders;
 using Vostok.Commons.Time;
+using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Strategies
 {
@@ -45,12 +46,15 @@ namespace Vostok.Clusterclient.Core.Strategies
                     break;
 
                 if (request.ContainsAlreadyUsedStream() || request.ContainsAlreadyUsedContent())
+                {
+                    RequestMiscExtensions.LogRequestDataIsUsed();
                     break;
+                }
 
                 var timeout = TimeSpanArithmetics.Min(timeoutsProvider.GetTimeout(request, budget, currentReplicaIndex++, replicasCount), budget.Remaining);
 
                 var connectionAttemptTimeout = currentReplicaIndex == replicasCount ? null : parameters.ConnectionTimeout;
-                
+
                 var result = await sender.SendToReplicaAsync(replica, request, connectionAttemptTimeout, timeout, cancellationToken).ConfigureAwait(false);
                 if (result.Verdict == ResponseVerdict.Accept)
                     break;
