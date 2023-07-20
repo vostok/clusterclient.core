@@ -94,7 +94,10 @@ namespace Vostok.Clusterclient.Core.Strategies
                 return;
 
             if (request.ContainsAlreadyUsedStream() || request.ContainsAlreadyUsedContent())
+            {
+                RequestMiscExtensions.LogRequestDataIsUsed();
                 return;
+            }
 
             if (replicas.MoveNext())
                 currentTasks.Add(sender.SendToReplicaAsync(replicas.Current, request, connectionTimeout, budget.Remaining, cancellationToken));

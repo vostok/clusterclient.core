@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies.DelayProviders;
+using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Strategies
 {
@@ -77,7 +78,10 @@ namespace Vostok.Clusterclient.Core.Strategies
                             break;
 
                         if (request.ContainsAlreadyUsedStream() || request.ContainsAlreadyUsedContent())
+                        {
+                            RequestMiscExtensions.LogRequestDataIsUsed();
                             break;
+                        }
 
                         var connectionAttemptTimeout = i == replicasCount - 1 ? null : parameters.ConnectionTimeout;
 
