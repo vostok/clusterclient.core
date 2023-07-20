@@ -35,7 +35,10 @@ namespace Vostok.Clusterclient.Core.Modules
                     return result;
 
                 if (context.Request.ContainsAlreadyUsedStream() || context.Request.ContainsAlreadyUsedContent())
+                {
+                    RequestMiscExtensions.LogRequestDataIsUsed();
                     return result;
+                }
 
                 if (!retryPolicy.NeedToRetry(context.Request, context.Parameters, result.ReplicaResults))
                     return result;
