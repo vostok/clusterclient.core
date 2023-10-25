@@ -122,13 +122,13 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
         }
 
         [Test]
-        public void Should_pass_cancellation_exceptions_through()
+        public void Should_not_pass_cancellation_exceptions_through()
         {
             Task.Run(() => resultSource.TrySetException(new OperationCanceledException()));
 
-            Action action = () => contextualSender.SendToReplicaAsync(replica, request, connectionTimeout, timeout, CancellationToken.None).GetAwaiter().GetResult();
+            var action = new Action(() => contextualSender.SendToReplicaAsync(replica, request, connectionTimeout, timeout, CancellationToken.None).GetAwaiter().GetResult());
 
-            action.Should().Throw<OperationCanceledException>();
+            action.Should().NotThrow<OperationCanceledException>();
         }
 
         [Test]
@@ -136,13 +136,7 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
         {
             Task.Run(() => resultSource.TrySetException(new OperationCanceledException()));
 
-            try
-            {
-                contextualSender.SendToReplicaAsync(replica, request, connectionTimeout, timeout, CancellationToken.None).GetAwaiter().GetResult();
-            }
-            catch (OperationCanceledException)
-            {
-            }
+            contextualSender.SendToReplicaAsync(replica, request, connectionTimeout, timeout, CancellationToken.None).GetAwaiter().GetResult();
 
             var replicaResult = context.FreezeReplicaResults().Should().ContainSingle().Which;
 
