@@ -52,7 +52,7 @@ namespace Vostok.Clusterclient.Core.Sending
 
             var absoluteRequest = requestConverter.TryConvertToAbsolute(request, replica);
 
-            var response = await SendRequestAsync(transport, absoluteRequest, timeBudget, connectionAttempts, connectionTimeout, cancellationToken).ConfigureAwait(false);
+            var response = await SendRequestAsync(transport, absoluteRequest, replica, timeBudget, connectionAttempts, connectionTimeout, cancellationToken).ConfigureAwait(false);
 
             var responseVerdict = responseClassifier.Decide(response, configuration.ResponseCriteria);
 
@@ -69,6 +69,7 @@ namespace Vostok.Clusterclient.Core.Sending
         private async Task<Response> SendRequestAsync(
             ITransport transport,
             [CanBeNull] Request request,
+            Uri replica,
             TimeBudget timeBudget,
             int connectionAttempts,
             TimeSpan? connectionTimeout,
@@ -84,7 +85,10 @@ namespace Vostok.Clusterclient.Core.Sending
                 var response = await transport.SendAsync(request, connectionTimeout, timeBudget.Remaining, cancellationToken).ConfigureAwait(false);
 
                 if (response.Code == ResponseCode.Canceled)
+                {
+                    LogCancelledResult(replica, timeBudget.Elapsed);
                     throw new OperationCanceledException();
+                }
 
                 return response;
             }
@@ -116,7 +120,7 @@ namespace Vostok.Clusterclient.Core.Sending
 
         private void LogResult(ReplicaResult result) =>
             configuration.Log.Info(
-                "Result: replica = '{Replica}'; code = {ResponseCode:D} ('{ResponseCode}'); verdict = {Verdict}; time = {ElapsedTime}.", 
+                "Result: replica = '{Replica}'; code = {ResponseCode:D} ('{ResponseCode}'); verdict = {Verdict}; time = {ElapsedTime}.",
                 new
                 {
                     Replica = result.Replica,
@@ -124,6 +128,17 @@ namespace Vostok.Clusterclient.Core.Sending
                     Verdict = result.Verdict,
                     ElapsedTime = result.Time.ToPrettyString(),
                     ElapsedTimeMs = result.Time.TotalMilliseconds
+                });
+
+        private void LogCancelledResult(Uri replica, TimeSpan time) =>
+            configuration.Log.Info(
+                "Result: replica = '{Replica}'; code = {ResponseCode:D} ('{ResponseCode}'); time = {ElapsedTime}.",
+                new
+                {
+                    Replica = replica,
+                    ResponseCode = ResponseCode.Canceled,
+                    ElapsedTime = time.ToPrettyString(),
+                    ElapsedTimeMs = time.TotalMilliseconds
                 });
 
         private void LogStreamReuseFailure() =>
