@@ -21,9 +21,11 @@ namespace Vostok.Clusterclient.Core.Sending
         {
             context.SetUnknownResult(replica);
 
+            ReplicaResult result;
+
             try
             {
-                var result = await sender.SendToReplicaAsync(
+                result = await sender.SendToReplicaAsync(
                         context.Transport,
                         context.ReplicaOrdering,
                         replica,
@@ -34,16 +36,15 @@ namespace Vostok.Clusterclient.Core.Sending
                         cancellationToken
                     )
                     .ConfigureAwait(false);
-
-                context.SetReplicaResult(result);
-
-                return result;
             }
             catch (OperationCanceledException)
             {
-                context.SetReplicaResult(CreateCanceledResult(replica));
-                throw;
+                result = CreateCanceledResult(replica);
             }
+
+            context.SetReplicaResult(result);
+
+            return result;
         }
 
         private static ReplicaResult CreateCanceledResult(Uri replica) =>
