@@ -1,3 +1,7 @@
+## 0.1.48 (26-09-2023):
+
+Request to replica does not throw anymore if cancellation happened. Because it might be retried according to current strategy.
+
 ## 0.1.47 (10-02-2023):
 
 `SetupExternalUrl`: fix incorrect configuration when `TargetService` is set after call `SetupReplicaBudgeting`
