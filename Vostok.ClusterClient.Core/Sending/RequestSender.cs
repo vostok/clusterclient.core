@@ -86,7 +86,7 @@ namespace Vostok.Clusterclient.Core.Sending
 
                 if (response.Code == ResponseCode.Canceled)
                 {
-                    LogCancelledResult(replica, timeBudget.Elapsed);
+                    LogCancelledResult(replica, timeBudget.Elapsed, cancellationToken);
                     throw new OperationCanceledException();
                 }
 
@@ -130,15 +130,16 @@ namespace Vostok.Clusterclient.Core.Sending
                     ElapsedTimeMs = result.Time.TotalMilliseconds
                 });
 
-        private void LogCancelledResult(Uri replica, TimeSpan time) =>
+        private void LogCancelledResult(Uri replica, TimeSpan time, CancellationToken cancellationToken) =>
             configuration.Log.Info(
-                "Result: replica = '{Replica}'; code = {ResponseCode:D} ('{ResponseCode}'); time = {ElapsedTime}.",
+                "Result: replica = '{Replica}'; code = {ResponseCode:D} ('{ResponseCode}'); token cancelled = {TokenCancelled}; time = {ElapsedTime}",
                 new
                 {
                     Replica = replica,
                     ResponseCode = ResponseCode.Canceled,
                     ElapsedTime = time.ToPrettyString(),
-                    ElapsedTimeMs = time.TotalMilliseconds
+                    ElapsedTimeMs = time.TotalMilliseconds,
+                    TokenCancelled = cancellationToken.IsCancellationRequested,
                 });
 
         private void LogStreamReuseFailure() =>
