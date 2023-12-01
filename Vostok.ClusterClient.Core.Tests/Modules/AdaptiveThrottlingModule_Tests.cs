@@ -44,19 +44,57 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [Test]
-        public void Should_increment_requests_and_accepts_on_accepted_results()
+        public void Should_handle_null_priority_how_sheddable()
+        {
+            Accept(1);
+            module.Accepts(RequestPriority.Sheddable).Should().Be(1);
+            module.Requests(RequestPriority.Sheddable).Should().Be(1);
+            Reject(1);
+            module.Accepts(RequestPriority.Sheddable).Should().Be(1);
+            module.Requests(RequestPriority.Sheddable).Should().Be(2);
+        }
+        
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_correctly_handle_request_by_priority(RequestPriority? priority)
+        {
+            var priorities = new[] {RequestPriority.Critical, RequestPriority.Ordinary, RequestPriority.Sheddable};
+            
+            Accept(1, priority);
+            module.Accepts(priority).Should().Be(1);
+            foreach (var p in priorities)
+            {
+                module.Requests(p).Should().Be(p == priority ? 1 : 0);
+            }
+            Reject(1, priority);
+            module.Accepts(priority).Should().Be(1);
+            foreach (var p in priorities)
+            {
+                module.Requests(p).Should().Be(p == priority ? 2 : 0);
+            }
+        }
+
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_increment_according_to_priority_requests_and_accepts_on_accepted_results(RequestPriority? priority)
         {
             for (var i = 1; i <= 10; i++)
             {
-                Execute(acceptedResult);
+                Execute(acceptedResult, priority);
 
-                module.Requests.Should().Be(i);
-                module.Accepts.Should().Be(i);
+                module.Requests(priority).Should().Be(i);
+                module.Accepts(priority).Should().Be(i);
             }
         }
-        
-        [Test]
-        public void Should_increment_requests_and_accepts_on_OperationCancelledException_when_request_is_cancelled_by_token()
+
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_increment_according_to_priority_requests_and_accepts_on_OperationCancelledException_when_request_is_cancelled_by_token(RequestPriority? priority)
         {
             using (var cts = new CancellationTokenSource())
             {
@@ -66,16 +104,19 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
 
                 for (var i = 1; i <= 10; i++)
                 {
-                    Execute(new OperationCanceledException());
+                    Execute(new OperationCanceledException(), priority);
 
-                    module.Requests.Should().Be(i);
-                    module.Accepts.Should().Be(i);
+                    module.Requests(priority).Should().Be(i);
+                    module.Accepts(priority).Should().Be(i);
                 }
             }
         }
-        
-        [Test]
-        public void Should_increment_only_requests_on_OperationCancelledException_when_token_is_not_signaled()
+
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_increment_according_to_priority_only_requests_on_OperationCancelledException_when_token_is_not_signaled(RequestPriority? priority)
         {
             using (var cts = new CancellationTokenSource())
             {
@@ -83,115 +124,136 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
 
                 for (var i = 1; i <= 10; i++)
                 {
-                    Execute(new OperationCanceledException());
-                    
-                    module.Requests.Should().Be(i);
-                    module.Accepts.Should().Be(0);
+                    Execute(new OperationCanceledException(), priority);
+
+                    module.Requests(priority).Should().Be(i);
+                    module.Accepts(priority).Should().Be(0);
                 }
             }
         }
 
-        [Test]
-        public void Should_increment_only_requests_on_rejected_results()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_increment_according_to_priority_only_requests_on_rejected_results(RequestPriority? priority)
         {
             for (var i = 1; i <= 10; i++)
             {
-                Execute(rejectedResult);
+                Execute(rejectedResult, priority);
 
-                module.Requests.Should().Be(i);
-                module.Accepts.Should().Be(0);
+                module.Requests(priority).Should().Be(i);
+                module.Accepts(priority).Should().Be(0);
             }
         }
 
-        [Test]
-        public void Should_correctly_compute_requests_to_accepts_ratio()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_correctly_compute_according_to_priority_requests_to_accepts_ratio(RequestPriority? priority)
         {
-            module.Ratio.Should().Be(0.0);
+            module.Ratio(priority).Should().Be(0.0);
 
-            Accept(10);
+            Accept(10, priority);
 
-            module.Ratio.Should().Be(1.0);
+            module.Ratio(priority).Should().Be(1.0);
 
-            Reject(10);
+            Reject(10, priority);
 
-            module.Ratio.Should().Be(2.0);
+            module.Ratio(priority).Should().Be(2.0);
         }
 
-        [Test]
-        public void Should_not_reject_requests_until_minimum_count_is_reached()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_not_reject_according_to_priority_requests_until_minimum_count_is_reached(RequestPriority? priority)
         {
             for (var i = 0; i < MinimumRequests - 1; i++)
-                Execute(rejectedResult).Should().BeSameAs(rejectedResult);
+                Execute(rejectedResult, priority).Should().BeSameAs(rejectedResult);
         }
 
-        [Test]
-        public void Should_honor_rejection_probability_cap()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_honor_according_to_priority_rejection_probability_cap(RequestPriority? priority)
         {
-            Accept(1);
+            Accept(1, priority);
 
-            Reject(100);
+            Reject(100, priority);
 
-            module.RejectionProbability.Should().Be(ProbabilityCap);
+            module.RejectionProbability(priority).Should().Be(ProbabilityCap);
         }
 
-        [Test]
-        public void Should_increase_rejection_probability_as_more_requests_are_rejected()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_increase_according_to_priority_rejection_probability_as_more_requests_are_rejected(RequestPriority? priority)
         {
-            Accept(1);
-            Reject(1);
+            Accept(1, priority);
+            Reject(1, priority);
 
-            while (module.RejectionProbability < ProbabilityCap)
+            while (module.RejectionProbability(priority) < ProbabilityCap)
             {
-                var previous = module.RejectionProbability;
+                var previous = module.RejectionProbability(priority);
 
-                Reject(1);
+                Reject(1, priority);
 
-                module.RejectionProbability.Should().BeGreaterThan(previous);
+                module.RejectionProbability(priority).Should().BeGreaterThan(previous);
             }
         }
 
-        [Test]
-        public void Should_gradually_decrease_rejection_probability_to_zero_after_requests_become_accepted_after_big_failure()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_gradually_decrease_according_to_priority_rejection_probability_to_zero_after_requests_become_accepted_after_big_failure(RequestPriority? priority)
         {
-            Accept(10);
+            Accept(10, priority);
 
-            while (module.RejectionProbability < ProbabilityCap)
+            while (module.RejectionProbability(priority) < ProbabilityCap)
             {
-                Reject(1);
+                Reject(1, priority);
             }
 
             for (var i = 0; i < 10 * 1000; i++)
             {
-                Accept(1);
+                Accept(1, priority);
 
-                if (module.RejectionProbability <= 0.001)
+                if (module.RejectionProbability(priority) <= 0.001)
                     Assert.Pass();
             }
 
             Assert.Fail("Rejection probability did not vanish after 10k accepts.");
         }
 
-        [Test]
-        public void Should_reject_with_throttled_result_when_rejection_probability_allows()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_reject_according_to_priority_with_throttled_result_when_rejection_probability_allows(RequestPriority? priority)
         {
             options = new AdaptiveThrottlingOptions(Guid.NewGuid().ToString(), 1, MinimumRequests, CriticalRatio, 1.0);
             module = new AdaptiveThrottlingModule(options);
 
-            Accept(1);
+            Accept(1, priority);
 
-            while (module.RejectionProbability < 0.999)
-                Reject(1);
+            while (module.RejectionProbability(priority) < 0.999)
+                Reject(1, priority);
 
             for (var i = 0; i < 100; i++)
             {
-                var requestsBefore = module.Requests;
-                var acceptsBefore = module.Accepts;
+                var requestsBefore = module.Requests(priority);
+                var acceptsBefore = module.Accepts(priority);
 
-                var result = Execute(acceptedResult);
+                var result = Execute(acceptedResult, priority);
                 if (result.Status == ClusterResultStatus.Throttled)
                 {
-                    module.Requests.Should().Be(requestsBefore + 1);
-                    module.Accepts.Should().Be(acceptsBefore);
+                    module.Requests(priority).Should().Be(requestsBefore + 1);
+                    module.Accepts(priority).Should().Be(acceptsBefore);
                     Assert.Pass();
                 }
             }
@@ -199,22 +261,31 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Assert.Fail("No requests were rejected in 100 attempts, which was highly expected.");
         }
 
-        [Test]
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
         [Explicit]
-        public void Should_forget_old_information_as_time_passes()
+        public void Should_forget_according_to_priority_old_information_as_time_passes(RequestPriority? priority)
         {
-            Accept(100);
-            Reject(100);
+            Accept(100, priority);
+            Reject(100, priority);
 
             Thread.Sleep(1.Minutes() + 5.Seconds());
 
-            module.Requests.Should().Be(0);
-            module.Accepts.Should().Be(0);
+            module.Requests(priority).Should().Be(0);
+            module.Accepts(priority).Should().Be(0);
         }
 
-        [Test]
-        public void Should_not_account_for_requests_still_in_progress()
+        [TestCase(null)]
+        [TestCase(RequestPriority.Critical)]
+        [TestCase(RequestPriority.Ordinary)]
+        [TestCase(RequestPriority.Sheddable)]
+        public void Should_not_account_according_to_priority_for_requests_still_in_progress(RequestPriority? priority)
         {
+            var parameters = new RequestParameters(priority: priority);
+            context.Parameters.Returns(parameters);
+
             var tcs = new TaskCompletionSource<ClusterResult>();
 
             var tasks = new List<Task<ClusterResult>>();
@@ -224,8 +295,8 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 tasks.Add(module.ExecuteAsync(context, _ => tcs.Task));
             }
 
-            module.Requests.Should().Be(0);
-            module.Accepts.Should().Be(0);
+            module.Requests(priority).Should().Be(0);
+            module.Accepts(priority).Should().Be(0);
 
             tcs.TrySetResult(rejectedResult);
 
@@ -234,33 +305,38 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 task.GetAwaiter().GetResult().Should().BeSameAs(rejectedResult);
             }
 
-            module.Requests.Should().Be(500);
-            module.Accepts.Should().Be(0);
+            module.Requests(priority).Should().Be(500);
+            module.Accepts(priority).Should().Be(0);
 
             Console.Out.WriteLine(module.RejectionProbability);
         }
 
-        private void Accept(int count)
+        private void Accept(int count, RequestPriority? priority = null)
         {
             for (var i = 0; i < count; i++)
-                Execute(acceptedResult);
+                Execute(acceptedResult, priority);
         }
 
-        private void Reject(int count)
+        private void Reject(int count, RequestPriority? priority = null)
         {
             for (var i = 0; i < count; i++)
-                Execute(rejectedResult);
+                Execute(rejectedResult, priority);
         }
 
-        private ClusterResult Execute(ClusterResult result)
+        private ClusterResult Execute(ClusterResult result, RequestPriority? priority = null)
         {
+            var parameters = new RequestParameters(priority: priority);
+            context.Parameters.Returns(parameters);
             return module.ExecuteAsync(context, _ => Task.FromResult(result)).GetAwaiter().GetResult();
         }
-        
-        private void Execute<T>(T exception) where T : Exception
+
+        private void Execute<T>(T exception, RequestPriority? priority = null)
+            where T : Exception
         {
             try
             {
+                var parameters = new RequestParameters(priority: priority);
+                context.Parameters.Returns(parameters);
                 module.ExecuteAsync(context, _ => Task.FromException<ClusterResult>(exception)).GetAwaiter().GetResult();
             }
             catch (T)
