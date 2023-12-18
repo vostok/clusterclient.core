@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Threading;
 using Vostok.Logging.Abstractions;
@@ -16,44 +17,16 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingModule : IRequestModule
     {
+        private static readonly RequestPriority DefaultPriority = RequestPriority.Sheddable;
         private static readonly ConcurrentDictionary<string, CountersByPriority> Counters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
         private readonly Func<string, CountersByPriority> counterFactory;
 
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
-            : this(options.StorageKey, options, options, options)
         {
-        }
-
-        public AdaptiveThrottlingModule(
-            string storageKey,
-            AdaptiveThrottlingOptions criticalOptions,
-            AdaptiveThrottlingOptions ordinaryOptions,
-            AdaptiveThrottlingOptions sheddableOptions)
-        {
-            StorageKey = storageKey;
-            Options = new Dictionary<RequestPriority, AdaptiveThrottlingOptions>
-            {
-                {RequestPriority.Critical, criticalOptions},
-                {RequestPriority.Ordinary, ordinaryOptions},
-                {RequestPriority.Sheddable, sheddableOptions}
-            };
-            counterFactory = _ => new CountersByPriority(
-                criticalOptions.MinutesToTrack,
-                ordinaryOptions.MinutesToTrack,
-                sheddableOptions.MinutesToTrack
-            );
-        }
-
-        public AdaptiveThrottlingModule(Dictionary<RequestPriority, AdaptiveThrottlingOptions> options)
-        {
-            this.Options = options;
-            counterFactory = _ => new CountersByPriority(
-                options[RequestPriority.Critical].MinutesToTrack,
-                options[RequestPriority.Ordinary].MinutesToTrack,
-                options[RequestPriority.Sheddable].MinutesToTrack
-            );
+            StorageKey = options.StorageKey;
+            counterFactory = _ => new CountersByPriority(options.Parameters);
         }
 
         public static void ClearCache()
@@ -61,22 +34,20 @@ namespace Vostok.Clusterclient.Core.Modules
             Counters.Clear();
         }
 
-        public Dictionary<RequestPriority, AdaptiveThrottlingOptions> Options { get; }
-
         public int Requests(RequestPriority? priority) => GetCounter(priority).GetMetrics().Requests;
 
         public int Accepts(RequestPriority? priority) => GetCounter(priority).GetMetrics().Accepts;
 
         public double Ratio(RequestPriority? priority) => ComputeRatio(GetCounter(priority).GetMetrics());
 
-        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetOptions(priority));
+        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Parameters);
 
         public string StorageKey { get; }
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
             var counter = GetCounter(context.Parameters.Priority);
-            var options = GetOptions(context.Parameters.Priority);
+            var options = counter.Parameters;
             counter.BeginRequest();
 
             ClusterResult result;
@@ -119,7 +90,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static double ComputeRatio(CounterMetrics metrics) =>
             1.0 * metrics.Requests / Math.Max(1.0, metrics.Accepts);
 
-        private static double ComputeRejectionProbability(CounterMetrics metrics, AdaptiveThrottlingOptions options)
+        private static double ComputeRejectionProbability(CounterMetrics metrics, AdaptiveThrottlingParameters options)
         {
             var probability = 1.0 * (metrics.Requests - options.CriticalRatio * metrics.Accepts) / (metrics.Requests + 1);
 
@@ -137,7 +108,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private Counter GetCounter(RequestPriority? priority)
         {
-            priority ??= RequestPriority.Sheddable;
+            priority ??= DefaultPriority;
             var counters = Counters.GetOrAdd(StorageKey, counterFactory);
             return priority switch
             {
@@ -148,22 +119,24 @@ namespace Vostok.Clusterclient.Core.Modules
             };
         }
 
-        private AdaptiveThrottlingOptions GetOptions(RequestPriority? priority) => Options[priority ?? RequestPriority.Sheddable];
-
         #region CountersByPriority
 
         private class CountersByPriority
         {
-            public CountersByPriority(int criticalBuckets, int ordinaryBuckets, int sheddableBuckets)
+            private readonly Dictionary<RequestPriority, Counter> requestCounters;
+
+            public CountersByPriority(Dictionary<RequestPriority, AdaptiveThrottlingParameters> options)
             {
-                CriticalRequestCounter = new Counter(criticalBuckets);
-                OrdinaryRequestCounter = new Counter(ordinaryBuckets);
-                SheddableRequestCounter = new Counter(sheddableBuckets);
+                requestCounters = new Dictionary<RequestPriority, Counter>();
+                foreach (var (priority, parameters) in options)
+                {
+                    requestCounters[priority] = new Counter(parameters);
+                }
             }
 
-            public Counter CriticalRequestCounter { get; }
-            public Counter OrdinaryRequestCounter { get; }
-            public Counter SheddableRequestCounter { get; }
+            public Counter CriticalRequestCounter => requestCounters[RequestPriority.Critical];
+            public Counter OrdinaryRequestCounter => requestCounters[RequestPriority.Ordinary];
+            public Counter SheddableRequestCounter => requestCounters[RequestPriority.Sheddable];
         }
 
         #endregion
@@ -193,13 +166,18 @@ namespace Vostok.Clusterclient.Core.Modules
             private readonly CounterBucket[] buckets;
             private int pendingRequests;
 
-            public Counter(int buckets)
+            public Counter(AdaptiveThrottlingParameters parameters)
             {
-                this.buckets = new CounterBucket[buckets];
+                Parameters = parameters;
 
-                for (var i = 0; i < buckets; i++)
-                    this.buckets[i] = new CounterBucket();
+                var bucketsNumber = parameters.MinutesToTrack;
+                buckets = new CounterBucket[bucketsNumber];
+
+                for (var i = 0; i < bucketsNumber; i++)
+                    buckets[i] = new CounterBucket();
             }
+
+            public AdaptiveThrottlingParameters Parameters { get; }
 
             public CounterMetrics GetMetrics()
             {
