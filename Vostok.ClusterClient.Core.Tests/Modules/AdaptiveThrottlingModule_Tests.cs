@@ -44,7 +44,17 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [Test]
-        public void Should_handle_null_priority_how_sheddable()
+        public void Should_correctly_compute_rejection_probability_for_different_priority()
+        {
+            Accept(1, RequestPriority.Critical);
+            Reject(1, RequestPriority.Ordinary);
+            var criticalProbability = module.RejectionProbability(RequestPriority.Critical);
+            var ordinaryProbability = module.RejectionProbability(RequestPriority.Ordinary);
+            criticalProbability.Should().BeLessThan(ordinaryProbability);
+        }
+
+        [Test]
+        public void Should_handle_null_priority_as_sheddable()
         {
             Accept(1);
             module.Accepts(RequestPriority.Sheddable).Should().Be(1);
@@ -53,20 +63,21 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Accepts(RequestPriority.Sheddable).Should().Be(1);
             module.Requests(RequestPriority.Sheddable).Should().Be(2);
         }
-        
+
         [TestCase(RequestPriority.Critical)]
         [TestCase(RequestPriority.Ordinary)]
         [TestCase(RequestPriority.Sheddable)]
         public void Should_correctly_handle_request_by_priority(RequestPriority? priority)
         {
             var priorities = new[] {RequestPriority.Critical, RequestPriority.Ordinary, RequestPriority.Sheddable};
-            
+
             Accept(1, priority);
             module.Accepts(priority).Should().Be(1);
             foreach (var p in priorities)
             {
                 module.Requests(p).Should().Be(p == priority ? 1 : 0);
             }
+
             Reject(1, priority);
             module.Accepts(priority).Should().Be(1);
             foreach (var p in priorities)
@@ -75,10 +86,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_increment_according_to_priority_requests_and_accepts_on_accepted_results(RequestPriority? priority)
         {
             for (var i = 1; i <= 10; i++)
@@ -90,10 +98,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_increment_according_to_priority_requests_and_accepts_on_OperationCancelledException_when_request_is_cancelled_by_token(RequestPriority? priority)
         {
             using (var cts = new CancellationTokenSource())
@@ -112,10 +117,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_increment_according_to_priority_only_requests_on_OperationCancelledException_when_token_is_not_signaled(RequestPriority? priority)
         {
             using (var cts = new CancellationTokenSource())
@@ -132,10 +134,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_increment_according_to_priority_only_requests_on_rejected_results(RequestPriority? priority)
         {
             for (var i = 1; i <= 10; i++)
@@ -147,10 +146,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_correctly_compute_according_to_priority_requests_to_accepts_ratio(RequestPriority? priority)
         {
             module.Ratio(priority).Should().Be(0.0);
@@ -164,20 +160,14 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Ratio(priority).Should().Be(2.0);
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_not_reject_according_to_priority_requests_until_minimum_count_is_reached(RequestPriority? priority)
         {
             for (var i = 0; i < MinimumRequests - 1; i++)
                 Execute(rejectedResult, priority).Should().BeSameAs(rejectedResult);
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_honor_according_to_priority_rejection_probability_cap(RequestPriority? priority)
         {
             Accept(1, priority);
@@ -187,10 +177,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.RejectionProbability(priority).Should().Be(ProbabilityCap);
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_increase_according_to_priority_rejection_probability_as_more_requests_are_rejected(RequestPriority? priority)
         {
             Accept(1, priority);
@@ -206,10 +193,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_gradually_decrease_according_to_priority_rejection_probability_to_zero_after_requests_become_accepted_after_big_failure(RequestPriority? priority)
         {
             Accept(10, priority);
@@ -230,10 +214,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Assert.Fail("Rejection probability did not vanish after 10k accepts.");
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_reject_according_to_priority_with_throttled_result_when_rejection_probability_allows(RequestPriority? priority)
         {
             options = new AdaptiveThrottlingOptions(Guid.NewGuid().ToString(), 1, MinimumRequests, CriticalRatio, 1.0);
@@ -261,10 +242,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Assert.Fail("No requests were rejected in 100 attempts, which was highly expected.");
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         [Explicit]
         public void Should_forget_according_to_priority_old_information_as_time_passes(RequestPriority? priority)
         {
@@ -277,10 +255,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Accepts(priority).Should().Be(0);
         }
 
-        [TestCase(null)]
-        [TestCase(RequestPriority.Critical)]
-        [TestCase(RequestPriority.Ordinary)]
-        [TestCase(RequestPriority.Sheddable)]
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_not_account_according_to_priority_for_requests_still_in_progress(RequestPriority? priority)
         {
             var parameters = new RequestParameters(priority: priority);
@@ -310,6 +285,14 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
 
             Console.Out.WriteLine(module.RejectionProbability);
         }
+
+        public static object[] PriorityCase =
+        {
+            new object[] {null},
+            new object[] {RequestPriority.Critical},
+            new object[] {RequestPriority.Ordinary},
+            new object[] {RequestPriority.Sheddable}
+        };
 
         private void Accept(int count, RequestPriority? priority = null)
         {
