@@ -17,16 +17,24 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingModule : IRequestModule
     {
-        private static readonly RequestPriority DefaultPriority = RequestPriority.Sheddable;
-        private static readonly ConcurrentDictionary<string, CountersByPriority> Counters = new();
+        private static readonly RequestPriority DefaultPriority = RequestPriority.Ordinary;
+        private static readonly ConcurrentDictionary<string, CountersPerPriority> Counters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
-        private readonly Func<string, CountersByPriority> counterFactory;
+        private readonly Func<string, CountersPerPriority> counterFactory;
 
+        [Obsolete("This constructor for adaptive throttling is obsolete. Instead use this constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
         {
             StorageKey = options.StorageKey;
-            counterFactory = _ => new CountersByPriority(options.Parameters);
+            var builder = new AdaptiveThrottlingOptionsBuilder(StorageKey).WithDefaultOptions(options);
+            counterFactory = _ => new CountersPerPriority(builder.Build().Parameters);
+        }
+
+        public AdaptiveThrottlingModule(AdaptiveThrottlingOptionsPerPriority options)
+        {
+            StorageKey = options.StorageKey;
+            counterFactory = _ => new CountersPerPriority(options.Parameters);
         }
 
         public static void ClearCache()
@@ -40,14 +48,16 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public double Ratio(RequestPriority? priority) => ComputeRatio(GetCounter(priority).GetMetrics());
 
-        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Parameters);
+        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Options);
+
+        public AdaptiveThrottlingOptions Options(RequestPriority? priority) => GetCounter(priority).Options;
 
         public string StorageKey { get; }
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
             var counter = GetCounter(context.Parameters.Priority);
-            var options = counter.Parameters;
+            var options = counter.Options;
             counter.BeginRequest();
 
             ClusterResult result;
@@ -90,7 +100,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static double ComputeRatio(CounterMetrics metrics) =>
             1.0 * metrics.Requests / Math.Max(1.0, metrics.Accepts);
 
-        private static double ComputeRejectionProbability(CounterMetrics metrics, AdaptiveThrottlingParameters options)
+        private static double ComputeRejectionProbability(CounterMetrics metrics, AdaptiveThrottlingOptions options)
         {
             var probability = 1.0 * (metrics.Requests - options.CriticalRatio * metrics.Accepts) / (metrics.Requests + 1);
 
@@ -108,24 +118,17 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private Counter GetCounter(RequestPriority? priority)
         {
-            priority ??= DefaultPriority;
             var counters = Counters.GetOrAdd(StorageKey, counterFactory);
-            return priority switch
-            {
-                RequestPriority.Critical => counters.CriticalRequestCounter,
-                RequestPriority.Ordinary => counters.OrdinaryRequestCounter,
-                RequestPriority.Sheddable => counters.SheddableRequestCounter,
-                _ => throw new ArgumentOutOfRangeException(nameof(priority), priority, null)
-            };
+            return counters.GetCounterPerPriority(priority ?? DefaultPriority);
         }
 
-        #region CountersByPriority
+        #region CountersPerPriority
 
-        private class CountersByPriority
+        private class CountersPerPriority
         {
             private readonly Dictionary<RequestPriority, Counter> requestCounters;
 
-            public CountersByPriority(Dictionary<RequestPriority, AdaptiveThrottlingParameters> options)
+            public CountersPerPriority(Dictionary<RequestPriority, AdaptiveThrottlingOptions> options)
             {
                 requestCounters = new Dictionary<RequestPriority, Counter>();
                 foreach (var (priority, parameters) in options)
@@ -134,9 +137,10 @@ namespace Vostok.Clusterclient.Core.Modules
                 }
             }
 
-            public Counter CriticalRequestCounter => requestCounters[RequestPriority.Critical];
-            public Counter OrdinaryRequestCounter => requestCounters[RequestPriority.Ordinary];
-            public Counter SheddableRequestCounter => requestCounters[RequestPriority.Sheddable];
+            public Counter GetCounterPerPriority(RequestPriority requestPriority)
+            {
+                return !requestCounters.TryGetValue(requestPriority, out var counter) ? null : counter;
+            }
         }
 
         #endregion
@@ -166,18 +170,18 @@ namespace Vostok.Clusterclient.Core.Modules
             private readonly CounterBucket[] buckets;
             private int pendingRequests;
 
-            public Counter(AdaptiveThrottlingParameters parameters)
+            public Counter(AdaptiveThrottlingOptions options)
             {
-                Parameters = parameters;
+                Options = options;
 
-                var bucketsNumber = parameters.MinutesToTrack;
+                var bucketsNumber = options.MinutesToTrack;
                 buckets = new CounterBucket[bucketsNumber];
 
                 for (var i = 0; i < bucketsNumber; i++)
                     buckets[i] = new CounterBucket();
             }
 
-            public AdaptiveThrottlingParameters Parameters { get; }
+            public AdaptiveThrottlingOptions Options { get; }
 
             public CounterMetrics GetMetrics()
             {
