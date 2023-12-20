@@ -44,6 +44,23 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [Test]
+        public void Should_create_adaptive_throttling_module_with_settings_for_all_priority_from_request_priority()
+        {
+            var priorityList = Enum.GetValues(typeof(RequestPriority));
+            foreach (RequestPriority priority in priorityList)
+            {
+                module.Options(priority).Should().NotBeNull();
+            }
+
+            var options = new AdaptiveThrottlingOptionsPerPriority(Guid.NewGuid().ToString());
+            module = new AdaptiveThrottlingModule(options);
+            foreach (RequestPriority priority in priorityList)
+            {
+                module.Options(priority).Should().NotBeNull();
+            }
+        }
+        
+        [Test]
         public void Should_correctly_compute_rejection_probability_for_different_priority()
         {
             Accept(1, RequestPriority.Critical);
@@ -54,14 +71,14 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [Test]
-        public void Should_handle_null_priority_as_sheddable()
+        public void Should_handle_null_priority_as_ordinary()
         {
             Accept(1);
-            module.Accepts(RequestPriority.Sheddable).Should().Be(1);
-            module.Requests(RequestPriority.Sheddable).Should().Be(1);
+            module.Accepts(RequestPriority.Ordinary).Should().Be(1);
+            module.Requests(RequestPriority.Ordinary).Should().Be(1);
             Reject(1);
-            module.Accepts(RequestPriority.Sheddable).Should().Be(1);
-            module.Requests(RequestPriority.Sheddable).Should().Be(2);
+            module.Accepts(RequestPriority.Ordinary).Should().Be(1);
+            module.Requests(RequestPriority.Ordinary).Should().Be(2);
         }
 
         [TestCase(RequestPriority.Critical)]

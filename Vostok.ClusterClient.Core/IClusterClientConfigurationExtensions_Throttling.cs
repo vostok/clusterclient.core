@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Vostok.Clusterclient.Core.Model;
-using Vostok.Clusterclient.Core.Modules;
+﻿using Vostok.Clusterclient.Core.Modules;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -11,10 +9,10 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
         /// <param name="storageKey">See <see cref="AdaptiveThrottlingOptions.StorageKey"/>.</param>
-        /// <param name="minutesToTrack">See <see cref="AdaptiveThrottlingParameters.MinutesToTrack"/>.</param>
-        /// <param name="minimumRequests">See <see cref="AdaptiveThrottlingParameters.MinimumRequests"/>.</param>
-        /// <param name="criticalRatio">See <see cref="AdaptiveThrottlingParameters.CriticalRatio"/>.</param>
-        /// <param name="maximumRejectProbability">See <see cref="AdaptiveThrottlingParameters.MaximumRejectProbability"/>.</param>
+        /// <param name="minutesToTrack">See <see cref="AdaptiveThrottlingOptions.MinutesToTrack"/>.</param>
+        /// <param name="minimumRequests">See <see cref="AdaptiveThrottlingOptions.MinimumRequests"/>.</param>
+        /// <param name="criticalRatio">See <see cref="AdaptiveThrottlingOptions.CriticalRatio"/>.</param>
+        /// <param name="maximumRejectProbability">See <see cref="AdaptiveThrottlingOptions.MaximumRejectProbability"/>.</param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             string storageKey,
@@ -38,10 +36,10 @@ namespace Vostok.Clusterclient.Core
         /// <para> <b>N.B.</b> Ensure that <see cref="IClusterClientConfiguration.TargetServiceName"/> and <see cref="IClusterClientConfiguration.TargetEnvironment"/> is set before calling this method.</para>
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
-        /// <param name="minutesToTrack">See <see cref="AdaptiveThrottlingParameters.MinutesToTrack"/>.</param>
-        /// <param name="minimumRequests">See <see cref="AdaptiveThrottlingParameters.MinimumRequests"/>.</param>
-        /// <param name="criticalRatio">See <see cref="AdaptiveThrottlingParameters.CriticalRatio"/>.</param>
-        /// <param name="maximumRejectProbability">See <see cref="AdaptiveThrottlingParameters.MaximumRejectProbability"/>.</param>
+        /// <param name="minutesToTrack">See <see cref="AdaptiveThrottlingOptions.MinutesToTrack"/>.</param>
+        /// <param name="minimumRequests">See <see cref="AdaptiveThrottlingOptions.MinimumRequests"/>.</param>
+        /// <param name="criticalRatio">See <see cref="AdaptiveThrottlingOptions.CriticalRatio"/>.</param>
+        /// <param name="maximumRejectProbability">See <see cref="AdaptiveThrottlingOptions.MaximumRejectProbability"/>.</param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
@@ -55,30 +53,13 @@ namespace Vostok.Clusterclient.Core
         }
 
         /// <summary>
-        /// Configures default settings by request priority for adaptive client throttling mechanism.
-        /// </summary>
-        public static AdaptiveThrottlingOptions ConfigureAdaptiveThrottlingOptions(string storageKey, AdaptiveThrottlingParameters defaultParameters)
-        {
-            defaultParameters ??= new AdaptiveThrottlingParameters();
-            
-            var parameters = new Dictionary<RequestPriority, AdaptiveThrottlingParameters>
-            {
-                [RequestPriority.Critical] = defaultParameters,
-                [RequestPriority.Ordinary] = defaultParameters,
-                [RequestPriority.Sheddable] = defaultParameters
-            };
-
-            return new AdaptiveThrottlingOptions(storageKey, parameters);
-        }
-
-        /// <summary>
         /// Sets up an adaptive client throttling mechanism with given options.
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
-        /// <param name="options">See <see cref="AdaptiveThrottlingOptions"/> </param>
+        /// <param name="options">See <see cref="AdaptiveThrottlingOptionsPerPriority"/> </param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
-            AdaptiveThrottlingOptions options)
+            AdaptiveThrottlingOptionsPerPriority options)
         {
             configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
