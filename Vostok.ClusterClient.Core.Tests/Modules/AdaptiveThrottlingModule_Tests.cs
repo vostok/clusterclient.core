@@ -61,7 +61,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 module.PerPriorityOptions(priority).Should().NotBeNull();
             }
         }
-        
+
         [Test]
         public void Should_correctly_compute_rejection_probability_for_different_priority()
         {
@@ -307,13 +307,13 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Console.Out.WriteLine(module.RejectionProbability(priority));
         }
 
-        public static object[] PriorityCase =
+        public static IEnumerable<RequestPriority?> PriorityCase()
         {
-            new object[] {null},
-            new object[] {RequestPriority.Critical},
-            new object[] {RequestPriority.Ordinary},
-            new object[] {RequestPriority.Sheddable}
-        };
+            yield return null;
+            yield return RequestPriority.Critical;
+            yield return RequestPriority.Ordinary;
+            yield return RequestPriority.Sheddable;
+        }
 
         private void Accept(int count, RequestPriority? priority = null)
         {
