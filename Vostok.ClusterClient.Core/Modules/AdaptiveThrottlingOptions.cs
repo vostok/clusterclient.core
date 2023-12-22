@@ -43,11 +43,38 @@ namespace Vostok.Clusterclient.Core.Modules
             MaximumRejectProbability = maximumRejectProbability;
         }
         
+        /// <param name="minutesToTrack">How much minutes of statistics will be tracked. Must be >= 1.</param>
+        /// <param name="minimumRequests">A minimum requests count in <see cref="MinutesToTrack"/> minutes to reject any request.</param>
+        /// <param name="criticalRatio">A minimum ratio of requests to accepts eligible for rejection. Must be > 1.</param>
+        /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
+        public AdaptiveThrottlingOptions(
+            int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
+            int minimumRequests = ClusterClientDefaults.AdaptiveThrottlingMinimumRequests,
+            double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
+            double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
+        {
+            if (minutesToTrack < 1)
+                throw new ArgumentOutOfRangeException(nameof(minutesToTrack), "Minutes to track parameter must be >= 1.");
+
+            if (criticalRatio <= 1.0)
+                throw new ArgumentOutOfRangeException(nameof(criticalRatio), "Critical ratio must be in (1; +inf) range.");
+
+            if (maximumRejectProbability < 0.0 || maximumRejectProbability > 1.0)
+                throw new ArgumentOutOfRangeException(nameof(maximumRejectProbability), "Maximum rejection probability must be in [0; 1] range.");
+            
+            StorageKey = string.Empty;
+            MinutesToTrack = minutesToTrack;
+            MinimumRequests = minimumRequests;
+            CriticalRatio = criticalRatio;
+            MaximumRejectProbability = maximumRejectProbability;
+        }
+        
         /// <summary>
         /// A key used to decouple statistics for different services.
         /// </summary>
         [NotNull]
-        [Obsolete("This property is obsolete. .", false)]
+        [Obsolete("This property is obsolete. Since it was transferred to property in AdaptiveThrottlingModule.", false)]
         public string StorageKey { get; }
 
         /// <summary>

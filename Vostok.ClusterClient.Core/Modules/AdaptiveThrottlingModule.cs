@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Threading;
 using Vostok.Logging.Abstractions;
@@ -23,12 +22,10 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private readonly Func<string, CountersPerPriority> counterFactory;
 
-        [Obsolete("This constructor for adaptive throttling is obsolete. Instead use this constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
+        [Obsolete("This constructor for adaptive throttling is obsolete. Instead use constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
+            : this(new AdaptiveThrottlingOptionsBuilder(options.StorageKey).WithDefaultOptions(options).Build())
         {
-            StorageKey = options.StorageKey;
-            var builder = new AdaptiveThrottlingOptionsBuilder(StorageKey).WithDefaultOptions(options);
-            counterFactory = _ => new CountersPerPriority(builder.Build().Parameters);
         }
 
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptionsPerPriority options)
@@ -50,7 +47,10 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Options);
 
-        public AdaptiveThrottlingOptions Options(RequestPriority? priority) => GetCounter(priority).Options;
+        [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
+        public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
+
+        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => GetCounter(priority).Options;
 
         public string StorageKey { get; }
 
@@ -128,12 +128,12 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             private readonly Dictionary<RequestPriority, Counter> requestCounters;
 
-            public CountersPerPriority(Dictionary<RequestPriority, AdaptiveThrottlingOptions> options)
+            public CountersPerPriority(IReadOnlyDictionary<RequestPriority, AdaptiveThrottlingOptions> options)
             {
                 requestCounters = new Dictionary<RequestPriority, Counter>();
-                foreach (var (priority, parameters) in options)
+                foreach (var parameters in options)
                 {
-                    requestCounters[priority] = new Counter(parameters);
+                    requestCounters[parameters.Key] = new Counter(parameters.Value);
                 }
             }
 

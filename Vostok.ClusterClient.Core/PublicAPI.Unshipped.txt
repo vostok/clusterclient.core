@@ -1,10 +1,7 @@
-static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority options) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string storageKey, System.Action<Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder> optionsBuilder) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Action<Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder> optionsBuilder) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder.AdaptiveThrottlingOptionsBuilder(string storageKey) -> void
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder.Build() -> Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder.WithDefaultOptions(Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions defaultThrottlingOptions) -> Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder.WithPriorityParameters(Vostok.Clusterclient.Core.Model.RequestPriority priority, Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions adaptiveThrottlingOptions) -> Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsBuilder
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority.AdaptiveThrottlingOptionsPerPriority(string storageKey, System.Collections.Generic.Dictionary<Vostok.Clusterclient.Core.Model.RequestPriority, Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions> options = null) -> void
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority.Parameters.get -> System.Collections.Generic.Dictionary<Vostok.Clusterclient.Core.Model.RequestPriority, Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions>
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptionsPerPriority.StorageKey.get -> string

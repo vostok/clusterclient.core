@@ -25,7 +25,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private ClusterResult rejectedResult;
         private IRequestContext context;
 
-        private AdaptiveThrottlingOptions options;
+        private AdaptiveThrottlingOptionsPerPriority options;
         private AdaptiveThrottlingModule module;
 
         [SetUp]
@@ -39,7 +39,9 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             context = Substitute.For<IRequestContext>();
             context.Log.Returns(new SilentLog());
 
-            options = new AdaptiveThrottlingOptions(Guid.NewGuid().ToString(), 1, MinimumRequests, CriticalRatio, ProbabilityCap);
+            options = new AdaptiveThrottlingOptionsBuilder(Guid.NewGuid().ToString())
+                .WithDefaultOptions(new AdaptiveThrottlingOptions(1, MinimumRequests))
+                .Build();
             module = new AdaptiveThrottlingModule(options);
         }
 
@@ -49,14 +51,14 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             var priorityList = Enum.GetValues(typeof(RequestPriority));
             foreach (RequestPriority priority in priorityList)
             {
-                module.Options(priority).Should().NotBeNull();
+                module.PerPriorityOptions(priority).Should().NotBeNull();
             }
 
-            var options = new AdaptiveThrottlingOptionsPerPriority(Guid.NewGuid().ToString());
+            options = new AdaptiveThrottlingOptionsPerPriority(Guid.NewGuid().ToString());
             module = new AdaptiveThrottlingModule(options);
             foreach (RequestPriority priority in priorityList)
             {
-                module.Options(priority).Should().NotBeNull();
+                module.PerPriorityOptions(priority).Should().NotBeNull();
             }
         }
         
@@ -234,7 +236,9 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         [TestCaseSource(nameof(PriorityCase))]
         public void Should_reject_according_to_priority_with_throttled_result_when_rejection_probability_allows(RequestPriority? priority)
         {
-            options = new AdaptiveThrottlingOptions(Guid.NewGuid().ToString(), 1, MinimumRequests, CriticalRatio, 1.0);
+            options = new AdaptiveThrottlingOptionsBuilder(Guid.NewGuid().ToString())
+                .WithDefaultOptions(new AdaptiveThrottlingOptions(1, MinimumRequests, CriticalRatio, 1.0))
+                .Build();
             module = new AdaptiveThrottlingModule(options);
 
             Accept(1, priority);
@@ -300,7 +304,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Requests(priority).Should().Be(500);
             module.Accepts(priority).Should().Be(0);
 
-            Console.Out.WriteLine(module.RejectionProbability);
+            Console.Out.WriteLine(module.RejectionProbability(priority));
         }
 
         public static object[] PriorityCase =
