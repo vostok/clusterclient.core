@@ -24,7 +24,12 @@ namespace Vostok.Clusterclient.Core.Modules
 
         [Obsolete("This constructor for adaptive throttling is obsolete. Instead use constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
-            : this(new AdaptiveThrottlingOptionsBuilder(options.StorageKey).WithDefaultOptions(options).Build())
+            : this(
+                AdaptiveThrottlingOptionsBuilder.Build(
+                    setup => setup.WithDefaultOptions(options),
+                    options.StorageKey
+                )
+            )
         {
         }
 
@@ -148,7 +153,7 @@ namespace Vostok.Clusterclient.Core.Modules
         #region Logging
 
         private void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability) =>
-            context.Log.Warn("Throttled request without sending it. Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}", ratio, rejectionProbability);
+            context.Log.Warn("Throttled {priority} request without sending it. Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}", context.Parameters.Priority, ratio, rejectionProbability);
 
         #endregion
 
