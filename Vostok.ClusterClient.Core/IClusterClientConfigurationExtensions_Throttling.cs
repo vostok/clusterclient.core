@@ -22,16 +22,20 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var options = new AdaptiveThrottlingOptionsBuilder(storageKey)
-                .WithDefaultOptions(
-                    new AdaptiveThrottlingOptions(
-                        minutesToTrack,
-                        minimumRequests,
-                        criticalRatio,
-                        maximumRejectProbability
-                    )
-                )
-                .Build();
+            var options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            minutesToTrack,
+                            minimumRequests,
+                            criticalRatio,
+                            maximumRejectProbability
+                        )
+                    );
+                },
+                storageKey
+            );
 
             configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
@@ -64,7 +68,7 @@ namespace Vostok.Clusterclient.Core
         /// <param name="optionsBuilder">See <see cref="AdaptiveThrottlingOptionsBuilder"/> </param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
-            Action<AdaptiveThrottlingOptionsBuilder> optionsBuilder)
+            Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
         {
             var storageKey = GenerateStorageKey(configuration);
 
@@ -80,12 +84,10 @@ namespace Vostok.Clusterclient.Core
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             string storageKey,
-            Action<AdaptiveThrottlingOptionsBuilder> optionsBuilder)
+            Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
         {
-            var builder = new AdaptiveThrottlingOptionsBuilder(storageKey);
-            optionsBuilder.Invoke(builder);
-
-            configuration.AddRequestModule(new AdaptiveThrottlingModule(builder.Build()), typeof(AbsoluteUrlSenderModule));
+            var builder = AdaptiveThrottlingOptionsBuilder.Build(optionsBuilder, storageKey);
+            configuration.AddRequestModule(new AdaptiveThrottlingModule(builder), typeof(AbsoluteUrlSenderModule));
         }
     }
 }
