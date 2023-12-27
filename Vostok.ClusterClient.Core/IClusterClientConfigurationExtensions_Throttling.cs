@@ -67,10 +67,8 @@ namespace Vostok.Clusterclient.Core
             Action<AdaptiveThrottlingOptionsBuilder> optionsBuilder)
         {
             var storageKey = GenerateStorageKey(configuration);
-            var builder = new AdaptiveThrottlingOptionsBuilder(storageKey);
-            optionsBuilder.Invoke(builder);
 
-            configuration.AddRequestModule(new AdaptiveThrottlingModule(builder.Build()), typeof(AbsoluteUrlSenderModule));
+            SetupAdaptiveThrottling(configuration, storageKey, optionsBuilder);
         }
 
         /// <summary>
