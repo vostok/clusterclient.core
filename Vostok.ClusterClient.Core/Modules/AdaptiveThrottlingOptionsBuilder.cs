@@ -39,12 +39,7 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             var builder = new AdaptiveThrottlingOptionsBuilder(storageKey);
             setup?.Invoke(builder);
-            return builder.Build();
-        }
-
-        private AdaptiveThrottlingOptionsPerPriority Build()
-        {
-            return new AdaptiveThrottlingOptionsPerPriority(storageKey, options);
+            return new AdaptiveThrottlingOptionsPerPriority(builder.storageKey, builder.options);
         }
     }
 }
