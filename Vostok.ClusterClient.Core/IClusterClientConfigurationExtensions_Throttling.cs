@@ -80,14 +80,14 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
         /// <param name="storageKey">A key used to decouple statistics for different services.</param>
-        /// <param name="optionsBuilder">See <see cref="AdaptiveThrottlingOptionsBuilder"/> </param>
+        /// <param name="optionsBuilder">See <see cref="IAdaptiveThrottlingOptionsBuilder"/> </param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             string storageKey,
             Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
         {
-            var builder = AdaptiveThrottlingOptionsBuilder.Build(optionsBuilder, storageKey);
-            configuration.AddRequestModule(new AdaptiveThrottlingModule(builder), typeof(AbsoluteUrlSenderModule));
+            var options = AdaptiveThrottlingOptionsBuilder.Build(optionsBuilder, storageKey);
+            configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
     }
 }
