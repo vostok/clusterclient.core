@@ -16,7 +16,7 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
         /// <exception cref="ArgumentNullException"><paramref name="storageKey"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/> or <paramref name="maximumRejectProbability"/> does not lie in expected range.</exception>
-        [Obsolete("This constructor is obsolete. Instead use AdaptiveThrottlingOptionsBuilder for set more correct settings", false)]
+        [Obsolete("This constructor is obsolete. Instead use constructor without storageKey parameter", false)]
         public AdaptiveThrottlingOptions(
             [NotNull] string storageKey,
             int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
