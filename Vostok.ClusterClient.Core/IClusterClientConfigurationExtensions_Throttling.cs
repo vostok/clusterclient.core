@@ -65,7 +65,7 @@ namespace Vostok.Clusterclient.Core
         /// Sets up an adaptive client throttling mechanism with given options.
         /// </summary>
         /// <param name="configuration">A configuration to be modified.</param>
-        /// <param name="optionsBuilder">See <see cref="AdaptiveThrottlingOptionsBuilder"/> </param>
+        /// <param name="optionsBuilder">See <see cref="IAdaptiveThrottlingOptionsBuilder"/> </param>
         public static void SetupAdaptiveThrottling(
             this IClusterClientConfiguration configuration,
             Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
