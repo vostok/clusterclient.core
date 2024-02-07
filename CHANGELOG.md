@@ -1,3 +1,7 @@
+## 0.1.49 (07-02-2024):
+
+Added accounting of request priority in `AdaptiveThrottlingModule`, also changed `AdaptiveThrottlingOptions` and added setting builder `AdaptiveThrottlingOptionsBuilder` per request priority
+
 ## 0.1.48 (26-09-2023):
 
 Request to replica does not throw anymore if cancellation happened. Because it might be retried according to current strategy.
