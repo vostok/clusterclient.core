@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -15,15 +16,27 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingModule : IRequestModule
     {
-        private static readonly ConcurrentDictionary<string, Counter> Counters = new();
+        private static readonly RequestPriority DefaultPriority = RequestPriority.Ordinary;
+        private static readonly ConcurrentDictionary<string, CountersPerPriority> Counters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
-        private readonly Func<string, Counter> counterFactory;
+        private readonly Func<string, CountersPerPriority> counterFactory;
 
+        [Obsolete("This constructor for adaptive throttling is obsolete. Instead use constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
+            : this(
+                AdaptiveThrottlingOptionsBuilder.Build(
+                    setup => setup.WithDefaultOptions(options),
+                    options.StorageKey
+                )
+            )
         {
-            this.Options = options;
-            counterFactory = _ => new Counter(options.MinutesToTrack);
+        }
+
+        public AdaptiveThrottlingModule(AdaptiveThrottlingOptionsPerPriority options)
+        {
+            StorageKey = options.StorageKey;
+            counterFactory = _ => new CountersPerPriority(options.Parameters);
         }
 
         public static void ClearCache()
@@ -31,20 +44,25 @@ namespace Vostok.Clusterclient.Core.Modules
             Counters.Clear();
         }
 
-        public AdaptiveThrottlingOptions Options { get; }
+        public int Requests(RequestPriority? priority) => GetCounter(priority).GetMetrics().Requests;
 
-        public int Requests => GetCounter().GetMetrics().Requests;
+        public int Accepts(RequestPriority? priority) => GetCounter(priority).GetMetrics().Accepts;
 
-        public int Accepts => GetCounter().GetMetrics().Accepts;
+        public double Ratio(RequestPriority? priority) => ComputeRatio(GetCounter(priority).GetMetrics());
 
-        public double Ratio => ComputeRatio(GetCounter().GetMetrics());
+        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Options);
 
-        public double RejectionProbability => ComputeRejectionProbability(GetCounter().GetMetrics(), Options);
+        [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
+        public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
+
+        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => GetCounter(priority).Options;
+
+        public string StorageKey { get; }
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
-            var counter = GetCounter();
-
+            var counter = GetCounter(context.Parameters.Priority);
+            var options = counter.Options;
             counter.BeginRequest();
 
             ClusterResult result;
@@ -57,9 +75,9 @@ namespace Vostok.Clusterclient.Core.Modules
                 double rejectionProbability;
 
                 var metrics = counter.GetMetrics();
-                if (metrics.Requests >= Options.MinimumRequests &&
-                    (ratio = ComputeRatio(metrics)) >= Options.CriticalRatio &&
-                    (rejectionProbability = ComputeRejectionProbability(metrics, Options)) > ThreadSafeRandom.NextDouble())
+                if (metrics.Requests >= options.MinimumRequests &&
+                    (ratio = ComputeRatio(metrics)) >= options.CriticalRatio &&
+                    (rejectionProbability = ComputeRejectionProbability(metrics, options)) > ThreadSafeRandom.NextDouble())
                 {
                     LogThrottledRequest(context, ratio, rejectionProbability);
 
@@ -103,12 +121,39 @@ namespace Vostok.Clusterclient.Core.Modules
                 counter.AddAccept();
         }
 
-        private Counter GetCounter() => Counters.GetOrAdd(Options.StorageKey, counterFactory);
+        private Counter GetCounter(RequestPriority? priority)
+        {
+            var counters = Counters.GetOrAdd(StorageKey, counterFactory);
+            return counters.GetCounterPerPriority(priority ?? DefaultPriority);
+        }
+
+        #region CountersPerPriority
+
+        private class CountersPerPriority
+        {
+            private readonly Dictionary<RequestPriority, Counter> requestCounters;
+
+            public CountersPerPriority(IReadOnlyDictionary<RequestPriority, AdaptiveThrottlingOptions> options)
+            {
+                requestCounters = new Dictionary<RequestPriority, Counter>();
+                foreach (var parameters in options)
+                {
+                    requestCounters[parameters.Key] = new Counter(parameters.Value);
+                }
+            }
+
+            public Counter GetCounterPerPriority(RequestPriority requestPriority)
+            {
+                return !requestCounters.TryGetValue(requestPriority, out var counter) ? null : counter;
+            }
+        }
+
+        #endregion
 
         #region Logging
 
         private void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability) =>
-            context.Log.Warn("Throttled request without sending it. Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}", ratio, rejectionProbability);
+            context.Log.Warn("Throttled {priority} request without sending it. Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}", context.Parameters.Priority, ratio, rejectionProbability);
 
         #endregion
 
@@ -130,13 +175,18 @@ namespace Vostok.Clusterclient.Core.Modules
             private readonly CounterBucket[] buckets;
             private int pendingRequests;
 
-            public Counter(int buckets)
+            public Counter(AdaptiveThrottlingOptions options)
             {
-                this.buckets = new CounterBucket[buckets];
+                Options = options;
 
-                for (var i = 0; i < buckets; i++)
-                    this.buckets[i] = new CounterBucket();
+                var bucketsNumber = options.MinutesToTrack;
+                buckets = new CounterBucket[bucketsNumber];
+
+                for (var i = 0; i < bucketsNumber; i++)
+                    buckets[i] = new CounterBucket();
             }
+
+            public AdaptiveThrottlingOptions Options { get; }
 
             public CounterMetrics GetMetrics()
             {
@@ -165,7 +215,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
             public void AddAccept() => Interlocked.Increment(ref ObtainBucket().Accepts);
 
-            private static int GetCurrentMinute() => (int) Math.Floor(Watch.Elapsed.TotalMinutes);
+            private static int GetCurrentMinute() => (int)Math.Floor(Watch.Elapsed.TotalMinutes);
 
             private CounterBucket ObtainBucket()
             {
