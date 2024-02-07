@@ -1,4 +1,5 @@
-﻿using Vostok.Clusterclient.Core.Modules;
+﻿using System;
+using Vostok.Clusterclient.Core.Modules;
 
 namespace Vostok.Clusterclient.Core
 {
@@ -21,12 +22,20 @@ namespace Vostok.Clusterclient.Core
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap)
         {
-            var options = new AdaptiveThrottlingOptions(
-                storageKey,
-                minutesToTrack,
-                minimumRequests,
-                criticalRatio,
-                maximumRejectProbability);
+            var options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            minutesToTrack,
+                            minimumRequests,
+                            criticalRatio,
+                            maximumRejectProbability
+                        )
+                    );
+                },
+                storageKey
+            );
 
             configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
@@ -50,6 +59,35 @@ namespace Vostok.Clusterclient.Core
             var storageKey = GenerateStorageKey(configuration);
 
             SetupAdaptiveThrottling(configuration, storageKey, minutesToTrack, minimumRequests, criticalRatio, maximumRejectProbability);
+        }
+
+        /// <summary>
+        /// Sets up an adaptive client throttling mechanism with given options.
+        /// </summary>
+        /// <param name="configuration">A configuration to be modified.</param>
+        /// <param name="optionsBuilder">See <see cref="IAdaptiveThrottlingOptionsBuilder"/> </param>
+        public static void SetupAdaptiveThrottling(
+            this IClusterClientConfiguration configuration,
+            Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
+        {
+            var storageKey = GenerateStorageKey(configuration);
+
+            SetupAdaptiveThrottling(configuration, storageKey, optionsBuilder);
+        }
+
+        /// <summary>
+        /// Sets up an adaptive client throttling mechanism with given options.
+        /// </summary>
+        /// <param name="configuration">A configuration to be modified.</param>
+        /// <param name="storageKey">A key used to decouple statistics for different services.</param>
+        /// <param name="optionsBuilder">See <see cref="IAdaptiveThrottlingOptionsBuilder"/> </param>
+        public static void SetupAdaptiveThrottling(
+            this IClusterClientConfiguration configuration,
+            string storageKey,
+            Action<IAdaptiveThrottlingOptionsBuilder> optionsBuilder)
+        {
+            var options = AdaptiveThrottlingOptionsBuilder.Build(optionsBuilder, storageKey);
+            configuration.AddRequestModule(new AdaptiveThrottlingModule(options), typeof(AbsoluteUrlSenderModule));
         }
     }
 }

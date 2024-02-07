@@ -162,7 +162,7 @@ namespace Vostok.Clusterclient.Core.Tests
             var secondThrottling = (AdaptiveThrottlingModule)secondConfiguration.Modules.First()
                 .Value.Before[0];
 
-            firstThrottling.Options.StorageKey.Should().NotBe(secondThrottling.Options.StorageKey);
+            firstThrottling.StorageKey.Should().NotBe(secondThrottling.StorageKey);
         }
         
         [Test]

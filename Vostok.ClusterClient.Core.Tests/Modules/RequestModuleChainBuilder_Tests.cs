@@ -147,7 +147,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                     {
                         Before =
                         {
-                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptions("foo")),
+                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptionsPerPriority("foo")),
                             new ReplicaBudgetingModule(new ReplicaBudgetingOptions("foo"))
                         }
                     }
@@ -189,7 +189,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                     {
                         Before =
                         {
-                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptions("foo")),
+                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptionsPerPriority("foo")),
                         }
                     },
                     [typeof(AdaptiveThrottlingModule)] = new RelatedModules
@@ -237,7 +237,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                     {
                         Before =
                         {
-                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptions("foo")),
+                            new AdaptiveThrottlingModule(new AdaptiveThrottlingOptionsPerPriority("foo")),
                         }
                     },
                     [typeof(AdaptiveThrottlingModule)] = new RelatedModules
