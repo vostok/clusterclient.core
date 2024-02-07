@@ -192,6 +192,8 @@ static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.RemoveReq
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.RepeatReplicas(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, int repeatCount) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string storageKey, System.Action<Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder> optionsBuilder) -> void
+static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAdaptiveThrottling(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Action<Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder> optionsBuilder) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupAuxiliaryHeaders(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, string priorityHeader = "Request-Priority", string identityHeader = "Application-Identity") -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupExternalUrl(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Uri url) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupHttpMethodValidation(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration) -> void
@@ -677,12 +679,16 @@ Vostok.Clusterclient.Core.Model.StreamContent.Length.get -> long?
 Vostok.Clusterclient.Core.Model.StreamContent.Stream.get -> System.IO.Stream
 Vostok.Clusterclient.Core.Model.StreamContent.StreamContent(System.IO.Stream stream, long? length = null) -> void
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(string storageKey, int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.CriticalRatio.get -> double
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MaximumRejectProbability.get -> double
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MinimumRequests.get -> int
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.MinutesToTrack.get -> int
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.StorageKey.get -> string
+Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder
+Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder.WithDefaultOptions(Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions adaptiveThrottlingOptions) -> Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder
+Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder.WithPriorityParameters(Vostok.Clusterclient.Core.Model.RequestPriority priority, Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions adaptiveThrottlingOptions) -> Vostok.Clusterclient.Core.Modules.IAdaptiveThrottlingOptionsBuilder
 Vostok.Clusterclient.Core.Modules.IRequestContext
 Vostok.Clusterclient.Core.Modules.IRequestContext.AsyncClusterProvider.get -> Vostok.Clusterclient.Core.Topology.IAsyncClusterProvider
 Vostok.Clusterclient.Core.Modules.IRequestContext.AsyncClusterProvider.set -> void
