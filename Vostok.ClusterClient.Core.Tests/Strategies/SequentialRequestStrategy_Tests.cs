@@ -145,14 +145,14 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_not_use_connection_timeout_for_last_attempt()
+        public void Should_use_configured_connection_timeout()
         {
             Send(Budget.WithRemaining(1500.Milliseconds()));
 
             sender.ReceivedCalls().Should().HaveCount(3);
             sender.Received(1).SendToReplicaAsync(replica1, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);
             sender.Received(1).SendToReplicaAsync(replica2, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);
-            sender.Received(1).SendToReplicaAsync(replica3, request, null, Arg.Any<TimeSpan>(), token);
+            sender.Received(1).SendToReplicaAsync(replica3, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);
         }
 
         [Test]
