@@ -146,7 +146,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_ignore_connection_timeout()
+        public void Should_use_configured_connection_timeout_for_all_requests()
         {
             strategy = new ParallelRequestStrategy(int.MaxValue);
 
@@ -158,7 +158,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             foreach (var replica in replicas)
             {
-                sender.Received(1).SendToReplicaAsync(replica, Arg.Any<Request>(), null, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+                sender.Received(1).SendToReplicaAsync(replica, Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
             }
         }
 
