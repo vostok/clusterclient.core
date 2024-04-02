@@ -1,3 +1,7 @@
+## 0.1.50 (02-04-2024):
+
+Configured ConnectionTimeout is used for all request attempts.
+
 ## 0.1.49 (07-02-2024):
 
 Added accounting of request priority in `AdaptiveThrottlingModule`, also changed `AdaptiveThrottlingOptions` and added setting builder `AdaptiveThrottlingOptionsBuilder` per request priority
