@@ -83,9 +83,7 @@ namespace Vostok.Clusterclient.Core.Strategies
                             break;
                         }
 
-                        var connectionAttemptTimeout = i == replicasCount - 1 ? null : parameters.ConnectionTimeout;
-
-                        LaunchRequest(currentTasks, request, budget, sender, replicasEnumerator, connectionAttemptTimeout, linkedCancellationToken);
+                        LaunchRequest(currentTasks, request, budget, sender, replicasEnumerator, parameters.ConnectionTimeout, linkedCancellationToken);
 
                         ScheduleForkIfNeeded(currentTasks, request, budget, i, replicasCount, linkedCancellationToken);
 

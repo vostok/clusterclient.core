@@ -211,12 +211,12 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_launch_requests_except_last_with_connection_timeout()
+        public void Should_launch_all_requests_with_configured_connection_timeout()
         {
             sender.ClearReceivedCalls();
-            
+
             strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, replicas.Length);
-            
+
             strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(5.Seconds()), replicas, replicas.Length, token);
 
             for (var i = 0; i < replicas.Length; ++i)
@@ -224,8 +224,8 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             for (var i = 0; i < replicas.Length - 1; ++i)
                 sender.Received(1).SendToReplicaAsync(replicas[i], Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
-            
-            sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), null, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+
+            sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         }
 
         [TestCase(0)]
@@ -243,7 +243,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status([Values]bool unreliableHeaderPresent)
+        public void Should_issue_another_request_when_a_pending_one_ends_with_rejected_status([Values] bool unreliableHeaderPresent)
         {
             var task = strategy.SendAsync(request, parameters, sender, Budget.Infinite, replicas, replicas.Length, token);
 
