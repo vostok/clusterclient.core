@@ -53,9 +53,7 @@ namespace Vostok.Clusterclient.Core.Strategies
 
                 var timeout = TimeSpanArithmetics.Min(timeoutsProvider.GetTimeout(request, budget, currentReplicaIndex++, replicasCount), budget.Remaining);
 
-                var connectionAttemptTimeout = currentReplicaIndex == replicasCount ? null : parameters.ConnectionTimeout;
-
-                var result = await sender.SendToReplicaAsync(replica, request, connectionAttemptTimeout, timeout, cancellationToken).ConfigureAwait(false);
+                var result = await sender.SendToReplicaAsync(replica, request, parameters.ConnectionTimeout, timeout, cancellationToken).ConfigureAwait(false);
                 if (result.Verdict == ResponseVerdict.Accept)
                     break;
 
