@@ -37,7 +37,7 @@ namespace Vostok.Clusterclient.Core.Modules
             context.Log.Error("Request timeout has incorrect negative value: '{Timeout}'.", context.Budget.Total);
 
         private void LogTooBigTimeout(IRequestContext context) =>
-            context.Log.Error("Request timeout has incorrect big value: '{Timeout}' > '{MaxValue}'.", context.Budget.Total.Milliseconds, int.MaxValue);
+            context.Log.Error("Request timeout has incorrect big value: '{Timeout}' > '{MaxValue}'.", context.Budget.Total.TotalMilliseconds, int.MaxValue);
 
         private void LogExpiredTimeout(IRequestContext context) =>
             context.Log.Warn("Request timeout expired prematurely or just was too small. Total budget = '{Timeout}'.", context.Budget.Total.ToPrettyString());
