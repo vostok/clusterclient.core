@@ -5,6 +5,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NSubstitute;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies;
@@ -145,9 +146,21 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_use_configured_connection_timeout()
+        public void Should_use_configured_connection_timeout_and_ClusterClientConstantsLastAttemptConnectionTimeBudget()
         {
             Send(Budget.WithRemaining(1500.Milliseconds()));
+
+            sender.ReceivedCalls().Should().HaveCount(3);
+            sender.Received(1).SendToReplicaAsync(replica1, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);
+            sender.Received(1).SendToReplicaAsync(replica2, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);
+            sender.Received(1).SendToReplicaAsync(replica3, request, ClusterClientConstants.LastAttemptConnectionTimeBudget, Arg.Any<TimeSpan>(), token);
+        }
+
+        [Test]
+        public void Should_use_configured_connection_timeout_if_it_greater_than_ClusterClientConstantsLastAttemptConnectionTimeBudget()
+        {
+            var parameters = RequestParameters.Empty.WithConnectionTimeout(ClusterClientConstants.LastAttemptConnectionTimeBudget + 100.Milliseconds());
+            strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(1500.Milliseconds()), replicas, replicas.Length, token).GetAwaiter().GetResult();
 
             sender.ReceivedCalls().Should().HaveCount(3);
             sender.Received(1).SendToReplicaAsync(replica1, request, parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), token);

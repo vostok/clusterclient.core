@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
 using FluentAssertions;
 using FluentAssertions.Extensions;
 using NSubstitute;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies;
@@ -217,7 +217,8 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, replicas.Length);
 
-            strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(5.Seconds()), replicas, replicas.Length, token);
+            var remainingBudget = 5.Seconds();
+            strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(remainingBudget), replicas, replicas.Length, token);
 
             for (var i = 0; i < replicas.Length; ++i)
                 CompleteForkingDelay();
@@ -225,7 +226,27 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
             for (var i = 0; i < replicas.Length - 1; ++i)
                 sender.Received(1).SendToReplicaAsync(replicas[i], Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
 
-            sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+            sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), ClusterClientConstants.LastAttemptConnectionTimeBudget, remainingBudget, Arg.Any<CancellationToken>());
+        }
+
+        [Test]
+        public void Should_select_connection_timeout_on_last_attempt_as_max_between_it_and_ClusterClientConstantsLastAttemptConnectionTimeBudget()
+        {
+            sender.ClearReceivedCalls();
+
+            strategy = new ForkingRequestStrategy(delaysProvider, delaysPlanner, replicas.Length);
+
+            var parameters = RequestParameters.Empty.WithConnectionTimeout(100.Seconds());
+            var remainingBudget = 5.Seconds();
+            strategy.SendAsync(request, parameters, sender, Budget.WithRemaining(remainingBudget), replicas, replicas.Length, token);
+
+            for (var i = 0; i < replicas.Length; ++i)
+                CompleteForkingDelay();
+
+            for (var i = 0; i < replicas.Length - 1; ++i)
+                sender.Received(1).SendToReplicaAsync(replicas[i], Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+
+            sender.Received(1).SendToReplicaAsync(replicas.Last(), Arg.Any<Request>(), parameters.ConnectionTimeout, remainingBudget, Arg.Any<CancellationToken>());
         }
 
         [TestCase(0)]
