@@ -60,7 +60,7 @@ namespace Vostok.Clusterclient.Core.Strategies
                         if (!replicasEnumerator.MoveNext())
                             throw new InvalidOperationException("Replicas enumerator ended prematurely. This is definitely a bug in code.");
 
-                        var connectionTimeout = TimeSpanExtensions.Max(ClusterClientConstants.LastAttemptConnectionTimeBudget, parameters.ConnectionTimeout);
+                        var connectionTimeout = TimeSpanExtensions.SelectConnectionTimeoutForLastAttempt(ClusterClientConstants.LastAttemptConnectionTimeBudget, parameters.ConnectionTimeout);
                         currentTasks.Add(sender.SendToReplicaAsync(replicasEnumerator.Current, request, connectionTimeout, budget.Remaining, linkedCancellationToken));
                     }
 

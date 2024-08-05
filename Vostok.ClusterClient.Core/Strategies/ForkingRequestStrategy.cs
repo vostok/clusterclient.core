@@ -85,7 +85,7 @@ namespace Vostok.Clusterclient.Core.Strategies
                         }
 
                         var connectionAttemptTimeout = i == replicasCount - 1 
-                            ? TimeSpanExtensions.Max(ClusterClientConstants.LastAttemptConnectionTimeBudget, parameters.ConnectionTimeout)
+                            ? TimeSpanExtensions.SelectConnectionTimeoutForLastAttempt(ClusterClientConstants.LastAttemptConnectionTimeBudget, parameters.ConnectionTimeout)
                             : parameters.ConnectionTimeout;
 
                         LaunchRequest(currentTasks, request, budget, sender, replicasEnumerator, connectionAttemptTimeout, linkedCancellationToken);
