@@ -92,7 +92,7 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
 
             Send(tokenSource.Token);
 
-            transport.Received(1).SendAsync(absoluteRequest, connectionTimeout, Arg.Any<TimeSpan>(), tokenSource.Token);
+            transport.Received(1).SendAsync(absoluteRequest, Arg.Any<TimeSpan>(), Arg.Any<TimeSpan>(), tokenSource.Token);
         }
 
         [Test]
@@ -105,14 +105,18 @@ namespace Vostok.Clusterclient.Core.Tests.Sending
             transport.Received(1).SendAsync(absoluteRequest, connectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         }
 
-        [Test]
-        public void Should_pass_null_connection_timeout_when_it_is_greater_than_full_timeout()
+        [TestCase(5, TestName = "ConnectionTimeout less than ClusterClientConstants.LastAttemptConnectionTimeBudget")]
+        [TestCase(9, TestName = "ConnectionTimeout greater than ClusterClientConstants.LastAttemptConnectionTimeBudget")]
+        public void Should_correctly_select_connection_timeout_when_it_is_greater_than_full_timeout(int secondsConnectionTimeout)
         {
-            connectionTimeout = 10.Seconds();
+            connectionTimeout = secondsConnectionTimeout.Seconds();
 
             Send();
 
-            transport.Received(1).SendAsync(absoluteRequest, null, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+            var expectedConnectionTimeout = connectionTimeout > ClusterClientConstants.LastAttemptConnectionTimeBudget
+                ? connectionTimeout
+                : ClusterClientConstants.LastAttemptConnectionTimeBudget;
+            transport.Received(1).SendAsync(absoluteRequest, expectedConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         }
 
         [Test]

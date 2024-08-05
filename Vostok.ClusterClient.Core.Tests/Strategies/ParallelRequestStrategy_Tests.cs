@@ -8,6 +8,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NSubstitute;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies;
@@ -146,7 +147,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
         }
 
         [Test]
-        public void Should_use_configured_connection_timeout_for_all_requests()
+        public void Should_use_ClusterClientConstantsLastAttemptConnectionTimeBudget_connection_timeout_for_all_requests()
         {
             strategy = new ParallelRequestStrategy(int.MaxValue);
 
@@ -158,7 +159,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             foreach (var replica in replicas)
             {
-                sender.Received(1).SendToReplicaAsync(replica, Arg.Any<Request>(), parameters.ConnectionTimeout, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+                sender.Received(1).SendToReplicaAsync(replica, Arg.Any<Request>(), ClusterClientConstants.LastAttemptConnectionTimeBudget, Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
             }
         }
 
