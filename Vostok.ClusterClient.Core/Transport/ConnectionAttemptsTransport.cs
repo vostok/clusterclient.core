@@ -34,7 +34,7 @@ namespace Vostok.Clusterclient.Core.Transport
             for (var attempt = 1; attempt <= connectionAttempts; ++attempt)
             {
                 var connectionAttemptTimeout = connectionTimeout == null || timeBudget.Remaining < connectionTimeout
-                    ? TimeSpanExtensions.Max(ClusterClientConstants.LastAttemptConnectionTimeBudget, connectionTimeout)
+                    ? TimeSpanExtensions.SelectConnectionTimeoutForLastAttempt(ClusterClientConstants.LastAttemptConnectionTimeBudget, connectionTimeout)
                     : connectionTimeout.Value;
 
                 var response = await transport.SendAsync(request, connectionAttemptTimeout, timeBudget.Remaining, cancellationToken).ConfigureAwait(false);

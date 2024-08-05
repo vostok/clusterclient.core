@@ -3,9 +3,9 @@ using Vostok.Commons.Time;
 
 namespace Vostok.Clusterclient.Core.Misc;
 
-public static class TimeSpanExtensions
+internal static class TimeSpanExtensions
 {
-    public static TimeSpan? Max(TimeSpan lastAttemptConnectionTimeBudget, TimeSpan? connectionTimeoutFromParameters)
+    public static TimeSpan? SelectConnectionTimeoutForLastAttempt(TimeSpan lastAttemptConnectionTimeBudget, TimeSpan? connectionTimeoutFromParameters)
     {
         return connectionTimeoutFromParameters == null 
             ? lastAttemptConnectionTimeBudget 
