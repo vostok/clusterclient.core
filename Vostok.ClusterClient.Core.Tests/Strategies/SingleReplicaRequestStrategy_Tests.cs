@@ -4,6 +4,7 @@ using FluentAssertions;
 using FluentAssertions.Extensions;
 using NSubstitute;
 using NUnit.Framework;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies;
@@ -49,7 +50,7 @@ namespace Vostok.Clusterclient.Core.Tests.Strategies
 
             strategy.SendAsync(request, parameters, sender, budget, replicas, replicas.Length, token).Wait();
 
-            sender.Received().SendToReplicaAsync(replicas[0], request, parameters.ConnectionTimeout, budget.Remaining, token);
+            sender.Received().SendToReplicaAsync(replicas[0], request, ClusterClientConstants.LastAttemptConnectionTimeBudget, budget.Remaining, token);
         }
         
 
