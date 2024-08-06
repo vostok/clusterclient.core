@@ -207,6 +207,8 @@ static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clust
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.SendAsync(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+static Vostok.Clusterclient.Core.Misc.ClusterClientConstants.LastAttemptConnectionTimeBudget -> System.TimeSpan
+static Vostok.Clusterclient.Core.Misc.TimeSpanExtensions.Max(System.TimeSpan lastAttemptConnectionTimeBudget, System.TimeSpan? connectionTimeoutFromParameters) -> System.TimeSpan?
 static Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Parse(string headerValue) -> Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection
 static Vostok.Clusterclient.Core.Model.Request.Delete(string url) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.Request.Delete(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
@@ -404,6 +406,7 @@ Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.get -> Vostok.Cl
 Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.set -> void
 Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions
 Vostok.Clusterclient.Core.IClusterClientExtensions
+Vostok.Clusterclient.Core.Misc.ClusterClientConstants
 Vostok.Clusterclient.Core.Misc.IResponseSelector
 Vostok.Clusterclient.Core.Misc.IResponseSelector.Select(Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> results) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Misc.LastAcceptedResponseSelector
@@ -432,6 +435,7 @@ Vostok.Clusterclient.Core.Misc.RelatedModules
 Vostok.Clusterclient.Core.Misc.RelatedModules.After.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
 Vostok.Clusterclient.Core.Misc.RelatedModules.Before.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
 Vostok.Clusterclient.Core.Misc.RelatedModules.RelatedModules() -> void
+Vostok.Clusterclient.Core.Misc.TimeSpanExtensions
 Vostok.Clusterclient.Core.Model.ClusterResult
 Vostok.Clusterclient.Core.Model.ClusterResult.ClusterResult(Vostok.Clusterclient.Core.Model.ClusterResultStatus status, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> replicaResults, Vostok.Clusterclient.Core.Model.Response selectedResponse, Vostok.Clusterclient.Core.Model.Request request) -> void
 Vostok.Clusterclient.Core.Model.ClusterResult.Dispose() -> void
