@@ -1,3 +1,7 @@
+## 0.1.51 (06-08-2024):
+
+ConnectionTimeout for the last attempt in strategies now is "AlmostInfinity".
+
 ## 0.1.50 (02-04-2024):
 
 Configured ConnectionTimeout is used for all request attempts.
