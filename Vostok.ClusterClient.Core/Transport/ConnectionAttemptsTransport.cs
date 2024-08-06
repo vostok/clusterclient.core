@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Time;
 
@@ -33,7 +34,7 @@ namespace Vostok.Clusterclient.Core.Transport
             for (var attempt = 1; attempt <= connectionAttempts; ++attempt)
             {
                 var connectionAttemptTimeout = connectionTimeout == null || timeBudget.Remaining < connectionTimeout
-                    ? (TimeSpan?)null
+                    ? TimeSpanExtensions.SelectConnectionTimeoutForLastAttempt(ClusterClientConstants.LastAttemptConnectionTimeBudget, connectionTimeout)
                     : connectionTimeout.Value;
 
                 var response = await transport.SendAsync(request, connectionAttemptTimeout, timeBudget.Remaining, cancellationToken).ConfigureAwait(false);

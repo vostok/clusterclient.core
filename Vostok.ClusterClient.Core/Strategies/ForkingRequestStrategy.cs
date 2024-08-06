@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Sending;
 using Vostok.Clusterclient.Core.Strategies.DelayProviders;
@@ -83,7 +84,11 @@ namespace Vostok.Clusterclient.Core.Strategies
                             break;
                         }
 
-                        LaunchRequest(currentTasks, request, budget, sender, replicasEnumerator, parameters.ConnectionTimeout, linkedCancellationToken);
+                        var connectionAttemptTimeout = i == replicasCount - 1 
+                            ? TimeSpanExtensions.SelectConnectionTimeoutForLastAttempt(ClusterClientConstants.LastAttemptConnectionTimeBudget, parameters.ConnectionTimeout)
+                            : parameters.ConnectionTimeout;
+
+                        LaunchRequest(currentTasks, request, budget, sender, replicasEnumerator, connectionAttemptTimeout, linkedCancellationToken);
 
                         ScheduleForkIfNeeded(currentTasks, request, budget, i, replicasCount, linkedCancellationToken);
 
