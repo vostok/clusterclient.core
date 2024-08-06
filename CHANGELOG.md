@@ -1,4 +1,4 @@
-## 0.1.51 (06-08-2024):
+## 0.1.52 (06-08-2024):
 
 ConnectionTimeout for the last attempt in strategies now is "AlmostInfinity".
 
