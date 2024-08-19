@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 
 namespace Vostok.Clusterclient.Core.Model
 {
@@ -167,20 +168,35 @@ namespace Vostok.Clusterclient.Core.Model
             return ToString(false);
         }
 
+        /// <param name="includeHeaders">Append all headers to result</param>
         /// <returns>String representation of current <see cref="Response"/> instance.</returns>
         [PublicAPI]
         public string ToString(bool includeHeaders)
         {
+            return ToString(includeHeaders, singleLineManner: false);
+        }
+
+        /// <inheritdoc cref="ToString(bool)"/>
+        [PublicAPI]
+        public string ToString([NotNull] RequestParametersLoggingSettings headersSettings)
+        {
+            return ToString(headersSettings, singleLineManner: false);
+        }
+
+        internal string ToString([NotNull] RequestParametersLoggingSettings headersSettings, bool singleLineManner)
+        {
+            if (headersSettings == null)
+                throw new ArgumentNullException(nameof(headersSettings));
+
             var builder = new StringBuilder();
 
-            builder.Append((int) Code);
+            builder.Append((int)Code);
             builder.Append(" ");
             builder.Append(Code);
 
-            if (includeHeaders && headers != null && headers.Count > 0)
+            if (headersSettings.Enabled)
             {
-                builder.AppendLine();
-                builder.Append(headers);
+                LoggingUtils.AppendHeaders(builder, Headers, headersSettings, singleLineManner);
             }
 
             return builder.ToString();

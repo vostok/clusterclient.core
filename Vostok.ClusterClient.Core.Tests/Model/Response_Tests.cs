@@ -63,7 +63,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             var response = new Response(ResponseCode.Ok, headers: Headers.Empty.Set("name", "value"));
 
-            response.ToString(true).Should().Be("200 Ok" + Environment.NewLine + "name: value");
+            response.ToString(true).Should().Be("200 Ok" + Environment.NewLine + "name=value");
         }
 
         [Test]

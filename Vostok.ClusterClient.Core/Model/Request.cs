@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 
 namespace Vostok.Clusterclient.Core.Model
 {
@@ -229,29 +230,46 @@ namespace Vostok.Clusterclient.Core.Model
             return ToString(false, false);
         }
 
+        /// <param name="includeQuery">Append query string to result</param>
+        /// <param name="includeHeaders">Append all headers to result</param>
         /// <returns>String representation of <see cref="Request"/> instance.</returns>
+        [PublicAPI]
         public string ToString(bool includeQuery, bool includeHeaders)
         {
+            return ToString(includeQuery, includeHeaders, singleLineManner: false);
+        }
+
+        /// <inheritdoc cref="ToString(bool,bool)"/>
+        [PublicAPI]
+        public string ToString([NotNull] RequestParametersLoggingSettings includeQuery, [NotNull] RequestParametersLoggingSettings includeHeaders)
+        {
+            return ToString(includeQuery, includeHeaders, singleLineManner: false);
+        }
+
+        internal string ToString([NotNull] RequestParametersLoggingSettings querySettings, [NotNull] RequestParametersLoggingSettings headersSettings, bool singleLineManner)
+        {
+            if (querySettings == null)
+                throw new ArgumentNullException(nameof(querySettings));
+            if (headersSettings == null)
+                throw new ArgumentNullException(nameof(headersSettings));
+
             var builder = new StringBuilder();
 
             builder.Append(Method);
             builder.Append(" ");
 
-            var urlString = Url.ToString();
+            // todo (patrofimov) test
+            var path = Url.GetLeftPart(UriPartial.Path);
+            builder.Append(path);
 
-            if (!includeQuery)
+            if (querySettings.Enabled)
             {
-                var queryBeginning = urlString.IndexOf("?", StringComparison.Ordinal);
-                if (queryBeginning >= 0)
-                    urlString = urlString.Substring(0, queryBeginning);
+                LoggingUtils.AppendQueryString(builder, Url, querySettings);
             }
 
-            builder.Append(urlString);
-
-            if (includeHeaders && Headers != null && Headers.Count > 0)
+            if (headersSettings.Enabled)
             {
-                builder.AppendLine();
-                builder.Append(Headers);
+                LoggingUtils.AppendHeaders(builder, Headers, headersSettings, singleLineManner);
             }
 
             return builder.ToString();

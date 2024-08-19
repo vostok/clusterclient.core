@@ -617,7 +617,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("name", "value");
 
-            request.ToString(true, true).Should().Be("POST http://foo/bar?a=b" + Environment.NewLine + "name: value");
+            request.ToString(true, true).Should().Be("POST http://foo/bar?a=b" + Environment.NewLine + "name=value");
         }
 
         [Test]
@@ -625,7 +625,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("name", "value");
 
-            request.ToString(false, true).Should().Be("POST http://foo/bar" + Environment.NewLine + "name: value");
+            request.ToString(false, true).Should().Be("POST http://foo/bar" + Environment.NewLine + "name=value");
         }
 
         [Test]
