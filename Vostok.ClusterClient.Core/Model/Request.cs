@@ -246,30 +246,29 @@ namespace Vostok.Clusterclient.Core.Model
             return ToString(includeQuery, includeHeaders, singleLineManner: false);
         }
 
-        internal string ToString([NotNull] RequestParametersLoggingSettings querySettings, [NotNull] RequestParametersLoggingSettings headersSettings, bool singleLineManner)
+        internal string ToString([NotNull] RequestParametersLoggingSettings includeQuery, [NotNull] RequestParametersLoggingSettings includeHeaders, bool singleLineManner)
         {
-            if (querySettings == null)
-                throw new ArgumentNullException(nameof(querySettings));
-            if (headersSettings == null)
-                throw new ArgumentNullException(nameof(headersSettings));
+            if (includeQuery == null)
+                throw new ArgumentNullException(nameof(includeQuery));
+            if (includeHeaders == null)
+                throw new ArgumentNullException(nameof(includeHeaders));
 
             var builder = new StringBuilder();
 
             builder.Append(Method);
             builder.Append(" ");
 
-            // todo (patrofimov) test
             var path = Url.GetLeftPart(UriPartial.Path);
             builder.Append(path);
 
-            if (querySettings.Enabled)
+            if (includeQuery.Enabled)
             {
-                LoggingUtils.AppendQueryString(builder, Url, querySettings);
+                LoggingUtils.AppendQueryString(builder, Url, includeQuery);
             }
 
-            if (headersSettings.Enabled)
+            if (includeHeaders.Enabled && Headers is {Count: > 0})
             {
-                LoggingUtils.AppendHeaders(builder, Headers, headersSettings, singleLineManner);
+                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendHeader: true);
             }
 
             return builder.ToString();

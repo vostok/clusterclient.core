@@ -24,6 +24,10 @@ namespace Vostok.Clusterclient.Core.Misc
                     builder.Append('?');
                     writtenFirst = true;
                 }
+                else
+                {
+                    builder.Append('&');
+                }
 
                 builder.Append(pair.Key);
                 builder.Append('=');
@@ -31,46 +35,47 @@ namespace Vostok.Clusterclient.Core.Misc
             }
         }
 
-        public static void AppendHeaders(StringBuilder builder, Headers headers, RequestParametersLoggingSettings headersSettings, bool singleLineManner)
+        public static void AppendHeaders(StringBuilder builder, Headers headers, RequestParametersLoggingSettings headersSettings, bool singleLineManner, bool appendHeader)
         {
             var writtenFirst = false;
+            var addDelimiter = false;
             foreach (var pair in headers)
             {
                 if (!headersSettings.IsEnabledForKey(pair.Name))
                     continue;
 
-                if (!writtenFirst)
+                if (!writtenFirst && appendHeader)
                 {
                     if (singleLineManner)
                     {
-                        builder.Append(" ");
-                    }
-                    else
-                    {
-                        builder.AppendLine();
+                        builder.Append(" Headers: (");
                     }
 
-                    builder.Append("Headers:");
                     writtenFirst = true;
                 }
 
                 if (singleLineManner)
                 {
-                    builder.Append(" (");
+                    if (addDelimiter)
+                        builder.Append(", ");
+
                     builder.Append(pair.Name);
                     builder.Append('=');
                     builder.Append(pair.Value);
-                    builder.Append(')');
+
+                    addDelimiter = true;
                 }
                 else
                 {
                     builder.AppendLine();
-                    builder.Append('\t');
                     builder.Append(pair.Name);
                     builder.Append('=');
                     builder.Append(pair.Value);
                 }
             }
+
+            if (singleLineManner && writtenFirst)
+                builder.Append(')');
         }
     }
 }

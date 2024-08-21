@@ -65,20 +65,20 @@ namespace Vostok.Clusterclient.Core.Modules
                     ResponseCode = result.Response.Code,
                     ElapsedTime = context.Budget.Elapsed.ToPrettyString(),
                     ElapsedTimeMs = context.Budget.Elapsed.TotalMilliseconds,
-                    ResponseHeaders = GetResponseHeadersString(result.Response.Headers),
+                    ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendHeader: true),
                 });
         }
 
-        private string GetResponseHeadersString(Headers headers)
+        private string GetResponseHeadersString(Headers headers, bool appendHeader)
         {
-            if (!loggingOptions.LogResponseHeaders.Enabled)
-                return null;
+            if (loggingOptions.LogResponseHeaders.Enabled && headers is {Count: > 0})
+            {
+                var builder = new StringBuilder();
+                LoggingUtils.AppendHeaders(builder, headers, loggingOptions.LogResponseHeaders, singleLineManner: true, appendHeader: appendHeader);
+                return builder.ToString();
+            }
 
-            var builder = new StringBuilder();
-
-            LoggingUtils.AppendHeaders(builder, headers, loggingOptions.LogResponseHeaders, singleLineManner: true);
-
-            return builder.ToString();
+            return null;
         }
 
         private void LogFailedResult(IRequestContext context, ClusterResult result)
@@ -90,7 +90,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 TargetService = targetService ?? "somewhere",
                 result.Status,
                 ResponseCode = result.Response.Code,
-                ResponseHeaders = GetResponseHeadersString(result.Response.Headers),
+                ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendHeader: true),
                 ElapsedTime = context.Budget.Elapsed.ToPrettyString(),
                 ElapsedTimeMs = context.Budget.Elapsed.TotalMilliseconds
             };
@@ -177,14 +177,31 @@ namespace Vostok.Clusterclient.Core.Modules
             for (var i = 0; i < replicaResults.Count; i++)
             {
                 var res = replicaResults[i];
-                properties[i] = new
+                var responseHeaders = GetResponseHeadersString(res.Response.Headers, appendHeader: false);
+                var responseCode = (int)res.Response.Code;
+                var elapsedTime = res.Time.ToPrettyString();
+
+                if (responseHeaders == null)
                 {
-                    res.Replica,
-                    ResponseCode = (int)res.Response.Code,
-                    res.Verdict,
-                    ElapsedTime = res.Time.ToPrettyString(),
-                    ResponseHeaders = GetResponseHeadersString(res.Response.Headers),
-                };
+                    properties[i] = new
+                    {
+                        res.Replica,
+                        ResponseCode = responseCode,
+                        res.Verdict,
+                        ElapsedTime = elapsedTime,
+                    };
+                }
+                else
+                {
+                    properties[i] = new
+                    {
+                        res.Replica,
+                        ResponseCode = responseCode,
+                        res.Verdict,
+                        ElapsedTime = elapsedTime,
+                        ResponseHeaders = responseHeaders,
+                    };
+                }
             }
 
             return properties;

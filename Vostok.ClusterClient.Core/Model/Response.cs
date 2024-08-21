@@ -178,15 +178,15 @@ namespace Vostok.Clusterclient.Core.Model
 
         /// <inheritdoc cref="ToString(bool)"/>
         [PublicAPI]
-        public string ToString([NotNull] RequestParametersLoggingSettings headersSettings)
+        public string ToString([NotNull] RequestParametersLoggingSettings includeHeaders)
         {
-            return ToString(headersSettings, singleLineManner: false);
+            return ToString(includeHeaders, singleLineManner: false);
         }
 
-        internal string ToString([NotNull] RequestParametersLoggingSettings headersSettings, bool singleLineManner)
+        internal string ToString([NotNull] RequestParametersLoggingSettings includeHeaders, bool singleLineManner)
         {
-            if (headersSettings == null)
-                throw new ArgumentNullException(nameof(headersSettings));
+            if (includeHeaders == null)
+                throw new ArgumentNullException(nameof(includeHeaders));
 
             var builder = new StringBuilder();
 
@@ -194,9 +194,9 @@ namespace Vostok.Clusterclient.Core.Model
             builder.Append(" ");
             builder.Append(Code);
 
-            if (headersSettings.Enabled)
+            if (includeHeaders.Enabled && Headers.Count > 0)
             {
-                LoggingUtils.AppendHeaders(builder, Headers, headersSettings, singleLineManner);
+                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendHeader: true);
             }
 
             return builder.ToString();
