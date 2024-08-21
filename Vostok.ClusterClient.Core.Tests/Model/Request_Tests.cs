@@ -620,6 +620,24 @@ namespace Vostok.Clusterclient.Core.Tests.Model
             request.ToString(true, true).Should().Be("POST http://foo/bar?a=b" + Environment.NewLine + "name=value");
         }
 
+        [TestCase("foo/bar?a=b", "POST foo/bar?a=b")]
+        [TestCase("foo/bar", "POST foo/bar")]
+        public void ToString_should_return_correct_value_for_relative_url_with_query(string input, string expected)
+        {
+            request = new Request(RequestMethods.Post, new Uri(input, UriKind.Relative), Content.Empty, Headers.Empty);
+
+            request.ToString(true, false).Should().Be(expected);
+        }
+
+        [TestCase("foo/bar?a=b", "POST foo/bar")]
+        [TestCase("foo/bar", "POST foo/bar")]
+        public void ToString_should_return_correct_value_for_relative_url_without_query(string input, string expected)
+        {
+            request = new Request(RequestMethods.Post, new Uri(input, UriKind.Relative), Content.Empty, Headers.Empty);
+
+            request.ToString(false, false).Should().Be(expected);
+        }
+
         [Test]
         public void ToString_should_return_correct_value_when_printing_headers_but_omitting_query()
         {

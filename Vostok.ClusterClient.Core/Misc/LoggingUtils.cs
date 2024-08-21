@@ -7,16 +7,17 @@ namespace Vostok.Clusterclient.Core.Misc
 {
     internal static class LoggingUtils
     {
-        public static void AppendQueryString(StringBuilder builder, Uri uri, RequestParametersLoggingSettings querySettings)
+        public static void AppendQueryString(StringBuilder builder, Uri uri, RequestParametersLoggingSettings querySettings, RequestUrlParser requestUrlParser)
         {
             if (querySettings.IsEnabledForAllKeys())
             {
-                builder.Append(uri.Query);
+                builder.Append(uri);
                 return;
             }
 
+            builder.Append(requestUrlParser.Path);
+
             var writtenFirst = false;
-            var requestUrlParser = new RequestUrlParser(uri.ToString());
             foreach (var pair in requestUrlParser.Where(kvp => querySettings.IsEnabledForKey(kvp.Key)))
             {
                 if (!writtenFirst)

@@ -258,12 +258,15 @@ namespace Vostok.Clusterclient.Core.Model
             builder.Append(Method);
             builder.Append(" ");
 
-            var path = Url.GetLeftPart(UriPartial.Path);
-            builder.Append(path);
+            var requestUrlParser = new RequestUrlParser(Url.ToString());
 
             if (includeQuery.Enabled)
             {
-                LoggingUtils.AppendQueryString(builder, Url, includeQuery);
+                LoggingUtils.AppendQueryString(builder, Url, includeQuery, requestUrlParser);
+            }
+            else
+            {
+                builder.Append(requestUrlParser.Path);
             }
 
             if (includeHeaders.Enabled && Headers is {Count: > 0})

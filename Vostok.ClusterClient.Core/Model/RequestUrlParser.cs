@@ -11,6 +11,8 @@ internal readonly struct RequestUrlParser : IEnumerable<KeyValuePair<string, str
 {
     private readonly Dictionary<string, string> query = new();
 
+    public readonly string Path = null;
+
     public RequestUrlParser([CanBeNull] string url)
     {
         if (url == null)
@@ -18,7 +20,13 @@ internal readonly struct RequestUrlParser : IEnumerable<KeyValuePair<string, str
 
         var question = url.IndexOf("?", StringComparison.Ordinal);
         if (question < 0)
+        {
+            Path = url;
             return;
+        }
+
+        Path = url.Substring(0, question);
+
         url = url.Substring(question + 1);
 
         var parameters = url.Split('&');
