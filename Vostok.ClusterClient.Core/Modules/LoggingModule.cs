@@ -65,16 +65,16 @@ namespace Vostok.Clusterclient.Core.Modules
                     ResponseCode = result.Response.Code,
                     ElapsedTime = context.Budget.Elapsed.ToPrettyString(),
                     ElapsedTimeMs = context.Budget.Elapsed.TotalMilliseconds,
-                    ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendHeader: true),
+                    ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendTitle: true),
                 });
         }
 
-        private string GetResponseHeadersString(Headers headers, bool appendHeader)
+        private string GetResponseHeadersString(Headers headers, bool appendTitle)
         {
             if (loggingOptions.LogResponseHeaders.Enabled && headers is {Count: > 0})
             {
                 var builder = new StringBuilder();
-                LoggingUtils.AppendHeaders(builder, headers, loggingOptions.LogResponseHeaders, singleLineManner: true, appendHeader: appendHeader);
+                LoggingUtils.AppendHeaders(builder, headers, loggingOptions.LogResponseHeaders, singleLineManner: true, appendTitle);
                 return builder.ToString();
             }
 
@@ -90,7 +90,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 TargetService = targetService ?? "somewhere",
                 result.Status,
                 ResponseCode = result.Response.Code,
-                ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendHeader: true),
+                ResponseHeaders = GetResponseHeadersString(result.Response.Headers, appendTitle: true),
                 ElapsedTime = context.Budget.Elapsed.ToPrettyString(),
                 ElapsedTimeMs = context.Budget.Elapsed.TotalMilliseconds
             };
@@ -177,7 +177,7 @@ namespace Vostok.Clusterclient.Core.Modules
             for (var i = 0; i < replicaResults.Count; i++)
             {
                 var res = replicaResults[i];
-                var responseHeaders = GetResponseHeadersString(res.Response.Headers, appendHeader: false);
+                var responseHeaders = GetResponseHeadersString(res.Response.Headers, appendTitle: false);
                 var responseCode = (int)res.Response.Code;
                 var elapsedTime = res.Time.ToPrettyString();
 

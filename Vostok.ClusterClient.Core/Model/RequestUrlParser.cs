@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using JetBrains.Annotations;
-using StringComparison = System.StringComparison;
 
 namespace Vostok.Clusterclient.Core.Model;
 
-internal readonly struct RequestUrlParser : IEnumerable<KeyValuePair<string, string>>
+internal readonly struct RequestUrlParser
 {
     private readonly Dictionary<string, string> query = new();
 
@@ -15,21 +12,10 @@ internal readonly struct RequestUrlParser : IEnumerable<KeyValuePair<string, str
 
     public RequestUrlParser([CanBeNull] string url)
     {
-        if (url == null)
+        if (!RequestUrlParsingHelpers.TryParseUrlPath(url, out Path, out var question))
             return;
 
-        var question = url.IndexOf("?", StringComparison.Ordinal);
-        if (question < 0)
-        {
-            Path = url;
-            return;
-        }
-
-        Path = url.Substring(0, question);
-
-        url = url.Substring(question + 1);
-
-        var parameters = url.Split('&');
+        var parameters = url!.Substring(question + 1).Split('&');
         foreach (var parameter in parameters)
         {
             var tokens = parameter.Split('=');
@@ -49,9 +35,6 @@ internal readonly struct RequestUrlParser : IEnumerable<KeyValuePair<string, str
         return query.TryGetValue(key, out value);
     }
 
-    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() =>
-        query.GetEnumerator();
-
-    IEnumerator IEnumerable.GetEnumerator() =>
-        GetEnumerator();
+    public IEnumerable<KeyValuePair<string, string>> GetQueryParameters() =>
+        query;
 }

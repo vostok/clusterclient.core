@@ -9,16 +9,8 @@ namespace Vostok.Clusterclient.Core.Misc
     {
         public static void AppendQueryString(StringBuilder builder, Uri uri, RequestParametersLoggingSettings querySettings, RequestUrlParser requestUrlParser)
         {
-            if (querySettings.IsEnabledForAllKeys())
-            {
-                builder.Append(uri);
-                return;
-            }
-
-            builder.Append(requestUrlParser.Path);
-
             var writtenFirst = false;
-            foreach (var pair in requestUrlParser.Where(kvp => querySettings.IsEnabledForKey(kvp.Key)))
+            foreach (var pair in requestUrlParser.GetQueryParameters().Where(kvp => querySettings.IsEnabledForKey(kvp.Key)))
             {
                 if (!writtenFirst)
                 {
@@ -36,7 +28,7 @@ namespace Vostok.Clusterclient.Core.Misc
             }
         }
 
-        public static void AppendHeaders(StringBuilder builder, Headers headers, RequestParametersLoggingSettings headersSettings, bool singleLineManner, bool appendHeader)
+        public static void AppendHeaders(StringBuilder builder, Headers headers, RequestParametersLoggingSettings headersSettings, bool singleLineManner, bool appendTitle)
         {
             var writtenFirst = false;
             var addDelimiter = false;
@@ -45,7 +37,7 @@ namespace Vostok.Clusterclient.Core.Misc
                 if (!headersSettings.IsEnabledForKey(pair.Name))
                     continue;
 
-                if (!writtenFirst && appendHeader)
+                if (!writtenFirst && appendTitle)
                 {
                     if (singleLineManner)
                     {

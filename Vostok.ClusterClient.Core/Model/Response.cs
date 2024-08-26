@@ -173,7 +173,8 @@ namespace Vostok.Clusterclient.Core.Model
         [PublicAPI]
         public string ToString(bool includeHeaders)
         {
-            return ToString(includeHeaders, singleLineManner: false);
+            var headersSettings = includeHeaders ? RequestParametersLoggingSettings.DefaultEnabled : RequestParametersLoggingSettings.DefaultDisabled;
+            return ToString(headersSettings, singleLineManner: false);
         }
 
         /// <inheritdoc cref="ToString(bool)"/>
@@ -196,7 +197,7 @@ namespace Vostok.Clusterclient.Core.Model
 
             if (includeHeaders.Enabled && Headers.Count > 0)
             {
-                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendHeader: true);
+                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendTitle: true);
             }
 
             return builder.ToString();

@@ -236,7 +236,9 @@ namespace Vostok.Clusterclient.Core.Model
         [PublicAPI]
         public string ToString(bool includeQuery, bool includeHeaders)
         {
-            return ToString(includeQuery, includeHeaders, singleLineManner: false);
+            var querySettings = includeQuery ? RequestParametersLoggingSettings.DefaultEnabled : RequestParametersLoggingSettings.DefaultDisabled;
+            var headersSettings = includeHeaders ? RequestParametersLoggingSettings.DefaultEnabled : RequestParametersLoggingSettings.DefaultDisabled;
+            return ToString(querySettings, headersSettings, singleLineManner: false);
         }
 
         /// <inheritdoc cref="ToString(bool,bool)"/>
@@ -258,20 +260,30 @@ namespace Vostok.Clusterclient.Core.Model
             builder.Append(Method);
             builder.Append(" ");
 
-            var requestUrlParser = new RequestUrlParser(Url.ToString());
-
             if (includeQuery.Enabled)
             {
-                LoggingUtils.AppendQueryString(builder, Url, includeQuery, requestUrlParser);
+                if (includeQuery.IsEnabledForAllKeys())
+                {
+                    builder.Append(Url);
+                }
+                else
+                {
+                    var requestUrlParser = new RequestUrlParser(Url.ToString());
+
+                    builder.Append(requestUrlParser.Path);
+
+                    LoggingUtils.AppendQueryString(builder, Url, includeQuery, requestUrlParser);
+                }
             }
             else
             {
-                builder.Append(requestUrlParser.Path);
+                RequestUrlParsingHelpers.TryParseUrlPath(Url.ToString(), out var path, out _);
+                builder.Append(path);
             }
 
             if (includeHeaders.Enabled && Headers is {Count: > 0})
             {
-                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendHeader: true);
+                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendTitle: true);
             }
 
             return builder.ToString();

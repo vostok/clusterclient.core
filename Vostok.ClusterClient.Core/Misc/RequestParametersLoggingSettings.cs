@@ -6,6 +6,9 @@ namespace Vostok.Clusterclient.Core.Misc
     [PublicAPI]
     public class RequestParametersLoggingSettings
     {
+        internal static readonly RequestParametersLoggingSettings DefaultEnabled = new(enabled: true);
+        internal static readonly RequestParametersLoggingSettings DefaultDisabled = new(enabled: false);
+
         public RequestParametersLoggingSettings(bool enabled)
         {
             Enabled = enabled;
