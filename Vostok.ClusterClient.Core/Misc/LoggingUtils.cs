@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using Vostok.Clusterclient.Core.Model;
 
@@ -7,7 +6,7 @@ namespace Vostok.Clusterclient.Core.Misc
 {
     internal static class LoggingUtils
     {
-        public static void AppendQueryString(StringBuilder builder, Uri uri, RequestParametersLoggingSettings querySettings, RequestUrlParser requestUrlParser)
+        public static void AppendQueryString(StringBuilder builder, RequestParametersLoggingSettings querySettings, RequestUrlParser requestUrlParser)
         {
             var writtenFirst = false;
             foreach (var pair in requestUrlParser.GetQueryParameters().Where(kvp => querySettings.IsEnabledForKey(kvp.Key)))

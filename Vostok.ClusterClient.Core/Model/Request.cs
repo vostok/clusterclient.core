@@ -272,7 +272,7 @@ namespace Vostok.Clusterclient.Core.Model
 
                     builder.Append(requestUrlParser.Path);
 
-                    LoggingUtils.AppendQueryString(builder, Url, includeQuery, requestUrlParser);
+                    LoggingUtils.AppendQueryString(builder, includeQuery, requestUrlParser);
                 }
             }
             else
