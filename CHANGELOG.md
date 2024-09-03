@@ -1,3 +1,7 @@
+## 0.1.54 (27-08-2024):
+
+Don't validate stream content if retry is not needed
+
 ## 0.1.53 (06-08-2024):
 
 ConnectionTimeout for the last attempt in strategies now is "AlmostInfinity".
