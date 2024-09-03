@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using StringComparison = System.StringComparison;
 
 namespace Vostok.Clusterclient.Core.Model;
 
@@ -9,21 +8,18 @@ internal readonly struct RequestUrlParser
 {
     private readonly Dictionary<string, string> query = new();
 
+    public readonly string Path = null;
+
     public RequestUrlParser([CanBeNull] string url)
     {
-        if (url == null)
+        if (!RequestUrlParsingHelpers.TryParseUrlPath(url, out Path, out var question))
             return;
-            
-        var question = url.IndexOf("?", StringComparison.Ordinal);
-        if (question < 0)
-            return;
-        url = url.Substring(question + 1);
 
-        var parameters = url.Split('&');
+        var parameters = url!.Substring(question + 1).Split('&');
         foreach (var parameter in parameters)
         {
             var tokens = parameter.Split('=');
-            query[Uri.UnescapeDataString(tokens[0])] = 
+            query[Uri.UnescapeDataString(tokens[0])] =
                 tokens.Length > 1 && !string.IsNullOrEmpty(tokens[1]) ? Uri.UnescapeDataString(tokens[1]) : string.Empty;
         }
     }
@@ -38,4 +34,7 @@ internal readonly struct RequestUrlParser
 
         return query.TryGetValue(key, out value);
     }
+
+    public IEnumerable<KeyValuePair<string, string>> GetQueryParameters() =>
+        query;
 }

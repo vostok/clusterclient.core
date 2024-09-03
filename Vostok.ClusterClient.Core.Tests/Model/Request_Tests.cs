@@ -617,7 +617,25 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("name", "value");
 
-            request.ToString(true, true).Should().Be("POST http://foo/bar?a=b" + Environment.NewLine + "name: value");
+            request.ToString(true, true).Should().Be("POST http://foo/bar?a=b" + Environment.NewLine + "name=value");
+        }
+
+        [TestCase("foo/bar?a=b", "POST foo/bar?a=b")]
+        [TestCase("foo/bar", "POST foo/bar")]
+        public void ToString_should_return_correct_value_for_relative_url_with_query(string input, string expected)
+        {
+            request = new Request(RequestMethods.Post, new Uri(input, UriKind.Relative), Content.Empty, Headers.Empty);
+
+            request.ToString(true, false).Should().Be(expected);
+        }
+
+        [TestCase("foo/bar?a=b", "POST foo/bar")]
+        [TestCase("foo/bar", "POST foo/bar")]
+        public void ToString_should_return_correct_value_for_relative_url_without_query(string input, string expected)
+        {
+            request = new Request(RequestMethods.Post, new Uri(input, UriKind.Relative), Content.Empty, Headers.Empty);
+
+            request.ToString(false, false).Should().Be(expected);
         }
 
         [Test]
@@ -625,7 +643,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("name", "value");
 
-            request.ToString(false, true).Should().Be("POST http://foo/bar" + Environment.NewLine + "name: value");
+            request.ToString(false, true).Should().Be("POST http://foo/bar" + Environment.NewLine + "name=value");
         }
 
         [Test]
@@ -653,9 +671,42 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         }
 
         [Test]
+        public void ToString_should_print_headers_single_line()
+        {
+            request = request.WithHeader("name1", "value1").WithHeader("name2", "value2");
+
+            request.ToString(false, true, true).Should().Be("POST http://foo/bar Headers: (name1=value1, name2=value2)");
+        }
+
+        [Test]
+        public void ToString_should_print_headers()
+        {
+            request = request.WithHeader("name1", "value1").WithHeader("name2", "value2");
+
+            request.ToString(false, true).Should().Be("POST http://foo/bar\r\nname1=value1\r\nname2=value2");
+        }
+
+        [Test]
+        public void ToString_should_print_query_and_headers_single_line()
+        {
+            request = request.WithHeader("name1", "value1").WithHeader("name2", "value2");
+
+            request.ToString(true, true, true).Should().Be("POST http://foo/bar?a=b Headers: (name1=value1, name2=value2)");
+        }
+
+        [Test]
         public void ToString_should_tolerate_empty_headers()
         {
             request.ToString(true, true).Should().Be("POST http://foo/bar?a=b");
+            request.ToString(true, true, true).Should().Be("POST http://foo/bar?a=b");
+        }
+
+        [Test]
+        public void ToString_should_tolerate_empty_query()
+        {
+            request = new Request(RequestMethods.Post, new Uri("http://foo/bar"), Content.Empty, Headers.Empty);
+            request.ToString(true, true).Should().Be("POST http://foo/bar");
+            request.ToString(true, true, true).Should().Be("POST http://foo/bar");
         }
 
         [Test]
@@ -736,13 +787,13 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithAdditionalQueryParameter("abc", "123");
             request = request.WithAdditionalQueryParameter("x", "1?=&2");
-            
+
             request.TryGetQueryParameter("abc", out var value).Should().BeTrue();
             value.Should().Be("123");
-            
+
             request.TryGetQueryParameter("x", out value).Should().BeTrue();
             value.Should().Be("1?=&2");
-            
+
             request.TryGetQueryParameter("y", out value).Should().BeFalse();
         }
     }

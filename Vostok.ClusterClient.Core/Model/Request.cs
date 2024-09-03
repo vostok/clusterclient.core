@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Misc;
 
 namespace Vostok.Clusterclient.Core.Model
 {
@@ -229,29 +230,60 @@ namespace Vostok.Clusterclient.Core.Model
             return ToString(false, false);
         }
 
+        /// <param name="includeQuery">Append query string to result</param>
+        /// <param name="includeHeaders">Append all headers to result</param>
         /// <returns>String representation of <see cref="Request"/> instance.</returns>
+        [PublicAPI]
         public string ToString(bool includeQuery, bool includeHeaders)
         {
+            var querySettings = includeQuery ? RequestParametersLoggingSettings.DefaultEnabled : RequestParametersLoggingSettings.DefaultDisabled;
+            var headersSettings = includeHeaders ? RequestParametersLoggingSettings.DefaultEnabled : RequestParametersLoggingSettings.DefaultDisabled;
+            return ToString(querySettings, headersSettings, singleLineManner: false);
+        }
+
+        /// <inheritdoc cref="ToString(bool,bool)"/>
+        [PublicAPI]
+        public string ToString([NotNull] RequestParametersLoggingSettings includeQuery, [NotNull] RequestParametersLoggingSettings includeHeaders)
+        {
+            return ToString(includeQuery, includeHeaders, singleLineManner: false);
+        }
+
+        internal string ToString([NotNull] RequestParametersLoggingSettings includeQuery, [NotNull] RequestParametersLoggingSettings includeHeaders, bool singleLineManner)
+        {
+            if (includeQuery == null)
+                throw new ArgumentNullException(nameof(includeQuery));
+            if (includeHeaders == null)
+                throw new ArgumentNullException(nameof(includeHeaders));
+
             var builder = new StringBuilder();
 
             builder.Append(Method);
             builder.Append(" ");
 
-            var urlString = Url.ToString();
-
-            if (!includeQuery)
+            if (includeQuery.Enabled)
             {
-                var queryBeginning = urlString.IndexOf("?", StringComparison.Ordinal);
-                if (queryBeginning >= 0)
-                    urlString = urlString.Substring(0, queryBeginning);
+                if (includeQuery.IsEnabledForAllKeys())
+                {
+                    builder.Append(Url);
+                }
+                else
+                {
+                    var requestUrlParser = new RequestUrlParser(Url.ToString());
+
+                    builder.Append(requestUrlParser.Path);
+
+                    LoggingUtils.AppendQueryString(builder, includeQuery, requestUrlParser);
+                }
+            }
+            else
+            {
+                RequestUrlParsingHelpers.TryParseUrlPath(Url.ToString(), out var path, out _);
+                builder.Append(path);
             }
 
-            builder.Append(urlString);
-
-            if (includeHeaders && Headers != null && Headers.Count > 0)
+            if (includeHeaders.Enabled && Headers is {Count: > 0})
             {
-                builder.AppendLine();
-                builder.Append(Headers);
+                LoggingUtils.AppendHeaders(builder, Headers, includeHeaders, singleLineManner, appendTitle: true);
             }
 
             return builder.ToString();
