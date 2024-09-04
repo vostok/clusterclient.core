@@ -683,7 +683,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             request = request.WithHeader("name1", "value1").WithHeader("name2", "value2");
 
-            request.ToString(false, true).Should().Be("POST http://foo/bar\r\nname1=value1\r\nname2=value2");
+            request.ToString(false, true).Should().Be($"POST http://foo/bar{Environment.NewLine}name1=value1{Environment.NewLine}name2=value2");
         }
 
         [Test]
