@@ -15,12 +15,10 @@ notests *default:
     - vostok.commons.time/src
     - vostok.commons.environment/src
     - vostok.logging.abstractions
-    - vostok.devtools
+    - vostok.devtools@net8.0
 
 full-build > notests:
   deps:
-    - -vostok.devtools
-    - vostok.devtools@with-net6.0
     - vostok.commons.testing
     - vostok.logging.console
   build:
