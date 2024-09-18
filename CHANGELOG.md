@@ -1,3 +1,7 @@
+## 0.1.57 (18-09-2024):
+
+Fixed request with empty query logging/parsing.
+
 ## 0.1.56 (04-09-2024):
 
 Fixed tests.
