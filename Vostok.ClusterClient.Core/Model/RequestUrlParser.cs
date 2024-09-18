@@ -15,7 +15,10 @@ internal readonly struct RequestUrlParser
         if (!RequestUrlParsingHelpers.TryParseUrlPath(url, out Path, out var question))
             return;
 
-        var parameters = url!.Substring(question + 1).Split('&');
+        if (!question.HasValue)
+            return;
+
+        var parameters = url!.Substring(question.Value + 1).Split('&');
         foreach (var parameter in parameters)
         {
             var tokens = parameter.Split('=');

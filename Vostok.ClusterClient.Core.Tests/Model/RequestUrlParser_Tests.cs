@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 using Vostok.Clusterclient.Core.Model;
 
@@ -22,18 +23,18 @@ internal class RequestUrlParser_Tests
 
         parser.TryGetQueryParameter("a", out var value).Should().BeTrue();
         value.Should().Be("1");
-        
+
         parser.TryGetQueryParameter("b", out value).Should().BeTrue();
         value.Should().Be("2+2=5?");
-        
+
         parser.TryGetQueryParameter("=?=&=", out value).Should().BeTrue();
         value.Should().Be("==!!==");
 
         parser.TryGetQueryParameter("=+=", out value).Should().BeFalse();
-        
+
         parser.TryGetQueryParameter(null, out value).Should().BeFalse();
     }
-    
+
     [Test]
     public void Should_work_with_empty_parameters()
     {
@@ -41,13 +42,13 @@ internal class RequestUrlParser_Tests
 
         parser.TryGetQueryParameter("a", out var value).Should().BeTrue();
         value.Should().Be("");
-        
+
         parser.TryGetQueryParameter("b", out value).Should().BeTrue();
         value.Should().Be("x");
-        
+
         parser.TryGetQueryParameter("c", out value).Should().BeTrue();
         value.Should().Be("");
-        
+
         parser.TryGetQueryParameter("d", out value).Should().BeTrue();
         value.Should().Be("");
     }
@@ -60,7 +61,7 @@ internal class RequestUrlParser_Tests
         parser.TryGetQueryParameter("bar", out var value).Should().BeTrue();
         value.Should().Be("");
     }
-    
+
     [Test]
     public void Should_work_without_parameters()
     {
@@ -71,16 +72,17 @@ internal class RequestUrlParser_Tests
 
         var parser = new RequestUrlParser(builder.Build().OriginalString);
 
+        parser.GetQueryParameters().Count().Should().Be(0);
         parser.TryGetQueryParameter("x", out _).Should().BeFalse();
     }
-    
+
     [Test]
     public void Should_work_without_url()
     {
         new RequestUrlParser(null).TryGetQueryParameter("x", out _).Should().BeFalse();
         new RequestUrlParser("").TryGetQueryParameter("x", out _).Should().BeFalse();
     }
-    
+
     [Test]
     public void Should_not_throw_on_null_or_empty_keys()
     {
@@ -88,7 +90,7 @@ internal class RequestUrlParser_Tests
         new RequestUrlParser("http://example.com/foo?bar=xyz").TryGetQueryParameter(null, out _).Should().BeFalse();
         new RequestUrlParser("http://example.com/foo?bar=xyz").TryGetQueryParameter("", out _).Should().BeFalse();
     }
-    
+
     [Test]
     public void Should_not_throw_on_incorrect_url()
     {

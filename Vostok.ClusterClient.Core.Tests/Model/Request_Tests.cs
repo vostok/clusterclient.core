@@ -613,6 +613,13 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         }
 
         [Test]
+        public void ToString_should_return_correct_value_when_printing_url_without_query()
+        {
+            request = new Request(RequestMethods.Post, new Uri("http://foo/bar"), Content.Empty, Headers.Empty);
+            request.ToString(includeQuery: true, includeHeaders: false).Should().Be("POST http://foo/bar");
+        }
+
+        [Test]
         public void ToString_should_return_correct_value_when_printing_both_query_and_headers()
         {
             request = request.WithHeader("name", "value");
