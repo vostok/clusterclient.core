@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 
 namespace Vostok.Clusterclient.Core.Misc
@@ -8,6 +9,10 @@ namespace Vostok.Clusterclient.Core.Misc
     [PublicAPI]
     public class LoggingOptions
     {
+        private RequestParametersLoggingSettings logQueryString = false;
+        private RequestParametersLoggingSettings logRequestHeaders = false;
+        private RequestParametersLoggingSettings logResponseHeaders = false;
+
         /// <summary>
         /// <para>Gets or sets whether to log request details before execution.</para>
         /// <para>This parameter is optional and has a default value (see <see cref="ClusterClientDefaults.LogRequestDetails"/>).</para>
@@ -38,5 +43,44 @@ namespace Vostok.Clusterclient.Core.Misc
         /// If <see cref="Misc.LoggingMode.SingleVerboseMessage"/> is set, only one detailed message about communication with the cluster will be logged with the results from each replica.
         /// </summary>
         public LoggingMode LoggingMode { get; set; } = ClusterClientDefaults.LoggingMode;
+
+        /// <summary>
+        /// <para>Request query parameters logging options.</para>
+        /// <para>By default, query parameters are not logged at all.</para>
+        /// </summary>
+        [NotNull]
+        public RequestParametersLoggingSettings LogQueryString
+        {
+            get =>
+                logQueryString;
+            set =>
+                logQueryString = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogQueryString));
+        }
+
+        /// <summary>
+        /// <para>Request headers logging options.</para>
+        /// <para>By default, request headers are not logged at all.</para>
+        /// </summary>
+        [NotNull]
+        public RequestParametersLoggingSettings LogRequestHeaders
+        {
+            get =>
+                logRequestHeaders;
+            set =>
+                logRequestHeaders = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogRequestHeaders));
+        }
+
+        /// <summary>
+        /// <para>Response headers logging options.</para>
+        /// <para>By default, response headers are not logged at all.</para>
+        /// </summary>
+        [NotNull]
+        public RequestParametersLoggingSettings LogResponseHeaders
+        {
+            get =>
+                logResponseHeaders;
+            set =>
+                logResponseHeaders = value.ToCaseInsensitive() ?? throw new ArgumentNullException(nameof(LogResponseHeaders));
+        }
     }
 }

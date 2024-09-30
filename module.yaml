@@ -21,6 +21,7 @@ full-build > notests:
   deps:
     - vostok.commons.testing
     - vostok.logging.console
+    - vostok.logging.formatting
   build:
     target: Vostok.ClusterClient.Core.sln
     configuration: Release

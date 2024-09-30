@@ -63,7 +63,23 @@ namespace Vostok.Clusterclient.Core.Tests.Model
         {
             var response = new Response(ResponseCode.Ok, headers: Headers.Empty.Set("name", "value"));
 
-            response.ToString(true).Should().Be("200 Ok" + Environment.NewLine + "name: value");
+            response.ToString(true).Should().Be("200 Ok" + Environment.NewLine + "name=value");
+        }
+
+        [Test]
+        public void ToString_should_print_headers_single_line()
+        {
+            var response = new Response(ResponseCode.Ok, headers: Headers.Empty.Set("name1", "value1").Set("name2", "value2"));
+
+            response.ToString(true, true).Should().Be("200 Ok Headers: (name1=value1, name2=value2)");
+        }
+
+        [Test]
+        public void ToString_should_print_headers()
+        {
+            var response = new Response(ResponseCode.Ok, headers: Headers.Empty.Set("name1", "value1").Set("name2", "value2"));
+
+            response.ToString(true).Should().Be($"200 Ok{Environment.NewLine}name1=value1{Environment.NewLine}name2=value2");
         }
 
         [Test]
@@ -80,6 +96,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
             var response = new Response(ResponseCode.Ok, headers: Headers.Empty);
 
             response.ToString(true).Should().Be("200 Ok");
+            response.ToString(true, true).Should().Be("200 Ok");
         }
 
         [Test]
@@ -88,6 +105,7 @@ namespace Vostok.Clusterclient.Core.Tests.Model
             var response = new Response(ResponseCode.Ok);
 
             response.ToString(true).Should().Be("200 Ok");
+            response.ToString(true, true).Should().Be("200 Ok");
         }
 
         [TestCase(ResponseCode.InternalServerError)]

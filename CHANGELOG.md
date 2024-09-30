@@ -1,3 +1,15 @@
+## 0.1.57 (18-09-2024):
+
+Fixed request with empty query logging/parsing.
+
+## 0.1.56 (04-09-2024):
+
+Fixed tests.
+
+## 0.1.55 (03-09-2024):
+
+Added more options for loggin request/response query string and headers.
+
 ## 0.1.54 (27-08-2024):
 
 Don't validate stream content if retry is not needed
