@@ -25,7 +25,7 @@ namespace Vostok.Clusterclient.Core.Ordering.Weighed.Relative
             IWeights weights = null)
         {
             IsUpdatingNow = new AtomicBoolean(false);
-            TimeProvider = timeProvider ?? new TimeProvider();
+            TimeProvider = timeProvider ?? new Misc.TimeProvider();
             RelativeWeightCalculator = relativeWeightCalculator ?? new RelativeWeightCalculator();
             Weights = weights ?? new Weights();
             WeightsNormalizer = weightsNormalizer ?? new WeightsNormalizer();
