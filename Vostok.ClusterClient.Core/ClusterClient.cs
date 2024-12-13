@@ -56,6 +56,9 @@ namespace Vostok.Clusterclient.Core
             configuration.AugmentWithDefaults();
             configuration.ApplyReplicaTransform();
             configuration.SetupRequestTimeoutHeader();
+#if NET6_0_OR_GREATER
+            configuration.SetupDistributedTracing();
+#endif
 
             ReplicaStorageProvider = ReplicaStorageProviderFactory.Create(configuration.ReplicaStorageScope);
 

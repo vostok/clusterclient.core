@@ -1,0 +1,14 @@
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Tracing.get -> Vostok.Clusterclient.Core.Misc.TracingOptions
+Vostok.Clusterclient.Core.IClusterClientConfiguration.Tracing.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions
+Vostok.Clusterclient.Core.Misc.TracingOptions.AdditionalRequestTransformation.get -> System.Func<Vostok.Clusterclient.Core.Model.Request, System.Diagnostics.ActivityContext, Vostok.Clusterclient.Core.Model.Request>
+Vostok.Clusterclient.Core.Misc.TracingOptions.AdditionalRequestTransformation.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions.Enabled.get -> bool
+Vostok.Clusterclient.Core.Misc.TracingOptions.Enabled.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithClusterResult.get -> System.Action<System.Diagnostics.Activity, Vostok.Clusterclient.Core.Model.ClusterResult>
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithClusterResult.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithRequest.get -> System.Action<System.Diagnostics.Activity, Vostok.Clusterclient.Core.Model.Request>
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithRequest.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithResponse.get -> System.Action<System.Diagnostics.Activity, Vostok.Clusterclient.Core.Model.Response>
+Vostok.Clusterclient.Core.Misc.TracingOptions.EnrichWithResponse.set -> void
+Vostok.Clusterclient.Core.Misc.TracingOptions.TracingOptions() -> void

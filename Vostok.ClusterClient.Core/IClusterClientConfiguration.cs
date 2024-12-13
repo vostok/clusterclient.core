@@ -193,6 +193,10 @@ namespace Vostok.Clusterclient.Core
         /// </summary>
         LoggingOptions Logging { get; set; }
 
+#if NET6_0_OR_GREATER
+        TracingOptions Tracing { get; set; }
+#endif
+
         /// <summary>
         /// <para>Gets or sets the name of client application which use ClusterClient. </para>
         /// <para>This parameter is optional. By default it is set to <see cref="Assembly.GetEntryAssembly"/> name.</para>

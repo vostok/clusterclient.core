@@ -11,6 +11,7 @@
     <PackageReference Include="FluentAssertions" Version="5.4.1" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
+    <PackageReference Include="OpenTelemetry" Version="1.10.0" Condition="'$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net6.0'"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Vostok.ClusterClient.Core\Vostok.ClusterClient.Core.csproj" />
@@ -26,6 +27,9 @@
     </Reference>
     <Reference Include="Vostok.Logging.Formatting">
       <HintPath>..\..\vostok.logging.formatting\Vostok.Logging.Formatting\bin\Release\$(ReferencesFramework)\Vostok.Logging.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Abstractions">
+      <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

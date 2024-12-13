@@ -151,6 +151,12 @@ namespace Vostok.Clusterclient.Core.Tests
             configuration.Logging.LoggingMode.Should().Be(LoggingMode.Detailed);
         }
 
+#if NET6_0_OR_GREATER
+        [Test]
+        public void Should_initially_have_tracing_enabled() =>
+            configuration.Tracing.Enabled.Should().BeTrue();
+#endif
+
         [Test]
         public void Should_initially_have_default_max_replicas_per_request()
         {

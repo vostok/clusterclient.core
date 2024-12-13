@@ -24,8 +24,15 @@
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Vostok.Logging.Abstractions">
       <HintPath>..\..\vostok.logging.abstractions\Vostok.Logging.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Tracing.Abstractions">
+      <HintPath>..\..\vostok.tracing.abstractions\Vostok.Tracing.Abstractions\bin\Release\$(ReferencesFramework)\Vostok.Tracing.Abstractions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -71,5 +78,11 @@
     <Compile Include="..\..\vostok.commons.environment\Vostok.Commons.Environment\EnvironmentInfo.cs">
       <Link>Commons\EnvironmentInfo.cs</Link>
     </Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Url\UrlNormalizer.cs" Link="Commons\UrlNormalizer.cs" />
+    <Compile Include="..\..\vostok.commons.helpers\Vostok.Commons.Helpers\Url\UrlExtensions.cs" Link="Commons\UrlExtensions.cs" />
+    <PackageReference Include="OpenTelemetry" Version="1.10.0" Condition="'$(TargetFramework)' == 'net8.0'" PrivateAssets="Compile" />
+    <PackageReference Include="OpenTelemetry" Version="1.9.0" Condition="'$(TargetFramework)' == 'net6.0'" PrivateAssets="Compile" />
   </ItemGroup>
 </Project>

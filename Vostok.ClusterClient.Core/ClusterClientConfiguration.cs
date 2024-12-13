@@ -41,6 +41,9 @@ namespace Vostok.Clusterclient.Core
                 LogReplicaResults = ClusterClientDefaults.LogReplicaResults
             };
 
+#if NET6_0_OR_GREATER
+            Tracing = new TracingOptions();
+#endif
             ConnectionAttempts = ClusterClientDefaults.ConnectionAttempts;
             DefaultConnectionTimeout = ClusterClientDefaults.ConnectionTimeout;
             MaxReplicasUsedPerRequest = ClusterClientDefaults.MaxReplicasUsedPerRequest;
@@ -92,7 +95,9 @@ namespace Vostok.Clusterclient.Core
         public int MaxReplicasUsedPerRequest { get; set; }
 
         public LoggingOptions Logging { get; set; }
-
+#if NET6_0_OR_GREATER
+        public TracingOptions Tracing { get; set; }
+#endif
         public string ClientApplicationName { get; set; }
 
         public string TargetServiceName { get; set; }
