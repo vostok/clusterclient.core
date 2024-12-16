@@ -1,3 +1,7 @@
+## 0.1.58 (16-12-2024): 
+
+Bump NuGet deps versions
+
 ## 0.1.57 (18-09-2024):
 
 Fixed request with empty query logging/parsing.
