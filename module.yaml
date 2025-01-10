@@ -8,21 +8,22 @@ notests *default:
   install:
     - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
     - module vostok.logging.abstractions
-    - target-framework: "netstandard2.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
-    - target-framework: "net6.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/net6.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
-    - target-framework: "net8.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/net8.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
+    - groups:
+      - target-framework: "netstandard2.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
+      - target-framework: "net6.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/net6.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
+      - target-framework: "net8.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/net8.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
 
   deps:
     - vostok.commons.threading/src
@@ -41,22 +42,22 @@ full-build > notests:
   install:
     - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
     - module vostok.logging.abstractions
-    - target-framework: "netstandard2.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
-    - target-framework: "net6.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/net6.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
-    - target-framework: "net8.0"
-      libraries:
-        - Vostok.ClusterClient.Core/bin/Release/net8.0/Vostok.ClusterClient.Core.dll
-      modules:
-        - name: vostok.logging.abstractions
-
+    - groups:
+      - target-framework: "netstandard2.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/netstandard2.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
+      - target-framework: "net6.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/net6.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
+      - target-framework: "net8.0"
+        libraries:
+          - Vostok.ClusterClient.Core/bin/Release/net8.0/Vostok.ClusterClient.Core.dll
+        modules:
+          - name: vostok.logging.abstractions
   build:
     target: Vostok.ClusterClient.Core.sln
     configuration: Release
