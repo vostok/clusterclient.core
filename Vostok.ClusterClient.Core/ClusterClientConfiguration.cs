@@ -84,6 +84,8 @@ namespace Vostok.Clusterclient.Core
         public IRequestStrategy DefaultRequestStrategy { get; set; }
 
         public TimeSpan DefaultTimeout { get; set; }
+        
+        public Func<TimeSpan?> TimeoutProvider { get; set; }
 
         public TimeSpan? DefaultConnectionTimeout { get; set; }
 
