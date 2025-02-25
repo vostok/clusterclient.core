@@ -1,3 +1,7 @@
+## 0.1.59 (25-01-2024):
+
+Added a `Func<TimeSpan?> TimeoutProvider` to `IClusterClientConfiguration` to pass a timeout, for example from the FlowingContext properties, and not pass this timeout to each SendAsync call.
+
 ## 0.1.58 (16-12-2024): 
 
 Bump NuGet deps versions
