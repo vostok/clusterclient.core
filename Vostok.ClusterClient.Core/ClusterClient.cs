@@ -95,7 +95,7 @@ namespace Vostok.Clusterclient.Core
                 new RequestContext(
                     request,
                     CompleteParameters(parameters),
-                    RequestTimeBudget.StartNew(timeout ?? configuration.DefaultTimeout, BudgetPrecision),
+                    RequestTimeBudget.StartNew(timeout ?? configuration.TimeoutProvider?.Invoke() ?? configuration.DefaultTimeout, BudgetPrecision),
                     configuration.Log,
                     configuration.ClusterProvider,
                     configuration.AsyncClusterProvider,

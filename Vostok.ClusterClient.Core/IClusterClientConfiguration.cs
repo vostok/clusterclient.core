@@ -167,6 +167,13 @@ namespace Vostok.Clusterclient.Core
         /// <para>This parameter is optional and has a default value (see <see cref="Timeout"/>).</para>
         /// </summary>
         TimeSpan DefaultTimeout { get; set; }
+        
+        /// <summary>
+        /// <para>Gets or sets a request timeout provider used for <see cref="ClusterClient"/> method overloads without timeout parameter.</para>
+        /// <para>This parameter is optional and if not defined, <see cref="DefaultTimeout"/> will be used</para>
+        /// <para>If provider returns null, <see cref="DefaultTimeout"/> will be used</para>
+        /// </summary>
+        public Func<TimeSpan?> TimeoutProvider { get; set; }
 
         /// <summary>
         /// <para>Gets or sets the timeout to establish new TCP connection to replica in cluster.</para>
