@@ -207,6 +207,7 @@ static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clust
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.SendAsync(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
+static Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.implicit operator Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings(bool enabled) -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
 static Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Parse(string headerValue) -> Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection
 static Vostok.Clusterclient.Core.Model.Request.Delete(string url) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.Request.Delete(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
@@ -400,6 +401,8 @@ Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetEnvironment.get -> s
 Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetEnvironment.set -> void
 Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetServiceName.get -> string
 Vostok.Clusterclient.Core.IClusterClientConfiguration.TargetServiceName.set -> void
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TimeoutProvider.get -> System.Func<System.TimeSpan?>
+Vostok.Clusterclient.Core.IClusterClientConfiguration.TimeoutProvider.set -> void
 Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.get -> Vostok.Clusterclient.Core.Transport.ITransport
 Vostok.Clusterclient.Core.IClusterClientConfiguration.Transport.set -> void
 Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions
@@ -417,12 +420,18 @@ Vostok.Clusterclient.Core.Misc.LoggingOptions
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingMode.get -> Vostok.Clusterclient.Core.Misc.LoggingMode
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingMode.set -> void
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LoggingOptions() -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogQueryString.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogQueryString.set -> void
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaRequests.get -> bool
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaRequests.set -> void
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaResults.get -> bool
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogReplicaResults.set -> void
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestDetails.get -> bool
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestDetails.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestHeaders.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestHeaders.set -> void
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResponseHeaders.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
+Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResponseHeaders.set -> void
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResultDetails.get -> bool
 Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResultDetails.set -> void
 Vostok.Clusterclient.Core.Misc.ModulePosition
@@ -432,6 +441,13 @@ Vostok.Clusterclient.Core.Misc.RelatedModules
 Vostok.Clusterclient.Core.Misc.RelatedModules.After.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
 Vostok.Clusterclient.Core.Misc.RelatedModules.Before.get -> System.Collections.Generic.List<Vostok.Clusterclient.Core.Modules.IRequestModule>
 Vostok.Clusterclient.Core.Misc.RelatedModules.RelatedModules() -> void
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Blacklist.get -> System.Collections.Generic.IReadOnlyCollection<string>
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Blacklist.set -> void
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Enabled.get -> bool
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.RequestParametersLoggingSettings(bool enabled) -> void
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Whitelist.get -> System.Collections.Generic.IReadOnlyCollection<string>
+Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Whitelist.set -> void
 Vostok.Clusterclient.Core.Model.ClusterResult
 Vostok.Clusterclient.Core.Model.ClusterResult.ClusterResult(Vostok.Clusterclient.Core.Model.ClusterResultStatus status, System.Collections.Generic.IList<Vostok.Clusterclient.Core.Model.ReplicaResult> replicaResults, Vostok.Clusterclient.Core.Model.Response selectedResponse, Vostok.Clusterclient.Core.Model.Request request) -> void
 Vostok.Clusterclient.Core.Model.ClusterResult.Dispose() -> void
@@ -549,6 +565,7 @@ Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, V
 Vostok.Clusterclient.Core.Model.Request.Request(string method, System.Uri url, Vostok.Clusterclient.Core.Model.IStreamContent content, Vostok.Clusterclient.Core.Model.Headers headers = null) -> void
 Vostok.Clusterclient.Core.Model.Request.StreamContent.get -> Vostok.Clusterclient.Core.Model.IStreamContent
 Vostok.Clusterclient.Core.Model.Request.ToString(bool includeQuery, bool includeHeaders) -> string
+Vostok.Clusterclient.Core.Model.Request.ToString(Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeQuery, Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeHeaders) -> string
 Vostok.Clusterclient.Core.Model.Request.Url.get -> System.Uri
 Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.CompositeContent content) -> Vostok.Clusterclient.Core.Model.Request
 Vostok.Clusterclient.Core.Model.Request.WithContent(Vostok.Clusterclient.Core.Model.Content content) -> Vostok.Clusterclient.Core.Model.Request
@@ -608,6 +625,7 @@ Vostok.Clusterclient.Core.Model.Response.RemoveHeader(string name) -> Vostok.Clu
 Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null) -> void
 Vostok.Clusterclient.Core.Model.Response.Stream.get -> System.IO.Stream
 Vostok.Clusterclient.Core.Model.Response.ToString(bool includeHeaders) -> string
+Vostok.Clusterclient.Core.Model.Response.ToString(Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeHeaders) -> string
 Vostok.Clusterclient.Core.Model.Response.WithContent(Vostok.Clusterclient.Core.Model.Content newContent) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.Response.WithHeader(string name, string value) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.Response.WithHeader<T>(string name, T value) -> Vostok.Clusterclient.Core.Model.Response
@@ -1065,19 +1083,3 @@ Vostok.Clusterclient.Core.Transport.TransportCapabilities.None = 0 -> Vostok.Clu
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestCompositeBody = 4 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestStreaming = 1 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseStreaming = 2 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
-static Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.implicit operator Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings(bool enabled) -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Blacklist.get -> System.Collections.Generic.IReadOnlyCollection<string>
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Blacklist.set -> void
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.RequestParametersLoggingSettings(bool enabled) -> void
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Enabled.get -> bool
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Whitelist.get -> System.Collections.Generic.IReadOnlyCollection<string>
-Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.Whitelist.set -> void
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogQueryString.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogQueryString.set -> void
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestHeaders.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogRequestHeaders.set -> void
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResponseHeaders.get -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
-Vostok.Clusterclient.Core.Misc.LoggingOptions.LogResponseHeaders.set -> void
-Vostok.Clusterclient.Core.Model.Request.ToString(Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeQuery, Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeHeaders) -> string
-Vostok.Clusterclient.Core.Model.Response.ToString(Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeHeaders) -> string

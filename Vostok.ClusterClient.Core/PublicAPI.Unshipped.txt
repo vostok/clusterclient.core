@@ -1,2 +1,0 @@
-Vostok.Clusterclient.Core.IClusterClientConfiguration.TimeoutProvider.get -> System.Func<System.TimeSpan?>
-Vostok.Clusterclient.Core.IClusterClientConfiguration.TimeoutProvider.set -> void
