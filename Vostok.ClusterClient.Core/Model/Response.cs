@@ -16,6 +16,7 @@ namespace Vostok.Clusterclient.Core.Model
         private readonly Content content;
         private readonly Headers headers;
         private readonly Stream stream;
+        private readonly Func<Headers> getTrailers;
 
         public Response(
             ResponseCode code,
@@ -30,6 +31,23 @@ namespace Vostok.Clusterclient.Core.Model
             this.content = content;
             this.headers = headers;
             this.stream = stream;
+        }
+        
+        private Response(
+            ResponseCode code,
+            [CanBeNull] Content content = null,
+            [CanBeNull] Headers headers = null,
+            [CanBeNull] Stream stream = null,
+            [CanBeNull] Func<Headers> getTrailers = null)
+        {
+            if (content != null && stream != null)
+                throw new ArgumentException("A response can't have both buffered content and a body stream.");
+
+            Code = code;
+            this.content = content;
+            this.headers = headers;
+            this.stream = stream;
+            this.getTrailers = getTrailers;
         }
 
         /// <summary>
@@ -54,6 +72,14 @@ namespace Vostok.Clusterclient.Core.Model
         /// </summary>
         [NotNull]
         public Stream Stream => stream ?? Stream.Null;
+
+        public Headers Trailers
+        {
+            get
+            {
+                return getTrailers?.Invoke() ?? Headers.Empty;
+            }
+        }
 
         /// <summary>
         /// Returns true if this response has buffered content, or false otherwise.
@@ -94,7 +120,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithHeader([NotNull] string name, [NotNull] string value)
         {
-            return new Response(Code, content, Headers.Set(name, value), stream);
+            return new Response(Code, content, Headers.Set(name, value), stream, getTrailers);
         }
 
         /// <summary>
@@ -126,7 +152,7 @@ namespace Vostok.Clusterclient.Core.Model
             if (ReferenceEquals(newHeaders, Headers))
                 return this;
 
-            return new Response(Code, content, newHeaders, stream);
+            return new Response(Code, content, newHeaders, stream, getTrailers);
         }
 
         /// <summary>
@@ -137,7 +163,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithContent([NotNull] Content newContent)
         {
-            return new Response(Code, newContent, headers, stream);
+            return new Response(Code, newContent, headers, stream, getTrailers);
         }
 
         /// <summary>
@@ -148,7 +174,19 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithStream([NotNull] Stream newStream)
         {
-            return new Response(Code, content, headers, newStream);
+            return new Response(Code, content, headers, newStream, getTrailers);
+        }
+
+        /// <summary>
+        /// Produces a new <see cref="Response"/> instance with given trailers callback. Current instance is not modified.
+        /// </summary>
+        /// <param name="newGetTrailers">New callback to be used</param>
+        /// <returns>A new <see cref="Response"/> object with updated trailers callback.</returns>
+        [Pure]
+        [NotNull]
+        public Response WithTrailersCallback([NotNull] Func<Headers> newGetTrailers)
+        {
+            return new Response(Code, content, headers, stream, newGetTrailers);
         }
 
         /// <summary>

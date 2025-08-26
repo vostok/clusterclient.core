@@ -1,0 +1,2 @@
+Vostok.Clusterclient.Core.Model.Response.Trailers.get -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Response.WithTrailersCallback(System.Func<Vostok.Clusterclient.Core.Model.Headers> newGetTrailers) -> Vostok.Clusterclient.Core.Model.Response
