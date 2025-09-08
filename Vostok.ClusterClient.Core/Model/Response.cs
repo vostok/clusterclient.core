@@ -73,13 +73,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Stream Stream => stream ?? Stream.Null;
 
-        public Headers Trailers
-        {
-            get
-            {
-                return getTrailers?.Invoke() ?? Headers.Empty;
-            }
-        }
+        public Headers Trailers => getTrailers?.Invoke() ?? Headers.Empty;
 
         /// <summary>
         /// Returns true if this response has buffered content, or false otherwise.

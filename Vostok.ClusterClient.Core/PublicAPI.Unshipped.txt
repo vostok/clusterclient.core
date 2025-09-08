@@ -1,2 +1,3 @@
 Vostok.Clusterclient.Core.Model.Response.Trailers.get -> Vostok.Clusterclient.Core.Model.Headers
 Vostok.Clusterclient.Core.Model.Response.WithTrailersCallback(System.Func<Vostok.Clusterclient.Core.Model.Headers> newGetTrailers) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseTrailers = 8 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
