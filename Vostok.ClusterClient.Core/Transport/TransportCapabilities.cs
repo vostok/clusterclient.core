@@ -32,8 +32,8 @@ namespace Vostok.Clusterclient.Core.Transport
         RequestCompositeBody = 1 << 2,
         
         /// <summary>
-        /// Transport is capable of filling out response trailers to <see cref="Response.Trailers"/>.
+        /// Transport is capable of filling out response trailers to <see cref="Response.TrailingHeaders"/>.
         /// </summary>
-        ResponseTrailers = 1 << 3
+        ResponseTrailingHeaders = 1 << 3
     }
 }

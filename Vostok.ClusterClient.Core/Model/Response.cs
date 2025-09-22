@@ -16,38 +16,37 @@ namespace Vostok.Clusterclient.Core.Model
         private readonly Content content;
         private readonly Headers headers;
         private readonly Stream stream;
-        private readonly Func<Headers> getTrailers;
+        private readonly Headers trailingHeaders;
+        private readonly Func<Headers> getTrailingHeaders;
 
         public Response(
             ResponseCode code,
             [CanBeNull] Content content = null,
             [CanBeNull] Headers headers = null,
-            [CanBeNull] Stream stream = null)
+            [CanBeNull] Stream stream = null,
+            [CanBeNull] Headers trailingHeaders = null,
+            [CanBeNull] Func<Headers> getTrailingHeaders = null)
         {
             if (content != null && stream != null)
                 throw new ArgumentException("A response can't have both buffered content and a body stream.");
-
+            if (trailingHeaders != null && getTrailingHeaders != null)
+                throw new ArgumentException("A response can't have both read trailers and trailers callback");
+            
             Code = code;
             this.content = content;
             this.headers = headers;
             this.stream = stream;
+            this.trailingHeaders = trailingHeaders;
+            this.getTrailingHeaders = getTrailingHeaders;
         }
         
-        private Response(
+        // BACKWARDS COMPATIBILITY OVERLOAD
+        public Response(
             ResponseCode code,
-            [CanBeNull] Content content = null,
-            [CanBeNull] Headers headers = null,
-            [CanBeNull] Stream stream = null,
-            [CanBeNull] Func<Headers> getTrailers = null)
+            [CanBeNull] Content content,
+            [CanBeNull] Headers headers,
+            [CanBeNull] Stream stream) : this(code, content, headers, stream, null, null)
         {
-            if (content != null && stream != null)
-                throw new ArgumentException("A response can't have both buffered content and a body stream.");
-
-            Code = code;
-            this.content = content;
-            this.headers = headers;
-            this.stream = stream;
-            this.getTrailers = getTrailers;
         }
 
         /// <summary>
@@ -73,7 +72,12 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Stream Stream => stream ?? Stream.Null;
 
-        public Headers Trailers => getTrailers?.Invoke() ?? Headers.Empty;
+        /// <summary>
+        /// Returns value of trailers field if present, then tries to invoke trailers callback with no result caching.
+        /// If none of the two is present, returns empty headers
+        /// </summary>
+        [NotNull]
+        public Headers TrailingHeaders => trailingHeaders ?? getTrailingHeaders?.Invoke() ?? Headers.Empty;
 
         /// <summary>
         /// Returns true if this response has buffered content, or false otherwise.
@@ -114,7 +118,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithHeader([NotNull] string name, [NotNull] string value)
         {
-            return new Response(Code, content, Headers.Set(name, value), stream, getTrailers);
+            return new Response(Code, content, Headers.Set(name, value), stream, trailingHeaders, getTrailingHeaders);
         }
 
         /// <summary>
@@ -146,7 +150,7 @@ namespace Vostok.Clusterclient.Core.Model
             if (ReferenceEquals(newHeaders, Headers))
                 return this;
 
-            return new Response(Code, content, newHeaders, stream, getTrailers);
+            return new Response(Code, content, newHeaders, stream, trailingHeaders, getTrailingHeaders);
         }
 
         /// <summary>
@@ -157,7 +161,7 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithContent([NotNull] Content newContent)
         {
-            return new Response(Code, newContent, headers, stream, getTrailers);
+            return new Response(Code, newContent, headers, stream, trailingHeaders, getTrailingHeaders);
         }
 
         /// <summary>
@@ -168,7 +172,19 @@ namespace Vostok.Clusterclient.Core.Model
         [NotNull]
         public Response WithStream([NotNull] Stream newStream)
         {
-            return new Response(Code, content, headers, newStream, getTrailers);
+            return new Response(Code, content, headers, newStream, trailingHeaders, getTrailingHeaders);
+        }
+        
+        
+        /// <summary>
+        /// Produces a new <see cref="Response"/> instance with given trailers. Current instance is not modified.
+        /// </summary>
+        /// <returns>A new <see cref="Response"/> object with updated trailers.</returns>
+        [Pure]
+        [NotNull]
+        public Response WithTrailingHeaders([NotNull] Headers newTrailers)
+        {
+            return new Response(Code, content, headers, stream, newTrailers, getTrailingHeaders);
         }
 
         /// <summary>
@@ -178,9 +194,9 @@ namespace Vostok.Clusterclient.Core.Model
         /// <returns>A new <see cref="Response"/> object with updated trailers callback.</returns>
         [Pure]
         [NotNull]
-        public Response WithTrailersCallback([NotNull] Func<Headers> newGetTrailers)
+        public Response WithTrailingHeadersCallback([NotNull] Func<Headers> newGetTrailers)
         {
-            return new Response(Code, content, headers, stream, newGetTrailers);
+            return new Response(Code, content, headers, stream, trailingHeaders, newGetTrailers);
         }
 
         /// <summary>

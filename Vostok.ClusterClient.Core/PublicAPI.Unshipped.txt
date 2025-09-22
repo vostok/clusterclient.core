@@ -1,3 +1,7 @@
-Vostok.Clusterclient.Core.Model.Response.Trailers.get -> Vostok.Clusterclient.Core.Model.Headers
-Vostok.Clusterclient.Core.Model.Response.WithTrailersCallback(System.Func<Vostok.Clusterclient.Core.Model.Headers> newGetTrailers) -> Vostok.Clusterclient.Core.Model.Response
-Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseTrailers = 8 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null, Vostok.Clusterclient.Core.Model.Headers trailingHeaders = null, System.Func<Vostok.Clusterclient.Core.Model.Headers> getTrailingHeaders = null) -> void
+Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content, Vostok.Clusterclient.Core.Model.Headers headers, System.IO.Stream stream) -> void
+Vostok.Clusterclient.Core.Model.Response.TrailingHeaders.get -> Vostok.Clusterclient.Core.Model.Headers
+Vostok.Clusterclient.Core.Model.Response.WithTrailingHeaders(Vostok.Clusterclient.Core.Model.Headers newTrailers) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithTrailingHeadersCallback(System.Func<Vostok.Clusterclient.Core.Model.Headers> newGetTrailers) -> Vostok.Clusterclient.Core.Model.Response
+*REMOVED*Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null) -> void
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseTrailingHeaders = 8 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
