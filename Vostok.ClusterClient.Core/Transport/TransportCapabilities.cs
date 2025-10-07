@@ -29,11 +29,6 @@ namespace Vostok.Clusterclient.Core.Transport
         /// <summary>
         /// Transport is capable of sending <see cref="CompositeContent"/> as request body.
         /// </summary>
-        RequestCompositeBody = 1 << 2,
-        
-        /// <summary>
-        /// Transport is capable of filling out response trailers to <see cref="Response.TrailingHeaders"/>.
-        /// </summary>
-        ResponseTrailingHeaders = 1 << 3
+        RequestCompositeBody = 1 << 2
     }
 }
