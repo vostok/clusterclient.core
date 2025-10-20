@@ -203,9 +203,9 @@ static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupRequ
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupResponseCriteria(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, params Vostok.Clusterclient.Core.Criteria.IResponseCriterion[] criteria) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupThreadPoolLimitsTuning(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration) -> void
 static Vostok.Clusterclient.Core.IClusterClientConfigurationExtensions.SetupWeighedReplicaOrdering(this Vostok.Clusterclient.Core.IClusterClientConfiguration configuration, System.Action<Vostok.Clusterclient.Core.Ordering.Weighed.IWeighedReplicaOrderingBuilder> build) -> void
-static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, Vostok.Clusterclient.Core.Model.RequestParameters parameters = null, System.TimeSpan? timeout = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Vostok.Clusterclient.Core.Model.ClusterResult
+static Vostok.Clusterclient.Core.IClusterClientExtensions.Send(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request) -> Vostok.Clusterclient.Core.Model.ClusterResult
 static Vostok.Clusterclient.Core.IClusterClientExtensions.SendAsync(this Vostok.Clusterclient.Core.IClusterClient client, Vostok.Clusterclient.Core.Model.Request request, System.TimeSpan? timeout = null, Vostok.Clusterclient.Core.Strategies.IRequestStrategy strategy = null, Vostok.Clusterclient.Core.Model.RequestPriority? priority = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Vostok.Clusterclient.Core.Model.ClusterResult>
 static Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings.implicit operator Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings(bool enabled) -> Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings
 static Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Parse(string headerValue) -> Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection
@@ -225,16 +225,16 @@ static Vostok.Clusterclient.Core.Model.Request.Put(string url) -> Vostok.Cluster
 static Vostok.Clusterclient.Core.Model.Request.Put(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.Request.Trace(string url) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.Request.Trace(System.Uri url) -> Vostok.Clusterclient.Core.Model.Request
-static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, byte[] buffer, int offset, int length) -> Vostok.Clusterclient.Core.Model.Request
-static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, string content) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, string content, System.Text.Encoding encoding) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, string content) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.ArraySegment<byte> content) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<byte[]> buffers) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<System.ArraySegment<byte>> segments) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.Collections.Generic.IEnumerable<Vostok.Clusterclient.Core.Model.Content> contents) -> Vostok.Clusterclient.Core.Model.Request
-static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.IO.Stream stream) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.IO.Stream stream, long length) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Request request, System.IO.Stream stream) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.AppendToHeaderWithQuality(this Vostok.Clusterclient.Core.Model.Request request, string name, string value, decimal quality = 1) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptCharsetHeader(this Vostok.Clusterclient.Core.Model.Request request, string value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithAcceptCharsetHeader(this Vostok.Clusterclient.Core.Model.Request request, System.Text.Encoding value) -> Vostok.Clusterclient.Core.Model.Request
@@ -259,20 +259,20 @@ static Vostok.Clusterclient.Core.Model.RequestHeadersExtensions.WithUserAgentHea
 static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedContent(this Vostok.Clusterclient.Core.Model.Request request) -> bool
 static Vostok.Clusterclient.Core.Model.RequestMiscExtensions.ContainsAlreadyUsedStream(this Vostok.Clusterclient.Core.Model.Request request) -> bool
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.TryGetQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, out string value) -> bool
-static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.Request
-static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter(this Vostok.Clusterclient.Core.Model.Request request, string key, string value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.Request
+static Vostok.Clusterclient.Core.Model.RequestQueryExtensions.WithAdditionalQueryParameter<T>(this Vostok.Clusterclient.Core.Model.Request request, string key, T value) -> Vostok.Clusterclient.Core.Model.Request
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsClientError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsInformational(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsNetworkError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsRedirection(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsServerError(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
 static Vostok.Clusterclient.Core.Model.ResponseCodeExtensions.IsSuccessful(this Vostok.Clusterclient.Core.Model.ResponseCode code) -> bool
-static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Response
 static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, byte[] buffer, int offset, int length) -> Vostok.Clusterclient.Core.Model.Response
-static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, string content) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, byte[] buffer) -> Vostok.Clusterclient.Core.Model.Response
 static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, string content, System.Text.Encoding encoding) -> Vostok.Clusterclient.Core.Model.Response
+static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, string content) -> Vostok.Clusterclient.Core.Model.Response
 static Vostok.Clusterclient.Core.Model.ResponseContentExtensions.WithContent(this Vostok.Clusterclient.Core.Model.Response response, System.ArraySegment<byte> content) -> Vostok.Clusterclient.Core.Model.Response
 static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseTime(System.Func<System.TimeSpan> timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
 static Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.TuningPolicies.ByResponseTime(System.TimeSpan timeThreshold) -> Vostok.Clusterclient.Core.Ordering.Weighed.Adaptive.IAdaptiveHealthTuningPolicy
@@ -303,8 +303,8 @@ Vostok.Clusterclient.Core.ClusterClientCachesCleaner
 Vostok.Clusterclient.Core.ClusterClientDefaults
 Vostok.Clusterclient.Core.ClusterClientException
 Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException() -> void
-Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException(string message) -> void
 Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException(string message, System.Exception innerException) -> void
+Vostok.Clusterclient.Core.ClusterClientException.ClusterClientException(string message) -> void
 Vostok.Clusterclient.Core.ClusterClientSetup
 Vostok.Clusterclient.Core.Criteria.AcceptHeaderCriterion
 Vostok.Clusterclient.Core.Criteria.AcceptHeaderCriterion.AcceptHeaderCriterion(string headerName) -> void
@@ -471,8 +471,8 @@ Vostok.Clusterclient.Core.Model.CompositeContent.Length.get -> long
 Vostok.Clusterclient.Core.Model.CompositeContent.Parts.get -> Vostok.Clusterclient.Core.Model.Content[]
 Vostok.Clusterclient.Core.Model.Content
 Vostok.Clusterclient.Core.Model.Content.Buffer.get -> byte[]
-Vostok.Clusterclient.Core.Model.Content.Content(byte[] buffer) -> void
 Vostok.Clusterclient.Core.Model.Content.Content(byte[] buffer, int offset, int length) -> void
+Vostok.Clusterclient.Core.Model.Content.Content(byte[] buffer) -> void
 Vostok.Clusterclient.Core.Model.Content.Content(System.ArraySegment<byte> segment) -> void
 Vostok.Clusterclient.Core.Model.Content.Length.get -> int
 Vostok.Clusterclient.Core.Model.Content.Offset.get -> int
@@ -525,8 +525,8 @@ Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Clear() -> voi
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Count.get -> int
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.GetEnumerator() -> System.Collections.Generic.IEnumerator<Vostok.Clusterclient.Core.Model.HeaderValueWithQuality>
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.HeaderValuesWithQualityCollection() -> void
-Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(string value) -> void
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(string value, decimal quality) -> void
+Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(string value) -> void
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.Remove(Vostok.Clusterclient.Core.Model.HeaderValueWithQuality valueWithQuality) -> void
 Vostok.Clusterclient.Core.Model.HeaderValuesWithQualityCollection.this[int idx].get -> Vostok.Clusterclient.Core.Model.HeaderValueWithQuality
 Vostok.Clusterclient.Core.Model.HeaderValueWithQuality
@@ -601,10 +601,10 @@ Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add<T>(string key, T value) ->
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Add<T>(T segment) -> void
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToPath(string segment) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToPath<T>(T segment) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
-Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery(string key, string value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery(string key, string value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
-Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery<T>(string key, T value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery(string key, string value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery<T>(string key, T value, bool allowEmptyValue) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
+Vostok.Clusterclient.Core.Model.RequestUrlBuilder.AppendToQuery<T>(string key, T value) -> Vostok.Clusterclient.Core.Model.RequestUrlBuilder
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Build() -> System.Uri
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.Dispose() -> void
 Vostok.Clusterclient.Core.Model.RequestUrlBuilder.EnsureNotDisposed() -> void
@@ -622,14 +622,18 @@ Vostok.Clusterclient.Core.Model.Response.HasStream.get -> bool
 Vostok.Clusterclient.Core.Model.Response.Headers.get -> Vostok.Clusterclient.Core.Model.Headers
 Vostok.Clusterclient.Core.Model.Response.IsSuccessful.get -> bool
 Vostok.Clusterclient.Core.Model.Response.RemoveHeader(string name) -> Vostok.Clusterclient.Core.Model.Response
-Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null) -> void
+Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content = null, Vostok.Clusterclient.Core.Model.Headers headers = null, System.IO.Stream stream = null, Vostok.Clusterclient.Core.Model.Headers trailingHeaders = null, System.Func<Vostok.Clusterclient.Core.Model.Headers> getTrailingHeaders = null) -> void
+Vostok.Clusterclient.Core.Model.Response.Response(Vostok.Clusterclient.Core.Model.ResponseCode code, Vostok.Clusterclient.Core.Model.Content content, Vostok.Clusterclient.Core.Model.Headers headers, System.IO.Stream stream) -> void
 Vostok.Clusterclient.Core.Model.Response.Stream.get -> System.IO.Stream
 Vostok.Clusterclient.Core.Model.Response.ToString(bool includeHeaders) -> string
 Vostok.Clusterclient.Core.Model.Response.ToString(Vostok.Clusterclient.Core.Misc.RequestParametersLoggingSettings includeHeaders) -> string
+Vostok.Clusterclient.Core.Model.Response.TrailingHeaders.get -> Vostok.Clusterclient.Core.Model.Headers
 Vostok.Clusterclient.Core.Model.Response.WithContent(Vostok.Clusterclient.Core.Model.Content newContent) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.Response.WithHeader(string name, string value) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.Response.WithHeader<T>(string name, T value) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.Response.WithStream(System.IO.Stream newStream) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithTrailingHeaders(Vostok.Clusterclient.Core.Model.Headers newTrailers) -> Vostok.Clusterclient.Core.Model.Response
+Vostok.Clusterclient.Core.Model.Response.WithTrailingHeadersCallback(System.Func<Vostok.Clusterclient.Core.Model.Headers> newGetTrailers) -> Vostok.Clusterclient.Core.Model.Response
 Vostok.Clusterclient.Core.Model.ResponseCode
 Vostok.Clusterclient.Core.Model.ResponseCode.Accepted = 202 -> Vostok.Clusterclient.Core.Model.ResponseCode
 Vostok.Clusterclient.Core.Model.ResponseCode.BadGateway = 502 -> Vostok.Clusterclient.Core.Model.ResponseCode
@@ -1083,3 +1087,4 @@ Vostok.Clusterclient.Core.Transport.TransportCapabilities.None = 0 -> Vostok.Clu
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestCompositeBody = 4 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.RequestStreaming = 1 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
 Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseStreaming = 2 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
+Vostok.Clusterclient.Core.Transport.TransportCapabilities.ResponseTrailingHeaders = 8 -> Vostok.Clusterclient.Core.Transport.TransportCapabilities
