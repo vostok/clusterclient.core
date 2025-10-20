@@ -1,3 +1,7 @@
+## 0.1.60 (20-10-2025):
+
+Added trailing headers to Response model, as well as a transport capability of relaying them.
+
 ## 0.1.59 (25-01-2024):
 
 Added a `Func<TimeSpan?> TimeoutProvider` to `IClusterClientConfiguration` to pass a timeout, for example from the FlowingContext properties, and not pass this timeout to each SendAsync call.
