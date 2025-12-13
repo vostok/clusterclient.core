@@ -28,8 +28,6 @@ namespace Vostok.Clusterclient.Core.Model
         public RequestParameters([CanBeNull] IRequestStrategy strategy = null, [CanBeNull] RequestPriority? priority = null)
             : this(strategy, priority, null, null)
         {
-            Strategy = strategy;
-            Priority = priority;
         }
 
         private RequestParameters()
