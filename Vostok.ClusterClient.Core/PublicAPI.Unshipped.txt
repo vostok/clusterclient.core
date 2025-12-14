@@ -1,8 +1,8 @@
 const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingAnomalousStatisticsThreshold = 2 -> double
 const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingTrackGranularStatistics = false -> bool
-static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularityRequestPropertiesExtensions.SetAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Modules.IRequestContext context, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularityKeys) -> void
-static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularityRequestPropertiesExtensions.WithAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularityKeys) -> Vostok.Clusterclient.Core.Model.RequestParameters
-Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularityRequestPropertiesExtensions
+static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions.SetAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Modules.IRequestContext context, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularityKeys) -> void
+static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions.WithAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularityKeys) -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8, bool trackGranularStatistics = false, double anomalousStatisticsThreshold = 2) -> void
 *REMOVED*Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
 Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack, int minimumRequests, double criticalRatio, double maximumRejectProbability) -> void
