@@ -68,6 +68,7 @@ namespace Vostok.Clusterclient.Core.Modules
             if (maximumRejectProbability < 0.0 || maximumRejectProbability > 1.0)
                 throw new ArgumentOutOfRangeException(nameof(maximumRejectProbability), "Maximum rejection probability must be in [0; 1] range.");
             
+#pragma warning disable once CS0618 // Type or member is obsolete
             StorageKey = string.Empty;
             MinutesToTrack = minutesToTrack;
             MinimumRequests = minimumRequests;
