@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Collections;
 using Vostok.Commons.Threading;
@@ -212,23 +211,24 @@ namespace Vostok.Clusterclient.Core.Modules
 
         #region Logging
 
-        private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability,
-                                         ImmutableArrayDictionary<string, string> granularity = null)
+        private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability)
         {
-            if (granularity is null)
-            {
-                context.Log.Warn("Throttled {priority} request without sending it based on overall service statistics. " +
-                                 "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}",
-                    context.Parameters.Priority, ratio, rejectionProbability);
-                return;
-            }
+            context.Log.Warn(
+                "Throttled {priority} request without sending it based on overall service statistics. " +
+                "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}",
+                context.Parameters.Priority, ratio, rejectionProbability);
+        }
 
+        private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability,
+                                                ImmutableArrayDictionary<string, string> granularity)
+        { 
             var builder = new StringBuilder();
             foreach (var pair in granularity)
                 builder.Append(pair.Key).Append('=').Append(pair.Value).Append("; ");
 
-            context.Log.Warn("Throttled {priority} request without sending it based on granular service statistics for granularity \"{Granularity}\". " +
-                             "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}.",
+            context.Log.Warn(
+                "Throttled {priority} request without sending it based on granular service statistics for granularity \"{Granularity}\". " +
+                "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}.",
                 context.Parameters.Priority, builder.ToString(), ratio, rejectionProbability);
         }
 
@@ -334,6 +334,12 @@ namespace Vostok.Clusterclient.Core.Modules
                 GlobalKey = globalKey;
                 Granularity = granularity;
             }
+
+            public override int GetHashCode() =>
+                unchecked(GlobalKey.GetHashCode() * 31 + Granularity.GetHashCode());
+
+            public bool Equals(GranularKey? other) =>
+                GlobalKey.Equals(other?.GlobalKey) && Granularity.Equals(other?.Granularity);
         }
 
         #endregion

@@ -6,7 +6,8 @@ using Vostok.Commons.Collections;
 namespace Vostok.Clusterclient.Core.Modules;
 
 [PublicAPI]
-public static class AdaptiveThrottlingGranularitySettingExtensions {
+public static class AdaptiveThrottlingGranularitySettingExtensions
+{
     public static RequestParameters SetAdaptiveThrottlingGranularity(this RequestParameters parameters, IReadOnlyDictionary<string, string> additionalGranularity)
     {
         var immutableGranularity = new ImmutableArrayDictionary<string, string>(additionalGranularity);
@@ -29,10 +30,9 @@ public static class AdaptiveThrottlingGranularitySettingExtensions {
             granularity.AppendUnsafe(key, value);
         }
 
-        
         return parameters.WithProperty(AdaptiveThrottlingModule.RequestParametersStatisticsGranularityPropertyKey, granularity);
     }
-    
+
     public static void SetAdaptiveThrottlingGranularity(this IRequestContext context, IReadOnlyDictionary<string, string> additionalGranularity)
     {
         context.Parameters = context.Parameters.SetAdaptiveThrottlingGranularity(additionalGranularity);

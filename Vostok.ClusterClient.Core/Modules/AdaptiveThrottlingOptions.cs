@@ -63,7 +63,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 throw new ArgumentOutOfRangeException(nameof(criticalRatio), "Critical ratio must be in (1; +inf) range.");
             
             if (anomalousStatisticsThreshold <= 1.0)
-                throw new ArgumentOutOfRangeException(nameof(anomalousStatisticsThreshold), "Critical ratio must be in (1; +inf) range.");
+                throw new ArgumentOutOfRangeException(nameof(anomalousStatisticsThreshold), "Anomalous statistics threshold must be in (1; +inf) range.");
 
             if (maximumRejectProbability < 0.0 || maximumRejectProbability > 1.0)
                 throw new ArgumentOutOfRangeException(nameof(maximumRejectProbability), "Maximum rejection probability must be in [0; 1] range.");
@@ -74,6 +74,7 @@ namespace Vostok.Clusterclient.Core.Modules
             MinimumRequests = minimumRequests;
             CriticalRatio = criticalRatio;
             MaximumRejectProbability = maximumRejectProbability;
+            
         }
         
         /// <summary>
