@@ -76,9 +76,6 @@ namespace Vostok.Clusterclient.Core.Modules
 
             var metrics = counter.GetMetrics();
             var granularMetrics = granularCounter?.GetMetrics();
-            
-            counter.BeginRequest();
-            granularCounter?.BeginRequest();            
 
             ClusterResult result;
 
@@ -118,11 +115,6 @@ namespace Vostok.Clusterclient.Core.Modules
                 UpdateCounter(counter, context.CancellationToken.IsCancellationRequested);
                 UpdateCounter(granularCounter, context.CancellationToken.IsCancellationRequested);
                 throw;
-            }
-            finally
-            {
-                counter.EndRequest();
-                granularCounter?.EndRequest();
             }
 
             return result;
@@ -244,7 +236,6 @@ namespace Vostok.Clusterclient.Core.Modules
         private class Counter
         {
             private readonly CounterBucket[] buckets;
-            private int pendingRequests;
 
             public Counter(AdaptiveThrottlingOptions options)
             {
@@ -273,14 +264,8 @@ namespace Vostok.Clusterclient.Core.Modules
                     metrics.Accepts += bucket.Accepts;
                 }
 
-                metrics.Requests -= pendingRequests;
-
                 return metrics;
             }
-
-            public void BeginRequest() => Interlocked.Increment(ref pendingRequests);
-
-            public void EndRequest() => Interlocked.Decrement(ref pendingRequests);
 
             public void AddRequest() => Interlocked.Increment(ref ObtainBucket().Requests);
 
