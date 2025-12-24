@@ -68,7 +68,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
-            var granularity = GetGranularity(context);
+            var granularity = ExtractGranularity(context);
             
             var counter = GetCounter(context.Parameters.Priority);
             var options = counter.Options;
@@ -84,13 +84,12 @@ namespace Vostok.Clusterclient.Core.Modules
 
             try
             {
-                granularCounter?.AddRequest();
-                
                 var random = ThreadSafeRandom.NextDouble();
                 if (TryReject(metrics, options, random, out var globalRatio, out var globalRejectionProbability))
                 {
                     LogThrottledRequest(context, globalRatio, globalRejectionProbability);
-                    counter.AddRequest();
+                    UpdateCounter(granularCounter, false);
+                    UpdateCounter(counter, false);
 
                     return ClusterResult.Throttled(context.Request);
                 }
@@ -99,33 +98,25 @@ namespace Vostok.Clusterclient.Core.Modules
                 if (granularMetrics.HasValue && TryReject(granularMetrics.Value, options, random, out granularRatio, out var granularRejectionProbability))
                 {
                     LogThrottledRequest(context, granularRatio, granularRejectionProbability, granularity);
-                    if (!RejectStatisticsInsertion(granularMetrics.Value.Requests, options, granularRatio, globalRatio))
-                        counter.AddRequest();
+
+                    UpdateCounter(granularCounter, false);
+                    if (!RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                        UpdateCounter(counter, false);
+
                     return ClusterResult.Throttled(context.Request);
                 }
 
-                counter.AddRequest();
-
                 result = await next(context).ConfigureAwait(false);
 
-                if (granularMetrics.HasValue)
-                {
-                    UpdateCounter(granularCounter, result);
-                    if (!RejectStatisticsInsertion(granularMetrics.Value.Requests, options, granularRatio, globalRatio))
-                        UpdateCounter(counter, result);
-                }
-                else
-                {
-                    UpdateCounter(counter, result);
-                }
+                var isAccept = IsAccept(result);
+                UpdateCounter(granularCounter, isAccept);
+                if (isAccept || !RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                    UpdateCounter(counter, isAccept);
             }
             catch (OperationCanceledException)
             {
-                if (context.CancellationToken.IsCancellationRequested)
-                {
-                    counter.AddAccept();
-                    granularCounter?.AddAccept();
-                }
+                UpdateCounter(counter, context.CancellationToken.IsCancellationRequested);
+                UpdateCounter(granularCounter, context.CancellationToken.IsCancellationRequested);
                 throw;
             }
             finally
@@ -137,7 +128,7 @@ namespace Vostok.Clusterclient.Core.Modules
             return result;
         }
 
-        private static ImmutableArrayDictionary<string, string> GetGranularity(IRequestContext context) =>
+        private static ImmutableArrayDictionary<string, string> ExtractGranularity(IRequestContext context) =>
             (context.Parameters.Properties.TryGetValue(RequestParametersStatisticsGranularityPropertyKey, out var granularity)
                 ? granularity
                 : null
@@ -151,10 +142,9 @@ namespace Vostok.Clusterclient.Core.Modules
                    (computedRejectionProbability = ComputeRejectionProbability(metrics, options)) > random;
         }
 
-        private static bool RejectStatisticsInsertion(int granularRequests, AdaptiveThrottlingOptions options, double granularRatio, double globalRatio)
+        private static bool RejectStatisticsInsertion(CounterMetrics? granularMetrics, AdaptiveThrottlingOptions options, double granularRatio, double globalRatio)
         {
-            Debug.Assert(globalRatio >= 1d && granularRatio >= 1d);
-            return granularRequests >= options.MinimumRequests &&
+            return granularMetrics.HasValue && granularMetrics.Value.Requests >= options.MinimumRequests &&
                    granularRatio / globalRatio > options.AnomalousStatisticsThreshold &&
                    1 - globalRatio / granularRatio > ThreadSafeRandom.NextDouble();
         }
@@ -172,9 +162,13 @@ namespace Vostok.Clusterclient.Core.Modules
             return probability;
         }
 
-        private static void UpdateCounter(Counter counter, ClusterResult result)
+        private bool IsAccept(ClusterResult result) => result.ReplicaResults.Any(r => r.Verdict == ResponseVerdict.Accept);
+
+        private static void UpdateCounter(Counter counter, bool isAccept)
         {
-            if (result.ReplicaResults.Any(r => r.Verdict == ResponseVerdict.Accept))
+            if (counter is null) return;
+            counter.AddRequest();
+            if (isAccept)
                 counter.AddAccept();
         }
 
@@ -335,11 +329,16 @@ namespace Vostok.Clusterclient.Core.Modules
                 Granularity = granularity;
             }
 
-            public override int GetHashCode() =>
-                unchecked(GlobalKey.GetHashCode() * 31 + Granularity.GetHashCode());
+            public override int GetHashCode()
+            {
+                var hash = 23;
+                hash = unchecked(hash * 31 + GlobalKey.GetHashCode());
+                hash = unchecked(hash * 31 + ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.GetHashCode(Granularity));
+                return hash;
+            }
 
             public bool Equals(GranularKey? other) =>
-                GlobalKey.Equals(other?.GlobalKey) && Granularity.Equals(other?.Granularity);
+                string.Equals(GlobalKey, other?.GlobalKey) && ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.Equals(Granularity, other?.Granularity);
         }
 
         #endregion
