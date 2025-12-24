@@ -74,7 +74,8 @@ namespace Vostok.Clusterclient.Core.Modules
             MinimumRequests = minimumRequests;
             CriticalRatio = criticalRatio;
             MaximumRejectProbability = maximumRejectProbability;
-            
+            TrackGranularStatistics = trackGranularStatistics;
+            AnomalousStatisticsThreshold = anomalousStatisticsThreshold;
         }
         
         /// <summary>

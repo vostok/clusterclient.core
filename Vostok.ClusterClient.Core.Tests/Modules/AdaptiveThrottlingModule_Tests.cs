@@ -8,6 +8,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
+using Vostok.Commons.Collections;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Tests.Modules
@@ -18,6 +19,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private const int MinimumRequests = 50;
         private const double CriticalRatio = 2.0;
         private const double ProbabilityCap = 0.8;
+        private const string GranularityKey = "granularity";
 
         private Uri replica;
         private Request request;
@@ -327,6 +329,44 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Console.Out.WriteLine(module.RejectionProbability(priority));
         }
 
+        #region GranularStatisticsRejection
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_track_granular_statistics_when_allowed(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+            
+            Accept(1, priority, granularity1);
+            Accept(1, priority, granularity2);
+            Reject(1, priority, granularity2);
+
+            module.Requests(priority).Should().Be(3);
+            module.Accepts(priority).Should().Be(2);
+            
+            module.Requests(priority, granularity1).Should().Be(1);
+            module.Accepts(priority, granularity1).Should().Be(1);
+            module.Requests(priority, granularity2).Should().Be(2);
+            module.Accepts(priority, granularity2).Should().Be(1);
+        }
+
+        #endregion
+        
         public static IEnumerable<RequestPriority?> PriorityCase()
         {
             yield return null;
@@ -335,21 +375,30 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             yield return RequestPriority.Sheddable;
         }
 
-        private void Accept(int count, RequestPriority? priority = null)
+        private ImmutableArrayDictionary<string, string> GetGranularityDictionary(string granularityKeyValue)
         {
-            for (var i = 0; i < count; i++)
-                Execute(acceptedResult, priority);
+            var result = new ImmutableArrayDictionary<string, string>(2);
+            result.AppendUnsafe(GranularityKey, granularityKeyValue);
+            return result;
         }
 
-        private void Reject(int count, RequestPriority? priority = null)
+        private void Accept(int count, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
         {
             for (var i = 0; i < count; i++)
-                Execute(rejectedResult, priority);
+                Execute(acceptedResult, priority, granularity);
         }
 
-        private ClusterResult Execute(ClusterResult result, RequestPriority? priority = null)
+        private void Reject(int count, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
+        {
+            for (var i = 0; i < count; i++)
+                Execute(rejectedResult, priority, granularity);
+        }
+
+        private ClusterResult Execute(ClusterResult result, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
         {
             var parameters = new RequestParameters(priority: priority);
+            if (granularity != null)
+                parameters = parameters.WithAdaptiveThrottlingGranularity(granularity);
             context.Parameters.Returns(parameters);
             return module.ExecuteAsync(context, _ => Task.FromResult(result)).GetAwaiter().GetResult();
         }

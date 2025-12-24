@@ -8,11 +8,8 @@ namespace Vostok.Clusterclient.Core.Modules;
 [PublicAPI]
 public static class AdaptiveThrottlingGranularitySettingExtensions
 {
-    public static RequestParameters SetAdaptiveThrottlingGranularity(this RequestParameters parameters, IReadOnlyDictionary<string, string> additionalGranularity)
-    {
-        var immutableGranularity = new ImmutableArrayDictionary<string, string>(additionalGranularity);
-        return parameters.WithProperty(AdaptiveThrottlingModule.RequestParametersStatisticsGranularityPropertyKey, immutableGranularity);
-    }
+    public static RequestParameters WithAdaptiveThrottlingGranularity(this RequestParameters parameters, IReadOnlyDictionary<string, string> additionalGranularity) =>
+        parameters.WithAdaptiveThrottlingGranularity(new ImmutableArrayDictionary<string, string>(additionalGranularity));
 
     public static RequestParameters WithAdaptiveThrottlingGranularity(this RequestParameters parameters, string key, string value)
     {
@@ -35,6 +32,9 @@ public static class AdaptiveThrottlingGranularitySettingExtensions
 
     public static void SetAdaptiveThrottlingGranularity(this IRequestContext context, IReadOnlyDictionary<string, string> additionalGranularity)
     {
-        context.Parameters = context.Parameters.SetAdaptiveThrottlingGranularity(additionalGranularity);
+        context.Parameters = context.Parameters.WithAdaptiveThrottlingGranularity(additionalGranularity);
     }
+    
+    internal static RequestParameters WithAdaptiveThrottlingGranularity(this RequestParameters parameters, ImmutableArrayDictionary<string, string> granularity) =>
+        parameters.WithProperty(AdaptiveThrottlingModule.RequestParametersStatisticsGranularityPropertyKey, granularity);
 }

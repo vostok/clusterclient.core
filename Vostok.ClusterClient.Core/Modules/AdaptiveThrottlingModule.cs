@@ -51,13 +51,14 @@ namespace Vostok.Clusterclient.Core.Modules
             Counters.Clear();
         }
 
-        public int Requests(RequestPriority? priority) => GetCounter(priority).GetMetrics().Requests;
+        public int Requests(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => GetCounter(priority, granularity).GetMetrics().Requests;
 
-        public int Accepts(RequestPriority? priority) => GetCounter(priority).GetMetrics().Accepts;
+        public int Accepts(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => GetCounter(priority, granularity).GetMetrics().Accepts;
 
-        public double Ratio(RequestPriority? priority) => ComputeRatio(GetCounter(priority).GetMetrics());
+        public double Ratio(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => ComputeRatio(GetCounter(priority, granularity).GetMetrics());
 
-        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Options);
+        public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) 
+            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), GetCounter(priority).Options);
 
         [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
         public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
