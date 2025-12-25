@@ -364,6 +364,89 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Requests(priority, granularity2).Should().Be(2);
             module.Accepts(priority, granularity2).Should().Be(1);
         }
+        
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_reject_and_deny_statistics_insertion_for_anomalous_granularities(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Reject(requestCount, priority, granularity2);
+            
+            module.Requests(priority, granularity1).Should().Be(requestCount);
+            module.Accepts(priority, granularity1).Should().Be(requestCount);
+            module.Requests(priority, granularity2).Should().Be(requestCount);
+            module.Accepts(priority, granularity2).Should().Be(0);
+
+            module.Requests(priority).Should().BeLessThan(requestCount * 2);
+            module.Accepts(priority).Should().Be(requestCount);
+            module.RejectionProbability(priority).Should().BeLessThan(module.RejectionProbability(priority, granularity2));
+        }
+        
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_allow_statistics_retribution(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Reject(requestCount, priority, granularity2);
+            
+            module.Requests(priority, granularity1).Should().Be(requestCount);
+            module.Accepts(priority, granularity1).Should().Be(requestCount);
+            module.Requests(priority, granularity2).Should().Be(requestCount);
+            module.Accepts(priority, granularity2).Should().Be(0);
+
+            module.Requests(priority).Should().BeLessThan(requestCount * 2);
+            module.Accepts(priority).Should().Be(requestCount);
+            var currentGranularRejectionProbability = module.RejectionProbability(priority, granularity2);
+            module.RejectionProbability(priority).Should().BeLessThan(currentGranularRejectionProbability);
+
+            var retributionRequests = 0; 
+            while (currentGranularRejectionProbability > 0)
+            {
+                Accept(1, priority, granularity2);
+                retributionRequests++; 
+                currentGranularRejectionProbability = module.RejectionProbability(priority, granularity2);
+            }
+            
+            module.Requests(priority).Should().BeInRange(requestCount * 2, requestCount * 2 + retributionRequests);
+            module.Requests(priority, granularity2).Should().Be(requestCount + retributionRequests);
+            module.Accepts(priority, granularity2).Should().BeGreaterOrEqualTo((int)((retributionRequests + requestCount) / options.Parameters[priority ?? RequestPriority.Ordinary].CriticalRatio));
+        }
 
         #endregion
         
