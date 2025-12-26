@@ -448,6 +448,59 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Accepts(priority, granularity2).Should().BeGreaterOrEqualTo((int)((retributionRequests + requestCount) / options.Parameters[priority ?? RequestPriority.Ordinary].CriticalRatio));
         }
 
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_reject_with_global_statistics_even_if_local_is_perfect(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+            var granularity3 = GetGranularityDictionary("3");
+            var granularity4 = GetGranularityDictionary("4");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Accept(requestCount, priority, granularity2);
+            Accept(requestCount, priority, granularity3);
+            Accept(requestCount, priority, granularity4);
+            while (module.RejectionProbability(priority) < options.Parameters[priority ?? RequestPriority.Ordinary].MaximumRejectProbability)
+            {
+                Reject(1, priority, granularity1);
+                Reject(1, priority, granularity2);
+                Reject(1, priority, granularity3);
+            }
+
+            for (var i = 0; i < requestCount; i++)
+            {
+                module.RejectionProbability(priority).Should().BeGreaterThan(options.Parameters[priority ?? RequestPriority.Ordinary].MaximumRejectProbability - 0.01);
+                module.RejectionProbability(priority, granularity4).Should().Be(0);
+                
+                var result = Execute(acceptedResult, priority, granularity4);
+                
+                // note: the expected behaviour here is that module rejects the request using global statistics, 
+                // thus fulfilling pessimisation promises.
+                // if we do not pessimise the rejection probability, it would make it possible to bypass the throttling mechanism
+                // entirely by always making requests falling into different buckets.
+                if (result.Status == ClusterResultStatus.Throttled)
+                    Assert.Pass();
+            }
+            
+            Assert.Fail();
+        }
+
         #endregion
         
         public static IEnumerable<RequestPriority?> PriorityCase()
