@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Commons.Collections;
 using Vostok.Commons.Threading;
@@ -49,6 +50,7 @@ namespace Vostok.Clusterclient.Core.Modules
         public static void ClearCache()
         {
             Counters.Clear();
+            GranularCounters.Clear();
         }
 
         public int Requests(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => GetCounter(priority, granularity).GetMetrics().Requests;
@@ -138,7 +140,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static bool RejectStatisticsInsertion(CounterMetrics? granularMetrics, AdaptiveThrottlingOptions options, double granularRatio, double globalRatio)
         {
             return granularMetrics.HasValue && granularMetrics.Value.Requests >= options.MinimumRequests &&
-                   granularRatio / globalRatio > options.AnomalousStatisticsThreshold &&
+                   granularRatio / globalRatio > options.GranularToGlobalStatisticsRatioAnomalyThreshold &&
                    1 - globalRatio / granularRatio > ThreadSafeRandom.NextDouble();
         }
 
@@ -209,6 +211,8 @@ namespace Vostok.Clusterclient.Core.Modules
         private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability,
                                                 ImmutableArrayDictionary<string, string> granularity)
         { 
+            if (!context.Log.IsEnabledFor(LogLevel.Warn)) return;
+
             var builder = new StringBuilder();
             foreach (var pair in granularity)
                 builder.Append(pair.Key).Append('=').Append(pair.Value).Append("; ");
@@ -304,27 +308,29 @@ namespace Vostok.Clusterclient.Core.Modules
 
         #region GranularKey
 
-        private record struct GranularKey
+        private struct GranularKey : IEquatable<GranularKey>
         {
-            public string GlobalKey;
-            public ImmutableArrayDictionary<string, string> Granularity;
+            private readonly string globalKey;
+            private readonly ImmutableArrayDictionary<string, string> granularity;
 
             public GranularKey(string globalKey, ImmutableArrayDictionary<string, string> granularity)
             {
-                GlobalKey = globalKey;
-                Granularity = granularity;
+                this.globalKey = globalKey;
+                this.granularity = granularity;
             }
 
             public override int GetHashCode()
             {
                 var hash = 23;
-                hash = unchecked(hash * 31 + GlobalKey.GetHashCode());
-                hash = unchecked(hash * 31 + ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.GetHashCode(Granularity));
+                hash = unchecked(hash * 31 + globalKey.GetHashCode());
+                hash = unchecked(hash * 31 + ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.GetHashCode(granularity));
                 return hash;
             }
 
-            public bool Equals(GranularKey? other) =>
-                string.Equals(GlobalKey, other?.GlobalKey) && ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.Equals(Granularity, other?.Granularity);
+            public override bool Equals(object other) => other is GranularKey otherKey && Equals(otherKey);
+
+            public bool Equals(GranularKey other) =>
+                string.Equals(globalKey, other.globalKey) && ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.Equals(granularity, other.granularity);
         }
 
         #endregion

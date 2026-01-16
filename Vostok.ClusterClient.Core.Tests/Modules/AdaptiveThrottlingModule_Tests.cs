@@ -329,8 +329,6 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Console.Out.WriteLine(module.RejectionProbability(priority));
         }
 
-        #region GranularStatisticsRejection
-
         [TestCaseSource(nameof(PriorityCase))]
         public void Should_track_granular_statistics_when_allowed(RequestPriority? priority)
         {
@@ -364,7 +362,40 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Requests(priority, granularity2).Should().Be(2);
             module.Accepts(priority, granularity2).Should().Be(1);
         }
-        
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_compare_granularities_by_value(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1_1 = GetGranularityDictionary("1");
+            var granularity1_2 = GetGranularityDictionary("1");
+            
+            Accept(1, priority, granularity1_1);
+            Accept(1, priority, granularity1_2);
+
+            module.Requests(priority).Should().Be(2);
+            module.Accepts(priority).Should().Be(2);
+            
+            module.Requests(priority, granularity1_1).Should().Be(2);
+            module.Accepts(priority, granularity1_1).Should().Be(2);
+            module.Requests(priority, granularity1_2).Should().Be(2);
+            module.Accepts(priority, granularity1_2).Should().Be(2);
+        }
+
         [TestCaseSource(nameof(PriorityCase))]
         public void Should_reject_and_deny_statistics_insertion_for_anomalous_granularities(RequestPriority? priority)
         {
@@ -442,10 +473,12 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                 retributionRequests++; 
                 currentGranularRejectionProbability = module.RejectionProbability(priority, granularity2);
             }
-            
+
             module.Requests(priority).Should().BeInRange(requestCount * 2, requestCount * 2 + retributionRequests);
             module.Requests(priority, granularity2).Should().Be(requestCount + retributionRequests);
-            module.Accepts(priority, granularity2).Should().BeGreaterOrEqualTo((int)((retributionRequests + requestCount) / options.Parameters[priority ?? RequestPriority.Ordinary].CriticalRatio));
+            // a lower bound estimate using the throttling formula 
+            var estimatedAccepts = (int)((retributionRequests + requestCount) / options.Parameters[priority ?? RequestPriority.Ordinary].CriticalRatio);
+            module.Accepts(priority, granularity2).Should().BeGreaterOrEqualTo(estimatedAccepts);
         }
 
         [TestCaseSource(nameof(PriorityCase))]
@@ -501,8 +534,6 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Assert.Fail();
         }
 
-        #endregion
-        
         public static IEnumerable<RequestPriority?> PriorityCase()
         {
             yield return null;

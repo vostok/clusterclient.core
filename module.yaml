@@ -27,7 +27,7 @@ notests *default:
 
   deps:
     - vostok.commons.threading/src
-    - vostok.commons.collections/src@INFRA-11460-adaptive-throttling-additional-info
+    - vostok.commons.collections/src
     - vostok.commons.time/src
     - vostok.commons.environment/src
     - vostok.logging.abstractions

@@ -45,16 +45,16 @@ namespace Vostok.Clusterclient.Core.Modules
         /// <param name="criticalRatio">A minimum ratio of requests to accepts eligible for rejection. Must be > 1.</param>
         /// <param name="maximumRejectProbability">A cap on the request rejection probability to prevent eternal rejection.</param>
         /// <param name="trackGranularStatistics">Whether to allow tracking granular statistics or not.</param>
-        /// <param name="anomalousStatisticsThreshold">Minimum statistics ratio for granular statistics to be deemed anomalous.</param>
+        /// <param name="granularToGlobalStatisticsRatioAnomalyThreshold">Minimum statistics ratio for granular statistics to be deemed anomalous.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minutesToTrack"/>, <paramref name="criticalRatio"/>,
-        /// <paramref name="maximumRejectProbability"/> or <paramref name="anomalousStatisticsThreshold"/> does not lie in expected range.</exception>
+        /// <paramref name="maximumRejectProbability"/> or <paramref name="granularToGlobalStatisticsRatioAnomalyThreshold"/> does not lie in expected range.</exception>
         public AdaptiveThrottlingOptions(
             int minutesToTrack = ClusterClientDefaults.AdaptiveThrottlingMinutesToTrack,
             int minimumRequests = ClusterClientDefaults.AdaptiveThrottlingMinimumRequests,
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap,
             bool trackGranularStatistics = ClusterClientDefaults.AdaptiveThrottlingTrackGranularStatistics,
-            double anomalousStatisticsThreshold = ClusterClientDefaults.AdaptiveThrottlingAnomalousStatisticsThreshold)
+            double granularToGlobalStatisticsRatioAnomalyThreshold = ClusterClientDefaults.AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold)
         {
             if (minutesToTrack < 1)
                 throw new ArgumentOutOfRangeException(nameof(minutesToTrack), "Minutes to track parameter must be >= 1.");
@@ -62,8 +62,8 @@ namespace Vostok.Clusterclient.Core.Modules
             if (criticalRatio <= 1.0)
                 throw new ArgumentOutOfRangeException(nameof(criticalRatio), "Critical ratio must be in (1; +inf) range.");
             
-            if (anomalousStatisticsThreshold <= 1.0)
-                throw new ArgumentOutOfRangeException(nameof(anomalousStatisticsThreshold), "Anomalous statistics threshold must be in (1; +inf) range.");
+            if (granularToGlobalStatisticsRatioAnomalyThreshold <= 1.0)
+                throw new ArgumentOutOfRangeException(nameof(granularToGlobalStatisticsRatioAnomalyThreshold), "Granular to global statistics ratio anomaly threshold must be in (1; +inf) range.");
 
             if (maximumRejectProbability < 0.0 || maximumRejectProbability > 1.0)
                 throw new ArgumentOutOfRangeException(nameof(maximumRejectProbability), "Maximum rejection probability must be in [0; 1] range.");
@@ -75,7 +75,7 @@ namespace Vostok.Clusterclient.Core.Modules
             CriticalRatio = criticalRatio;
             MaximumRejectProbability = maximumRejectProbability;
             TrackGranularStatistics = trackGranularStatistics;
-            AnomalousStatisticsThreshold = anomalousStatisticsThreshold;
+            GranularToGlobalStatisticsRatioAnomalyThreshold = granularToGlobalStatisticsRatioAnomalyThreshold;
         }
         
         /// <summary>
@@ -115,6 +115,6 @@ namespace Vostok.Clusterclient.Core.Modules
         /// the granular statistics are deemed "anomalous" and have a probability of skipping
         /// request result insertion into global statistics.  
         /// </summary>
-        public double AnomalousStatisticsThreshold { get; }
+        public double GranularToGlobalStatisticsRatioAnomalyThreshold { get; }
     }
 }

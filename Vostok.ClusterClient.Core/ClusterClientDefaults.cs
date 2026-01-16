@@ -72,14 +72,14 @@ namespace Vostok.Clusterclient.Core
         public const double AdaptiveThrottlingRejectProbabilityCap = 0.8;
         
         /// <summary>
-        /// The default value of <see cref="AdaptiveThrottlingOptions.MaximumRejectProbability"/>.
+        /// The default value of <see cref="AdaptiveThrottlingOptions.TrackGranularStatistics"/>.
         /// </summary>
         public const bool AdaptiveThrottlingTrackGranularStatistics = false;
 
         /// <summary>
-        /// The default value of <see cref="AdaptiveThrottlingOptions.MaximumRejectProbability"/>.
+        /// The default value of <see cref="AdaptiveThrottlingOptions.GranularToGlobalStatisticsRatioAnomalyThreshold"/>.
         /// </summary>
-        public const double AdaptiveThrottlingAnomalousStatisticsThreshold = 2.0;
+        public const double AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold = 2.0;
         
         /// <summary>
         /// The default value of <see cref="ReplicaBudgetingOptions.MinimumRequests"/>.
