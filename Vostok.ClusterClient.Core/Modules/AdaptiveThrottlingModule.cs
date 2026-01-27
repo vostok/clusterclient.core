@@ -3,9 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Vostok.Clusterclient.Core.Misc;
 using Vostok.Clusterclient.Core.Model;
+using Vostok.Commons.Collections;
 using Vostok.Commons.Threading;
 using Vostok.Logging.Abstractions;
 
@@ -16,11 +19,15 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingModule : IRequestModule
     {
+        internal const string RequestParametersStatisticsGranularityPropertyKey = "AdaptiveThrottlingModule.StatisticsGranularity";
+
         private static readonly RequestPriority DefaultPriority = RequestPriority.Ordinary;
         private static readonly ConcurrentDictionary<string, CountersPerPriority> Counters = new();
+        private static readonly ConcurrentDictionary<GranularKey, CountersPerPriority> GranularCounters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
         private readonly Func<string, CountersPerPriority> counterFactory;
+        private readonly Func<GranularKey, CountersPerPriority> granularCounterFactory;
 
         [Obsolete("This constructor for adaptive throttling is obsolete. Instead use constructor with AdaptiveThrottlingOptionsPerRequest.", false)]
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptions options)
@@ -37,20 +44,23 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             StorageKey = options.StorageKey;
             counterFactory = _ => new CountersPerPriority(options.Parameters);
+            granularCounterFactory = _ => new CountersPerPriority(options.Parameters);
         }
 
         public static void ClearCache()
         {
             Counters.Clear();
+            GranularCounters.Clear();
         }
 
-        public int Requests(RequestPriority? priority) => GetCounter(priority).GetMetrics().Requests;
+        public int Requests(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => GetCounter(priority, granularity).GetMetrics().Requests;
 
-        public int Accepts(RequestPriority? priority) => GetCounter(priority).GetMetrics().Accepts;
+        public int Accepts(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => GetCounter(priority, granularity).GetMetrics().Accepts;
 
-        public double Ratio(RequestPriority? priority) => ComputeRatio(GetCounter(priority).GetMetrics());
+        public double Ratio(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => ComputeRatio(GetCounter(priority, granularity).GetMetrics());
 
-        public double RejectionProbability(RequestPriority? priority) => ComputeRejectionProbability(GetCounter(priority).GetMetrics(), GetCounter(priority).Options);
+        public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) 
+            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), GetCounter(priority).Options);
 
         [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
         public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
@@ -61,45 +71,77 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
+            var granularity = ExtractGranularity(context);
+            
             var counter = GetCounter(context.Parameters.Priority);
             var options = counter.Options;
-            counter.BeginRequest();
+            var granularCounter = options.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
+
+            var metrics = counter.GetMetrics();
+            var granularMetrics = granularCounter?.GetMetrics();
 
             ClusterResult result;
 
             try
             {
-                counter.AddRequest();
-
-                double ratio;
-                double rejectionProbability;
-
-                var metrics = counter.GetMetrics();
-                if (metrics.Requests >= options.MinimumRequests &&
-                    (ratio = ComputeRatio(metrics)) >= options.CriticalRatio &&
-                    (rejectionProbability = ComputeRejectionProbability(metrics, options)) > ThreadSafeRandom.NextDouble())
+                var random = ThreadSafeRandom.NextDouble();
+                if (TryReject(metrics, options, random, out var globalRatio, out var globalRejectionProbability))
                 {
-                    LogThrottledRequest(context, ratio, rejectionProbability);
+                    LogThrottledRequest(context, globalRatio, globalRejectionProbability);
+                    UpdateCounter(granularCounter, false);
+                    UpdateCounter(counter, false);
+
+                    return ClusterResult.Throttled(context.Request);
+                }
+
+                double granularRatio = 0;
+                if (granularMetrics.HasValue && TryReject(granularMetrics.Value, options, random, out granularRatio, out var granularRejectionProbability))
+                {
+                    LogThrottledRequest(context, granularRatio, granularRejectionProbability, granularity);
+
+                    UpdateCounter(granularCounter, false);
+                    if (!RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                        UpdateCounter(counter, false);
 
                     return ClusterResult.Throttled(context.Request);
                 }
 
                 result = await next(context).ConfigureAwait(false);
 
-                UpdateCounter(counter, result);
+                var isAccept = IsAccept(result);
+                UpdateCounter(granularCounter, isAccept);
+                if (isAccept || !RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                    UpdateCounter(counter, isAccept);
             }
             catch (OperationCanceledException)
             {
-                if (context.CancellationToken.IsCancellationRequested)
-                    counter.AddAccept();
+                UpdateCounter(counter, context.CancellationToken.IsCancellationRequested);
+                UpdateCounter(granularCounter, context.CancellationToken.IsCancellationRequested);
                 throw;
-            }
-            finally
-            {
-                counter.EndRequest();
             }
 
             return result;
+        }
+
+        private static ImmutableArrayDictionary<string, string> ExtractGranularity(IRequestContext context) =>
+            (context.Parameters.Properties.TryGetValue(RequestParametersStatisticsGranularityPropertyKey, out var granularity)
+                ? granularity
+                : null
+            ) as ImmutableArrayDictionary<string, string>;
+
+        private static bool TryReject(CounterMetrics metrics, AdaptiveThrottlingOptions options, double random, out double ratio, out double computedRejectionProbability)
+        {
+            ratio = 1d; computedRejectionProbability = 0d;
+            return metrics.Requests >= options.MinimumRequests &&
+                   (ratio = ComputeRatio(metrics)) >= options.CriticalRatio &&
+                   (computedRejectionProbability = ComputeRejectionProbability(metrics, options)) > random;
+        }
+
+        private static bool RejectStatisticsInsertion(CounterMetrics? granularMetrics, AdaptiveThrottlingOptions options, double granularRatio, double globalRatio)
+        {
+            return granularMetrics.HasValue && granularMetrics.Value.Requests >= options.MinimumRequests &&
+                   granularRatio / globalRatio > options.GranularToGlobalStatisticsRatioAnomalyThreshold &&
+                   1 - globalRatio / granularRatio > ThreadSafeRandom.NextDouble();
         }
 
         private static double ComputeRatio(CounterMetrics metrics) =>
@@ -115,15 +157,21 @@ namespace Vostok.Clusterclient.Core.Modules
             return probability;
         }
 
-        private static void UpdateCounter(Counter counter, ClusterResult result)
+        private bool IsAccept(ClusterResult result) => result.ReplicaResults.Any(r => r.Verdict == ResponseVerdict.Accept);
+
+        private static void UpdateCounter(Counter counter, bool isAccept)
         {
-            if (result.ReplicaResults.Any(r => r.Verdict == ResponseVerdict.Accept))
+            if (counter is null) return;
+            counter.AddRequest();
+            if (isAccept)
                 counter.AddAccept();
         }
 
-        private Counter GetCounter(RequestPriority? priority)
+        private Counter GetCounter(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null)
         {
-            var counters = Counters.GetOrAdd(StorageKey, counterFactory);
+            var counters = granularity == null
+                ? Counters.GetOrAdd(StorageKey, counterFactory)
+                : GranularCounters.GetOrAdd(new GranularKey(StorageKey, granularity), granularCounterFactory);
             return counters.GetCounterPerPriority(priority ?? DefaultPriority);
         }
 
@@ -152,8 +200,28 @@ namespace Vostok.Clusterclient.Core.Modules
 
         #region Logging
 
-        private void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability) =>
-            context.Log.Warn("Throttled {priority} request without sending it. Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}", context.Parameters.Priority, ratio, rejectionProbability);
+        private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability)
+        {
+            context.Log.Warn(
+                "Throttled {priority} request without sending it based on overall service statistics. " +
+                "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}",
+                context.Parameters.Priority, ratio, rejectionProbability);
+        }
+
+        private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability,
+                                                ImmutableArrayDictionary<string, string> granularity)
+        { 
+            if (!context.Log.IsEnabledFor(LogLevel.Warn)) return;
+
+            var builder = new StringBuilder();
+            foreach (var pair in granularity)
+                builder.Append(pair.Key).Append('=').Append(pair.Value).Append("; ");
+
+            context.Log.Warn(
+                "Throttled {priority} request without sending it based on granular service statistics for granularity \"{Granularity}\". " +
+                "Request/accept ratio = {RequestAcceptsRatio:F3}. Rejection probability = {RejectionProbability:F3}.",
+                context.Parameters.Priority, builder.ToString(), ratio, rejectionProbability);
+        }
 
         #endregion
 
@@ -173,7 +241,6 @@ namespace Vostok.Clusterclient.Core.Modules
         private class Counter
         {
             private readonly CounterBucket[] buckets;
-            private int pendingRequests;
 
             public Counter(AdaptiveThrottlingOptions options)
             {
@@ -202,14 +269,8 @@ namespace Vostok.Clusterclient.Core.Modules
                     metrics.Accepts += bucket.Accepts;
                 }
 
-                metrics.Requests -= pendingRequests;
-
                 return metrics;
             }
-
-            public void BeginRequest() => Interlocked.Increment(ref pendingRequests);
-
-            public void EndRequest() => Interlocked.Decrement(ref pendingRequests);
 
             public void AddRequest() => Interlocked.Increment(ref ObtainBucket().Requests);
 
@@ -241,6 +302,35 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             public int Requests;
             public int Accepts;
+        }
+
+        #endregion
+
+        #region GranularKey
+
+        private struct GranularKey : IEquatable<GranularKey>
+        {
+            private readonly string globalKey;
+            private readonly ImmutableArrayDictionary<string, string> granularity;
+
+            public GranularKey(string globalKey, ImmutableArrayDictionary<string, string> granularity)
+            {
+                this.globalKey = globalKey;
+                this.granularity = granularity;
+            }
+
+            public override int GetHashCode()
+            {
+                var hash = 23;
+                hash = unchecked(hash * 31 + globalKey.GetHashCode());
+                hash = unchecked(hash * 31 + ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.GetHashCode(granularity));
+                return hash;
+            }
+
+            public override bool Equals(object other) => other is GranularKey otherKey && Equals(otherKey);
+
+            public bool Equals(GranularKey other) =>
+                string.Equals(globalKey, other.globalKey) && ImmutableArrayDictionaryByValueEqualityComparer<string, string>.Instance.Equals(granularity, other.granularity);
         }
 
         #endregion

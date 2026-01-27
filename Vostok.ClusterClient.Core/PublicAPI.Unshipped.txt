@@ -1,0 +1,11 @@
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold = 2 -> double
+const Vostok.Clusterclient.Core.ClusterClientDefaults.AdaptiveThrottlingTrackGranularStatistics = false -> bool
+static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions.SetAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Modules.IRequestContext context, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularity) -> void
+static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions.WithAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Model.RequestParameters parameters, string key, string value) -> Vostok.Clusterclient.Core.Model.RequestParameters
+static Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions.WithAdaptiveThrottlingGranularity(this Vostok.Clusterclient.Core.Model.RequestParameters parameters, System.Collections.Generic.IReadOnlyDictionary<string, string> additionalGranularity) -> Vostok.Clusterclient.Core.Model.RequestParameters
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingGranularitySettingExtensions
+*REMOVED*Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack = 2, int minimumRequests = 30, double criticalRatio = 2, double maximumRejectProbability = 0.8, bool trackGranularStatistics = false, double granularToGlobalStatisticsRatioAnomalyThreshold = 2) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.AdaptiveThrottlingOptions(int minutesToTrack, int minimumRequests, double criticalRatio, double maximumRejectProbability) -> void
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.GranularToGlobalStatisticsRatioAnomalyThreshold.get -> double
+Vostok.Clusterclient.Core.Modules.AdaptiveThrottlingOptions.TrackGranularStatistics.get -> bool

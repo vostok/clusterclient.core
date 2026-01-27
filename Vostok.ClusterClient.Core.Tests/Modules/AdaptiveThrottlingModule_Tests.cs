@@ -8,6 +8,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Vostok.Clusterclient.Core.Model;
 using Vostok.Clusterclient.Core.Modules;
+using Vostok.Commons.Collections;
 using Vostok.Logging.Abstractions;
 
 namespace Vostok.Clusterclient.Core.Tests.Modules
@@ -18,6 +19,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private const int MinimumRequests = 50;
         private const double CriticalRatio = 2.0;
         private const double ProbabilityCap = 0.8;
+        private const string GranularityKey = "granularity";
 
         private Uri replica;
         private Request request;
@@ -327,6 +329,211 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             Console.Out.WriteLine(module.RejectionProbability(priority));
         }
 
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_track_granular_statistics_when_allowed(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+            
+            Accept(1, priority, granularity1);
+            Accept(1, priority, granularity2);
+            Reject(1, priority, granularity2);
+
+            module.Requests(priority).Should().Be(3);
+            module.Accepts(priority).Should().Be(2);
+            
+            module.Requests(priority, granularity1).Should().Be(1);
+            module.Accepts(priority, granularity1).Should().Be(1);
+            module.Requests(priority, granularity2).Should().Be(2);
+            module.Accepts(priority, granularity2).Should().Be(1);
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_compare_granularities_by_value(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1_1 = GetGranularityDictionary("1");
+            var granularity1_2 = GetGranularityDictionary("1");
+            
+            Accept(1, priority, granularity1_1);
+            Accept(1, priority, granularity1_2);
+
+            module.Requests(priority).Should().Be(2);
+            module.Accepts(priority).Should().Be(2);
+            
+            module.Requests(priority, granularity1_1).Should().Be(2);
+            module.Accepts(priority, granularity1_1).Should().Be(2);
+            module.Requests(priority, granularity1_2).Should().Be(2);
+            module.Accepts(priority, granularity1_2).Should().Be(2);
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_reject_and_deny_statistics_insertion_for_anomalous_granularities(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Reject(requestCount, priority, granularity2);
+            
+            module.Requests(priority, granularity1).Should().Be(requestCount);
+            module.Accepts(priority, granularity1).Should().Be(requestCount);
+            module.Requests(priority, granularity2).Should().Be(requestCount);
+            module.Accepts(priority, granularity2).Should().Be(0);
+
+            module.Requests(priority).Should().BeLessThan(requestCount * 2);
+            module.Accepts(priority).Should().Be(requestCount);
+            module.RejectionProbability(priority).Should().BeLessThan(module.RejectionProbability(priority, granularity2));
+        }
+        
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_allow_statistics_retribution(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Reject(requestCount, priority, granularity2);
+            
+            module.Requests(priority, granularity1).Should().Be(requestCount);
+            module.Accepts(priority, granularity1).Should().Be(requestCount);
+            module.Requests(priority, granularity2).Should().Be(requestCount);
+            module.Accepts(priority, granularity2).Should().Be(0);
+
+            module.Requests(priority).Should().BeLessThan(requestCount * 2);
+            module.Accepts(priority).Should().Be(requestCount);
+            var currentGranularRejectionProbability = module.RejectionProbability(priority, granularity2);
+            module.RejectionProbability(priority).Should().BeLessThan(currentGranularRejectionProbability);
+
+            var retributionRequests = 0; 
+            while (currentGranularRejectionProbability > 0)
+            {
+                Accept(1, priority, granularity2);
+                retributionRequests++; 
+                currentGranularRejectionProbability = module.RejectionProbability(priority, granularity2);
+            }
+
+            module.Requests(priority).Should().BeInRange(requestCount * 2, requestCount * 2 + retributionRequests);
+            module.Requests(priority, granularity2).Should().Be(requestCount + retributionRequests);
+            // a lower bound estimate using the throttling formula 
+            var estimatedAccepts = (int)((retributionRequests + requestCount) / options.Parameters[priority ?? RequestPriority.Ordinary].CriticalRatio);
+            module.Accepts(priority, granularity2).Should().BeGreaterOrEqualTo(estimatedAccepts);
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_reject_with_global_statistics_even_if_local_is_perfect(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity1 = GetGranularityDictionary("1");
+            var granularity2 = GetGranularityDictionary("2");
+            var granularity3 = GetGranularityDictionary("3");
+            var granularity4 = GetGranularityDictionary("4");
+
+            const int requestCount = 100;
+            Accept(requestCount, priority, granularity1);
+            Accept(requestCount, priority, granularity2);
+            Accept(requestCount, priority, granularity3);
+            Accept(requestCount, priority, granularity4);
+            while (module.RejectionProbability(priority) < options.Parameters[priority ?? RequestPriority.Ordinary].MaximumRejectProbability)
+            {
+                Reject(1, priority, granularity1);
+                Reject(1, priority, granularity2);
+                Reject(1, priority, granularity3);
+            }
+
+            for (var i = 0; i < requestCount; i++)
+            {
+                module.RejectionProbability(priority).Should().BeGreaterThan(options.Parameters[priority ?? RequestPriority.Ordinary].MaximumRejectProbability - 0.01);
+                module.RejectionProbability(priority, granularity4).Should().Be(0);
+                
+                var result = Execute(acceptedResult, priority, granularity4);
+                
+                // note: the expected behaviour here is that module rejects the request using global statistics, 
+                // thus fulfilling pessimisation promises.
+                // if we do not pessimise the rejection probability, it would make it possible to bypass the throttling mechanism
+                // entirely by always making requests falling into different buckets.
+                if (result.Status == ClusterResultStatus.Throttled)
+                    Assert.Pass();
+            }
+            
+            Assert.Fail();
+        }
+
         public static IEnumerable<RequestPriority?> PriorityCase()
         {
             yield return null;
@@ -335,21 +542,30 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             yield return RequestPriority.Sheddable;
         }
 
-        private void Accept(int count, RequestPriority? priority = null)
+        private ImmutableArrayDictionary<string, string> GetGranularityDictionary(string granularityKeyValue)
         {
-            for (var i = 0; i < count; i++)
-                Execute(acceptedResult, priority);
+            var result = new ImmutableArrayDictionary<string, string>(2);
+            result.AppendUnsafe(GranularityKey, granularityKeyValue);
+            return result;
         }
 
-        private void Reject(int count, RequestPriority? priority = null)
+        private void Accept(int count, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
         {
             for (var i = 0; i < count; i++)
-                Execute(rejectedResult, priority);
+                Execute(acceptedResult, priority, granularity);
         }
 
-        private ClusterResult Execute(ClusterResult result, RequestPriority? priority = null)
+        private void Reject(int count, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
+        {
+            for (var i = 0; i < count; i++)
+                Execute(rejectedResult, priority, granularity);
+        }
+
+        private ClusterResult Execute(ClusterResult result, RequestPriority? priority = null, ImmutableArrayDictionary<string, string> granularity = null)
         {
             var parameters = new RequestParameters(priority: priority);
+            if (granularity != null)
+                parameters = parameters.WithAdaptiveThrottlingGranularity(granularity);
             context.Parameters.Returns(parameters);
             return module.ExecuteAsync(context, _ => Task.FromResult(result)).GetAwaiter().GetResult();
         }
