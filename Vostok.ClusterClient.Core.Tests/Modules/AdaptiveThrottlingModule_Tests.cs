@@ -25,6 +25,7 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         private Request request;
         private ClusterResult acceptedResult;
         private ClusterResult rejectedResult;
+        private ClusterResult emptyTopologyResult;
         private IRequestContext context;
 
         private AdaptiveThrottlingOptionsPerPriority options;
@@ -37,7 +38,8 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             request = Request.Get("foo/bar");
             acceptedResult = new ClusterResult(ClusterResultStatus.Success, new[] {new ReplicaResult(replica, new Response(ResponseCode.Accepted), ResponseVerdict.Accept, TimeSpan.Zero)}, null, request);
             rejectedResult = new ClusterResult(ClusterResultStatus.ReplicasExhausted, new[] {new ReplicaResult(replica, new Response(ResponseCode.TooManyRequests), ResponseVerdict.Reject, TimeSpan.Zero)}, null, request);
-
+            emptyTopologyResult = new ClusterResult(ClusterResultStatus.ReplicasNotFound, Array.Empty<ReplicaResult>(), null, request);
+            
             context = Substitute.For<IRequestContext>();
             context.Log.Returns(new SilentLog());
 
@@ -532,6 +534,14 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             }
             
             Assert.Fail();
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_not_throttle_on_ReplicasNotFound_cluster_status(RequestPriority? priority)
+        {
+            for (var i = 0; i < 1000; i++)
+                Execute(emptyTopologyResult, priority);
+            module.RejectionProbability(priority).Should().Be(0d);
         }
 
         public static IEnumerable<RequestPriority?> PriorityCase()

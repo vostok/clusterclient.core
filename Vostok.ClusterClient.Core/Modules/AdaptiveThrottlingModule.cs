@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,7 +58,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
         public double Ratio(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => ComputeRatio(GetCounter(priority, granularity).GetMetrics());
 
-        public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) 
+        public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null)
             => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), GetCounter(priority).Options);
 
         [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
@@ -72,7 +71,7 @@ namespace Vostok.Clusterclient.Core.Modules
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
             var granularity = ExtractGranularity(context);
-            
+
             var counter = GetCounter(context.Parameters.Priority);
             var options = counter.Options;
             var granularCounter = options.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
@@ -108,10 +107,15 @@ namespace Vostok.Clusterclient.Core.Modules
 
                 result = await next(context).ConfigureAwait(false);
 
+                if (result.Status is ClusterResultStatus.ReplicasNotFound)
+                    return result;
+
                 var isAccept = IsAccept(result);
                 UpdateCounter(granularCounter, isAccept);
                 if (isAccept || !RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
                     UpdateCounter(counter, isAccept);
+
+                return result;
             }
             catch (OperationCanceledException)
             {
@@ -119,8 +123,6 @@ namespace Vostok.Clusterclient.Core.Modules
                 UpdateCounter(granularCounter, context.CancellationToken.IsCancellationRequested);
                 throw;
             }
-
-            return result;
         }
 
         private static ImmutableArrayDictionary<string, string> ExtractGranularity(IRequestContext context) =>
@@ -131,7 +133,8 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private static bool TryReject(CounterMetrics metrics, AdaptiveThrottlingOptions options, double random, out double ratio, out double computedRejectionProbability)
         {
-            ratio = 1d; computedRejectionProbability = 0d;
+            ratio = 1d;
+            computedRejectionProbability = 0d;
             return metrics.Requests >= options.MinimumRequests &&
                    (ratio = ComputeRatio(metrics)) >= options.CriticalRatio &&
                    (computedRejectionProbability = ComputeRejectionProbability(metrics, options)) > random;
@@ -157,7 +160,7 @@ namespace Vostok.Clusterclient.Core.Modules
             return probability;
         }
 
-        private bool IsAccept(ClusterResult result) => result.ReplicaResults.Any(r => r.Verdict == ResponseVerdict.Accept);
+        private bool IsAccept(ClusterResult result) => result.Status is ClusterResultStatus.Success;
 
         private static void UpdateCounter(Counter counter, bool isAccept)
         {
@@ -210,7 +213,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
         private static void LogThrottledRequest(IRequestContext context, double ratio, double rejectionProbability,
                                                 ImmutableArrayDictionary<string, string> granularity)
-        { 
+        {
             if (!context.Log.IsEnabledFor(LogLevel.Warn)) return;
 
             var builder = new StringBuilder();
