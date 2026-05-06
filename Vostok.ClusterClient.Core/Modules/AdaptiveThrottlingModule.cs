@@ -61,12 +61,15 @@ namespace Vostok.Clusterclient.Core.Modules
         public double Ratio(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => ComputeRatio(GetCounter(priority, granularity).GetMetrics());
 
         public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null)
-            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), GetCounter(priority).Options);
+            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), PerPriorityOptions(priority));
 
         [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
-        public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
+        public AdaptiveThrottlingOptions Options => PerPriorityOptions(DefaultPriority);
 
-        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => GetCounter(priority).Options;
+        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => 
+            options.TryGetValue(priority ?? DefaultPriority, out var perPriorityOptions)
+                ? perPriorityOptions
+                : AdaptiveThrottlingOptions.Default;
 
         public string StorageKey { get; }
 
@@ -74,7 +77,7 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             var granularity = ExtractGranularity(context);
 
-            var currentPriorityOptions = options.TryGetValue(context.Parameters.Priority ?? DefaultPriority, out var tmp) ? tmp : AdaptiveThrottlingOptions.Default;
+            var currentPriorityOptions = PerPriorityOptions(context.Parameters.Priority);
             var counter = currentPriorityOptions.TrackGlobalStatistics ? GetCounter(context.Parameters.Priority) : null;
             var granularCounter = currentPriorityOptions.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
 
@@ -192,7 +195,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 requestCounters = new Dictionary<RequestPriority, Counter>();
                 foreach (var parameters in options)
                 {
-                    requestCounters[parameters.Key] = new Counter(parameters.Value);
+                    requestCounters[parameters.Key] = new Counter(parameters.Value.MinutesToTrack);
                 }
             }
 
@@ -248,18 +251,13 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             private readonly CounterBucket[] buckets;
 
-            public Counter(AdaptiveThrottlingOptions options)
+            public Counter(int bucketsCount)
             {
-                Options = options;
+                buckets = new CounterBucket[bucketsCount];
 
-                var bucketsNumber = options.MinutesToTrack;
-                buckets = new CounterBucket[bucketsNumber];
-
-                for (var i = 0; i < bucketsNumber; i++)
+                for (var i = 0; i < bucketsCount; i++)
                     buckets[i] = new CounterBucket();
             }
-
-            public AdaptiveThrottlingOptions Options { get; }
 
             public CounterMetrics GetMetrics()
             {
