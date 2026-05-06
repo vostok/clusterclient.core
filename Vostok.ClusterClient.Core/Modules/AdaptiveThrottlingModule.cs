@@ -25,6 +25,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static readonly ConcurrentDictionary<GranularKey, CountersPerPriority> GranularCounters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
+        private readonly IReadOnlyDictionary<RequestPriority, AdaptiveThrottlingOptions> options;
         private readonly Func<string, CountersPerPriority> counterFactory;
         private readonly Func<GranularKey, CountersPerPriority> granularCounterFactory;
 
@@ -42,8 +43,9 @@ namespace Vostok.Clusterclient.Core.Modules
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptionsPerPriority options)
         {
             StorageKey = options.StorageKey;
-            counterFactory = _ => new CountersPerPriority(options.Parameters);
-            granularCounterFactory = _ => new CountersPerPriority(options.Parameters);
+            this.options = options.Parameters; 
+            counterFactory = _ => new CountersPerPriority(this.options);
+            granularCounterFactory = _ => new CountersPerPriority(this.options);
         }
 
         public static void ClearCache()
@@ -72,11 +74,11 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             var granularity = ExtractGranularity(context);
 
-            var counter = GetCounter(context.Parameters.Priority);
-            var options = counter.Options;
-            var granularCounter = options.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
+            var currentPriorityOptions = options.TryGetValue(context.Parameters.Priority ?? DefaultPriority, out var tmp) ? tmp : AdaptiveThrottlingOptions.Default;
+            var counter = currentPriorityOptions.TrackGlobalStatistics ? GetCounter(context.Parameters.Priority) : null;
+            var granularCounter = currentPriorityOptions.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
 
-            var metrics = counter.GetMetrics();
+            var metrics = counter?.GetMetrics();
             var granularMetrics = granularCounter?.GetMetrics();
 
             ClusterResult result;
@@ -84,22 +86,23 @@ namespace Vostok.Clusterclient.Core.Modules
             try
             {
                 var random = ThreadSafeRandom.NextDouble();
-                if (TryReject(metrics, options, random, out var globalRatio, out var globalRejectionProbability))
+                double globalRatio = 0;
+                if (metrics.HasValue && TryReject(metrics.Value, currentPriorityOptions, random, out globalRatio, out var globalRejectionProbability))
                 {
                     LogThrottledRequest(context, globalRatio, globalRejectionProbability);
-                    UpdateCounter(granularCounter, false);
                     UpdateCounter(counter, false);
+                    UpdateCounter(granularCounter, false);
 
                     return ClusterResult.Throttled(context.Request);
                 }
 
                 double granularRatio = 0;
-                if (granularMetrics.HasValue && TryReject(granularMetrics.Value, options, random, out granularRatio, out var granularRejectionProbability))
+                if (granularMetrics.HasValue && TryReject(granularMetrics.Value, currentPriorityOptions, random, out granularRatio, out var granularRejectionProbability))
                 {
                     LogThrottledRequest(context, granularRatio, granularRejectionProbability, granularity);
 
                     UpdateCounter(granularCounter, false);
-                    if (!RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                    if (counter is not null && !RejectStatisticsInsertion(granularMetrics, currentPriorityOptions, granularRatio, globalRatio))
                         UpdateCounter(counter, false);
 
                     return ClusterResult.Throttled(context.Request);
@@ -112,7 +115,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
                 var isAccept = IsAccept(result);
                 UpdateCounter(granularCounter, isAccept);
-                if (isAccept || !RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
+                if (counter is not null && (isAccept || !RejectStatisticsInsertion(granularMetrics, currentPriorityOptions, granularRatio, globalRatio)))
                     UpdateCounter(counter, isAccept);
 
                 return result;

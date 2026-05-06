@@ -10,7 +10,6 @@ namespace Vostok.Clusterclient.Core.Modules
     /// </summary>
     internal class AdaptiveThrottlingOptionsPerPriority
     {
-        private static readonly AdaptiveThrottlingOptions DefaultThrottlingOptions = new();
         private static readonly Array PriorityList = Enum.GetValues(typeof(RequestPriority));
 
         private readonly Dictionary<RequestPriority, AdaptiveThrottlingOptions> parameters;
@@ -32,7 +31,7 @@ namespace Vostok.Clusterclient.Core.Modules
             {
                 if (!parameters.ContainsKey(priority))
                 {
-                    parameters[priority] = DefaultThrottlingOptions;
+                    parameters[priority] = AdaptiveThrottlingOptions.Default;
                 }
             }
         }

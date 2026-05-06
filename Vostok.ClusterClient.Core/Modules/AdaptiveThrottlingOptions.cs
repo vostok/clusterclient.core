@@ -9,6 +9,8 @@ namespace Vostok.Clusterclient.Core.Modules
     [PublicAPI]
     public class AdaptiveThrottlingOptions
     {
+        internal static readonly AdaptiveThrottlingOptions Default = new();
+
         /// <param name="storageKey">A key used to decouple statistics for different services. This parameter is REQUIRED</param>
         /// <param name="minutesToTrack">How much minutes of statistics will be tracked. Must be >= 1.</param>
         /// <param name="minimumRequests">A minimum requests count in <see cref="MinutesToTrack"/> minutes to reject any request.</param>
@@ -54,7 +56,8 @@ namespace Vostok.Clusterclient.Core.Modules
             double criticalRatio = ClusterClientDefaults.AdaptiveThrottlingCriticalRatio,
             double maximumRejectProbability = ClusterClientDefaults.AdaptiveThrottlingRejectProbabilityCap,
             bool trackGranularStatistics = ClusterClientDefaults.AdaptiveThrottlingTrackGranularStatistics,
-            double granularToGlobalStatisticsRatioAnomalyThreshold = ClusterClientDefaults.AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold)
+            double granularToGlobalStatisticsRatioAnomalyThreshold = ClusterClientDefaults.AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold,
+            bool trackGlobalStatistics = ClusterClientDefaults.AdaptiveThrottlingTrackGlobalStatistics)
         {
             if (minutesToTrack < 1)
                 throw new ArgumentOutOfRangeException(nameof(minutesToTrack), "Minutes to track parameter must be >= 1.");
@@ -76,6 +79,7 @@ namespace Vostok.Clusterclient.Core.Modules
             MaximumRejectProbability = maximumRejectProbability;
             TrackGranularStatistics = trackGranularStatistics;
             GranularToGlobalStatisticsRatioAnomalyThreshold = granularToGlobalStatisticsRatioAnomalyThreshold;
+            TrackGlobalStatistics = trackGlobalStatistics;
         }
         
         /// <summary>
@@ -109,6 +113,11 @@ namespace Vostok.Clusterclient.Core.Modules
         /// Whether to allow tracking granular statistics or not.
         /// </summary>
         public bool TrackGranularStatistics { get; }
+
+        /// <summary>
+        /// Whether to track global statistics or not.
+        /// </summary>
+        public bool TrackGlobalStatistics { get; }
 
         /// <summary>
         /// A minimum ratio of granular requests / accepts ratio to that of global statistics so that

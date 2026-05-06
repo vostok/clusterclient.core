@@ -77,6 +77,11 @@ namespace Vostok.Clusterclient.Core
         public const bool AdaptiveThrottlingTrackGranularStatistics = false;
 
         /// <summary>
+        /// The default value of <see cref="AdaptiveThrottlingOptions.TrackGranularStatistics"/>.
+        /// </summary>
+        public const bool AdaptiveThrottlingTrackGlobalStatistics = true;
+
+        /// <summary>
         /// The default value of <see cref="AdaptiveThrottlingOptions.GranularToGlobalStatisticsRatioAnomalyThreshold"/>.
         /// </summary>
         public const double AdaptiveThrottlingGranularToGlobalStatisticsRatioAnomalyThreshold = 2.0;
