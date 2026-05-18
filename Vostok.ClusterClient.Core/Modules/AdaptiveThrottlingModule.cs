@@ -79,7 +79,7 @@ namespace Vostok.Clusterclient.Core.Modules
 
             var currentPriorityOptions = PerPriorityOptions(context.Parameters.Priority);
             var counter = currentPriorityOptions.TrackGlobalStatistics ? GetCounter(context.Parameters.Priority) : null;
-            var granularCounter = currentPriorityOptions.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
+            var granularCounter = currentPriorityOptions.TrackGranularStatistics && granularity is not null ? GetCounter(context.Parameters.Priority, granularity) : null;
 
             var metrics = counter?.GetMetrics();
             var granularMetrics = granularCounter?.GetMetrics();
