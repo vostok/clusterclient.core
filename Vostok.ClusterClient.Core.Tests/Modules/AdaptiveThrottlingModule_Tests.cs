@@ -548,7 +548,8 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
                             MinimumRequests,
                             CriticalRatio,
                             ProbabilityCap,
-                            trackGlobalStatistics: false
+                            trackGlobalStatistics: false,
+                            trackGranularStatistics: true
                         )
                     );
                 },
@@ -575,8 +576,8 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
             module.Requests(priority, granularity).Should().Be(30);
             module.RejectionProbability(priority, granularity).Should().BeGreaterThan(0.25);
             module.Accepts(priority, granularity2).Should().Be(1);
-            module.Requests(priority, granularity).Should().Be(201);
-            module.RejectionProbability(priority, granularity).Should().BeApproximately(ProbabilityCap, 0.01);
+            module.Requests(priority, granularity2).Should().Be(201);
+            module.RejectionProbability(priority, granularity2).Should().BeApproximately(ProbabilityCap, 0.01);
         }
 
         [TestCaseSource(nameof(PriorityCase))]
