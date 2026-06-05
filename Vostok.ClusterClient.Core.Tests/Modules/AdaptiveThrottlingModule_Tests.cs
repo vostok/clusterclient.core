@@ -537,6 +537,89 @@ namespace Vostok.Clusterclient.Core.Tests.Modules
         }
 
         [TestCaseSource(nameof(PriorityCase))]
+        public void Should_not_collect_global_statistics_when_disabled(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            CriticalRatio,
+                            ProbabilityCap,
+                            trackGlobalStatistics: false,
+                            trackGranularStatistics: true
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            Accept(10, priority);
+            Reject(20, priority);
+
+            var granularity = GetGranularityDictionary("test");
+            Accept(10, priority, granularity);
+            Reject(20, priority, granularity);
+
+            var granularity2 = GetGranularityDictionary("test2");
+            Accept(1, priority, granularity2);
+            Reject(200, priority, granularity2);
+
+            module.Accepts(priority).Should().Be(0);
+            module.Requests(priority).Should().Be(0);
+            module.RejectionProbability(priority).Should().Be(0d);
+
+            module.Accepts(priority, granularity).Should().Be(10);
+            module.Requests(priority, granularity).Should().Be(30);
+            module.RejectionProbability(priority, granularity).Should().BeGreaterThan(0.25);
+            module.Accepts(priority, granularity2).Should().Be(1);
+            module.Requests(priority, granularity2).Should().Be(201);
+            module.RejectionProbability(priority, granularity2).Should().BeApproximately(ProbabilityCap, 0.01);
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
+        public void Should_not_collect_any_statistics_when_both_disabled(RequestPriority? priority)
+        {
+            options = AdaptiveThrottlingOptionsBuilder.Build(
+                setup =>
+                {
+                    setup.WithDefaultOptions(
+                        new AdaptiveThrottlingOptions(
+                            1,
+                            MinimumRequests,
+                            CriticalRatio,
+                            ProbabilityCap,
+                            trackGlobalStatistics: false,
+                            trackGranularStatistics: false
+                        )
+                    );
+                },
+                Guid.NewGuid().ToString()
+            );
+            module = new AdaptiveThrottlingModule(options);
+
+            var granularity = GetGranularityDictionary("test");
+            Accept(10, priority, granularity);
+            Reject(200, priority, granularity);
+
+            for (int i = 0; i < 10; i++)
+            {
+                var result = Execute(acceptedResult, priority);
+                result.Status.Should().NotBe(ClusterResultStatus.Throttled);
+            }
+
+            module.Requests(priority).Should().Be(0);
+            module.Requests(priority, granularity).Should().Be(0);
+            module.Accepts(priority).Should().Be(0);
+            module.Accepts(priority, granularity).Should().Be(0);
+            module.RejectionProbability(priority).Should().Be(0d);
+            module.RejectionProbability(priority, granularity).Should().Be(0d);
+        }
+
+        [TestCaseSource(nameof(PriorityCase))]
         public void Should_not_throttle_on_ReplicasNotFound_cluster_status(RequestPriority? priority)
         {
             for (var i = 0; i < 1000; i++)

@@ -25,6 +25,7 @@ namespace Vostok.Clusterclient.Core.Modules
         private static readonly ConcurrentDictionary<GranularKey, CountersPerPriority> GranularCounters = new();
         private static readonly Stopwatch Watch = Stopwatch.StartNew();
 
+        private readonly IReadOnlyDictionary<RequestPriority, AdaptiveThrottlingOptions> options;
         private readonly Func<string, CountersPerPriority> counterFactory;
         private readonly Func<GranularKey, CountersPerPriority> granularCounterFactory;
 
@@ -42,8 +43,9 @@ namespace Vostok.Clusterclient.Core.Modules
         public AdaptiveThrottlingModule(AdaptiveThrottlingOptionsPerPriority options)
         {
             StorageKey = options.StorageKey;
-            counterFactory = _ => new CountersPerPriority(options.Parameters);
-            granularCounterFactory = _ => new CountersPerPriority(options.Parameters);
+            this.options = options.Parameters; 
+            counterFactory = _ => new CountersPerPriority(this.options);
+            granularCounterFactory = _ => new CountersPerPriority(this.options);
         }
 
         public static void ClearCache()
@@ -59,12 +61,15 @@ namespace Vostok.Clusterclient.Core.Modules
         public double Ratio(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null) => ComputeRatio(GetCounter(priority, granularity).GetMetrics());
 
         public double RejectionProbability(RequestPriority? priority, ImmutableArrayDictionary<string, string> granularity = null)
-            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), GetCounter(priority).Options);
+            => ComputeRejectionProbability(GetCounter(priority, granularity).GetMetrics(), PerPriorityOptions(priority));
 
         [Obsolete("This property for adaptive throttling is obsolete. Instead use PerPriorityOptions.", false)]
-        public AdaptiveThrottlingOptions Options => GetCounter(DefaultPriority).Options;
+        public AdaptiveThrottlingOptions Options => PerPriorityOptions(DefaultPriority);
 
-        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => GetCounter(priority).Options;
+        public AdaptiveThrottlingOptions PerPriorityOptions(RequestPriority? priority) => 
+            options.TryGetValue(priority ?? DefaultPriority, out var perPriorityOptions)
+                ? perPriorityOptions
+                : AdaptiveThrottlingOptions.Default;
 
         public string StorageKey { get; }
 
@@ -72,11 +77,11 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             var granularity = ExtractGranularity(context);
 
-            var counter = GetCounter(context.Parameters.Priority);
-            var options = counter.Options;
-            var granularCounter = options.TrackGranularStatistics ? GetCounter(context.Parameters.Priority, granularity) : null;
+            var currentPriorityOptions = PerPriorityOptions(context.Parameters.Priority);
+            var globalCounter = currentPriorityOptions.TrackGlobalStatistics ? GetCounter(context.Parameters.Priority) : null;
+            var granularCounter = currentPriorityOptions.TrackGranularStatistics && granularity is not null ? GetCounter(context.Parameters.Priority, granularity) : null;
 
-            var metrics = counter.GetMetrics();
+            var globalMetrics = globalCounter?.GetMetrics();
             var granularMetrics = granularCounter?.GetMetrics();
 
             ClusterResult result;
@@ -84,23 +89,24 @@ namespace Vostok.Clusterclient.Core.Modules
             try
             {
                 var random = ThreadSafeRandom.NextDouble();
-                if (TryReject(metrics, options, random, out var globalRatio, out var globalRejectionProbability))
+                double globalRatio = 0;
+                if (globalMetrics.HasValue && TryReject(globalMetrics.Value, currentPriorityOptions, random, out globalRatio, out var globalRejectionProbability))
                 {
                     LogThrottledRequest(context, globalRatio, globalRejectionProbability);
+                    UpdateCounter(globalCounter, false);
                     UpdateCounter(granularCounter, false);
-                    UpdateCounter(counter, false);
 
                     return ClusterResult.Throttled(context.Request);
                 }
 
                 double granularRatio = 0;
-                if (granularMetrics.HasValue && TryReject(granularMetrics.Value, options, random, out granularRatio, out var granularRejectionProbability))
+                if (granularMetrics.HasValue && TryReject(granularMetrics.Value, currentPriorityOptions, random, out granularRatio, out var granularRejectionProbability))
                 {
                     LogThrottledRequest(context, granularRatio, granularRejectionProbability, granularity);
 
                     UpdateCounter(granularCounter, false);
-                    if (!RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
-                        UpdateCounter(counter, false);
+                    if (globalCounter is not null && !RejectStatisticsInsertion(granularMetrics, currentPriorityOptions, granularRatio, globalRatio))
+                        UpdateCounter(globalCounter, false);
 
                     return ClusterResult.Throttled(context.Request);
                 }
@@ -112,14 +118,14 @@ namespace Vostok.Clusterclient.Core.Modules
 
                 var isAccept = IsAccept(result);
                 UpdateCounter(granularCounter, isAccept);
-                if (isAccept || !RejectStatisticsInsertion(granularMetrics, options, granularRatio, globalRatio))
-                    UpdateCounter(counter, isAccept);
+                if (globalCounter is not null && (isAccept || !RejectStatisticsInsertion(granularMetrics, currentPriorityOptions, granularRatio, globalRatio)))
+                    UpdateCounter(globalCounter, isAccept);
 
                 return result;
             }
             catch (OperationCanceledException)
             {
-                UpdateCounter(counter, context.CancellationToken.IsCancellationRequested);
+                UpdateCounter(globalCounter, context.CancellationToken.IsCancellationRequested);
                 UpdateCounter(granularCounter, context.CancellationToken.IsCancellationRequested);
                 throw;
             }
@@ -189,7 +195,7 @@ namespace Vostok.Clusterclient.Core.Modules
                 requestCounters = new Dictionary<RequestPriority, Counter>();
                 foreach (var parameters in options)
                 {
-                    requestCounters[parameters.Key] = new Counter(parameters.Value);
+                    requestCounters[parameters.Key] = new Counter(parameters.Value.MinutesToTrack);
                 }
             }
 
@@ -245,18 +251,13 @@ namespace Vostok.Clusterclient.Core.Modules
         {
             private readonly CounterBucket[] buckets;
 
-            public Counter(AdaptiveThrottlingOptions options)
+            public Counter(int bucketsCount)
             {
-                Options = options;
+                buckets = new CounterBucket[bucketsCount];
 
-                var bucketsNumber = options.MinutesToTrack;
-                buckets = new CounterBucket[bucketsNumber];
-
-                for (var i = 0; i < bucketsNumber; i++)
+                for (var i = 0; i < bucketsCount; i++)
                     buckets[i] = new CounterBucket();
             }
-
-            public AdaptiveThrottlingOptions Options { get; }
 
             public CounterMetrics GetMetrics()
             {
